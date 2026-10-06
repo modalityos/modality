@@ -1,6 +1,6 @@
 # Development installs mirror the production prefix
 
-A development build installs into a dev root (`/opt/modality-dev` in the test VM) laid out exactly like the production prefix `/usr`, and code finds its files through one variable, `MODALITY_PREFIX`, defaulting to `/usr`. One install step serves both the PKGBUILD and the dev sync, so dev and production run the same code against the same relative layout, and removing the dev root undoes a dev install completely.
+A development build installs into a dev root (`/opt/modalityos-dev` in the test VM) laid out exactly like the production prefix `/usr`, and code finds its files through one variable, `MODALITYOS_PREFIX`, defaulting to `/usr`. One install step serves both the PKGBUILD and the dev sync, so dev and production run the same code against the same relative layout, and removing the dev root undoes a dev install completely.
 
 ## Considered Options
 
