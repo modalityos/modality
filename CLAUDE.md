@@ -42,7 +42,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 - **Seams:** a seam named in the spec's Testing Decisions or in the ticket counts as confirmed. An unattended implementer uses only those; if it needs a new seam, it stops that ticket and reports.
 - **Red must fail for the expected reason** — a compile error or setup crash isn't red. **Never weaken a failing test** to make it pass; report the gap and stop.
 - **Test-after** only for existing untested QML (coverage gaps) or pure visual layout: use `qt-qml-test`.
-- **Rust:** `cargo test`; lint with `cargo clippy --all-targets --all-features --locked -- -D warnings`.
+- **Rust:** `cargo test`; lint with the clippy command in `CODING_STANDARDS.md`.
 - **QML:** Qt Quick Test, `tst_*.qml` in `tests/`, run with `QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -import tests/stubs -input tests`.
 - **Quickshell** types can't load under `qmltestrunner`: stub the ones you use in `tests/stubs/Quickshell/`, and keep logic in plain QML/JS outside the thin Quickshell layer.
 
@@ -59,14 +59,15 @@ Every change moves through these stages, in order. Each stage writes only its ow
 
 Repo files (code, config, `.gitignore`, `README.md`, `LICENSE`) are written in `/implement` or `/implement-spec`. Create the branch or worktree before `/grill-with-docs`, since it writes `GLOSSARY.md` and ADRs.
 
-- Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec.
+- Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
 - `/code-review`: default fixed point is `main`.
 
 ## Working rules
 
 - **Coding standards:** see `CODING_STANDARDS.md` (enforced by `/code-review`).
-- **Prove it:** don't claim a UI fix works until it is seen in running Quickshell or covered by a passing test. Quickshell isn't installed here, so for unattended runs a passing test is the proof.
+- **Prove it:** don't claim a UI fix works until it is seen in running Quickshell or covered by a passing test. Agent environments can't run Quickshell, so for unattended runs a passing test is the proof.
+
 ## Agent skills
 
 ### Issue tracker
@@ -75,7 +76,7 @@ Issues live in GitHub Issues on `modalityos/modality`, managed with the `gh` CLI
 
 ### Triage labels
 
-Default labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+Default label vocabulary. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
