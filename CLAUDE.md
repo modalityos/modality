@@ -61,12 +61,12 @@ Repo files (code, config, `.gitignore`, `README.md`, `LICENSE`) are written in `
 
 - Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
-- `/code-review`: default fixed point is `main`.
+- `/mattpocock-skills:code-review` (not the built-in `/code-review`): default fixed point is `main`.
 
 ## Working rules
 
 - **Conflicting instructions:** when a skill conflicts with this file, this file wins; otherwise follow the stricter rule, note it, and carry on.
-- **Coding standards:** see `CODING_STANDARDS.md` (enforced by `/code-review`).
+- **Coding standards:** see `CODING_STANDARDS.md` (enforced by `/mattpocock-skills:code-review`).
 - **Prove it:** don't claim a UI fix works until it is seen in running Quickshell or covered by a passing test. Agent environments can't run Quickshell, so for unattended runs a passing test is the proof.
 
 ## Agent skills
