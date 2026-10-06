@@ -34,7 +34,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 - PR titles follow Conventional Commits; they become the squash commit title on `main`.
 - Write issue and PR bodies to `.scratch/<name>.md` and pass `--body-file`; never inline `--body` or a heredoc.
 - Never merge PRs to `main`; the user merges.
-- PR bodies: the `pr` skill's format matches `pull_request_template.md`; when using it, add the template's **Related issues** section too.
+- Write every PR body with the `pr` skill (its format matches `pull_request_template.md`), then add the template's **Related issues** section.
 
 ## Testing
 
@@ -65,6 +65,7 @@ Repo files (code, config, `.gitignore`, `README.md`, `LICENSE`) are written in `
 
 ## Working rules
 
+- **Conflicting instructions:** when a skill conflicts with this file, this file wins; otherwise follow the stricter rule, note it, and carry on.
 - **Coding standards:** see `CODING_STANDARDS.md` (enforced by `/code-review`).
 - **Prove it:** don't claim a UI fix works until it is seen in running Quickshell or covered by a passing test. Agent environments can't run Quickshell, so for unattended runs a passing test is the proof.
 
