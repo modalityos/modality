@@ -1,6 +1,6 @@
 # ModalityOS
 
-An Arch-based Linux OS with its own desktop shell, login screen and apps, aiming for a macOS-like look and feel.
+An Arch-based Linux OS with its own desktop shell, login screen and apps, aiming for a beautiful look and feel, inspired by the best of macOS, Windows, HarmonyOS and other OSes.
 
 ## Language
 

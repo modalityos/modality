@@ -48,20 +48,40 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 
 ## Workflow — IMPORTANT
 
-Every change moves through these stages, in order. Each stage writes only its own output, then ends with a **hand-off**: name the next stage and stop. The user starts every stage; "go", "agreed" or "yes" inside a stage closes that stage only.
+Every change moves through these stages, in order. Each stage writes only its own output, then ends with a **hand-off**: name the next stage and what to do to the context **before starting it** (the Before-next column), then stop. The user starts every stage; "go", "agreed" or "yes" inside a stage closes that stage only.
 
-| Stage | Writes | Hand-off |
-|---|---|---|
-| `/grill-with-docs` | `GLOSSARY.md`, `docs/adr/` | `/to-spec` |
-| `/to-spec` | the spec issue | `/to-tickets` |
-| `/to-tickets` | ticket issues | `/implement` per ticket (`/clear` between), or `/implement-spec` |
-| `/implement`, `/implement-spec` | code, tests, the PR | the user merges |
+| Stage | Writes | Hand-off | Before next |
+|---|---|---|---|
+| `/grill-with-docs` | `GLOSSARY.md`, `docs/adr/` | `/design-brief` if the change has visual work still to design, else `/to-spec` | Keep |
+| `/design-brief` | `design/<slug>/brief.md` and `refs/`, `design/README.md` | the user designs in Claude Design, then `/design-intake` | Keep the session open while designing; if it closed, `claude --resume` it |
+| `/design-intake` | `design/<slug>/handoff/`, `assets/` and `spec.md` | `/design-intake` for the next piece, then `/to-spec` | Keep |
+| `/to-spec` | the spec issue | `/to-tickets #<spec>` | Keep |
+| `/to-tickets` | ticket issues | `/implement #<ticket>` per ticket, or `/implement-spec #<spec>` | `/clear`: the issues hold everything |
+| `/implement` | code, tests; the PR after the last ticket | the next ticket's `/implement`; after the last, the user merges | `/clear` |
+| `/implement-spec` | code, tests, the PR | the user merges | None |
 
-Repo files (code, config, `.gitignore`, `README.md`, `LICENSE`) are written in `/implement` or `/implement-spec`. Create the branch or worktree before `/grill-with-docs`, since it writes `GLOSSARY.md` and ADRs.
+**Why:** `/to-spec` writes the spec from the conversation, not by interview, so the grill, the design and the spec share one context. From `/to-tickets` on, the work runs from the issues, and a clear context reads them instead of the old chat.
+
+Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are written in `/implement` or `/implement-spec`. Create the branch or worktree before `/grill-with-docs`, since it writes `GLOSSARY.md` and ADRs, and the design stages write `design/`.
 
 - Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
 - `/mattpocock-skills:code-review` (not the built-in `/code-review`): default fixed point is `main`.
+
+### Visual work
+
+<important if="a /grill-with-docs session is ending, or you are running /to-spec, /to-tickets, /implement, /implement-spec or /prototype on a change that has visual work, or opening or readying a PR for one">
+
+**Visual work** is anything a person sees that is designed before it is built: a screen, a component, an icon set, an illustration or wallpaper, a logo, or a kind not yet named. A change has visual work when it designs some, or builds some from a design spec. **Visual work still to design** is a new piece with no `design/<slug>/spec.md` yet, or a redesign of a built one; that is what goes to `/design-brief`. When unsure at the end of a grill, name both hand-offs and your pick.
+
+- **Designing** happens in Claude Design, outside Claude Code, reached through `/design-brief`. `/prototype` is for logic and state questions; take "what should this look like?" to `/design-brief`.
+- **`/to-spec`:** the change's design specs are those of the pieces briefed in this conversation, plus any existing `design/<slug>/spec.md` the change builds from. Read each first, and cite each by path in the spec issue's Implementation Decisions. An implementer uses the design spec its ticket names.
+- **`/to-tickets`:** each ticket that builds visual work names its `design/<slug>/spec.md` and the sections it builds. Its acceptance criteria cover what a test can prove (states, inputs, token and component names; for assets, the files present at their names and sizes), plus one marked **User check:** the result matches the design in `design/<slug>/handoff/`.
+- **Paths:** `design/<slug>/` paths are the one exception to the no-file-paths rule in `/to-spec` and `/to-tickets`.
+- **Implementing:** the design spec, `design/<slug>/spec.md`, is the build target; use its token and component names. Files in `design/<slug>/assets/` are copied to where they ship (`data/`, a QML module's resources), and code loads them from there. Passing tests close the ticket's criteria; each **User check** stays open for the user, who ticks it where the piece is shown, before merging.
+- **The PR**, whoever opens or readies it, on either path: its body says the User checks are the user's, before merging; and before it is marked ready for review, each built design spec's **Built by** line is set to the spec issue, `#<number>`.
+- **Built designs:** `design/` stays on `main`. A design spec whose **Built by** names an issue is history, and the code is the source of truth, until `/design-brief` replaces it in a redesign.
+</important>
 
 ## Working rules
 
