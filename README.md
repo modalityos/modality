@@ -29,6 +29,7 @@ data/            Defaults and other files installed to the system
 packaging/arch/  Arch packages (PKGBUILDs)
 iso/             Installer ISO profile
 tools/           Developer scripts
+design/          Design briefs, Claude Design handoffs and design specs
 docs/            Architecture decision records and agent docs
 ```
 
