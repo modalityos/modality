@@ -4,7 +4,9 @@ Read this first, before any brief. It holds what every piece of ModalityOS desig
 
 ## The product
 
-ModalityOS is an Arch-based Linux OS with its own Shell, Greeter and Apps. It aims for a macOS-like look and feel: calm, spacious, legible, with depth from light shadows and translucency rather than heavy chrome.
+ModalityOS is an Arch-based Linux OS with its own Shell, Greeter and Apps. It aims for a beautiful look and feel, taking inspiration from the best parts of macOS, Windows and other OSes: calm, spacious, legible, with depth from light shadows and translucency rather than heavy chrome.
+
+Inspired by, never copied. Use no assets, fonts, icons, sounds or product names from Apple, Microsoft or any other OS, and make nothing a person could mistake for a screenshot of another OS.
 
 The words that matter are defined in each brief's **Terms** section. Use each one exactly as the brief writes it: the desktop UI is the "Shell", the login screen is the "Greeter".
 
@@ -43,10 +45,10 @@ Design at 1Ã— logical pixels. The brief names the canvas; a full screen is 1920Ã
 
 A **token** is a named visual value: a colour, radius, spacing step, font, shadow or motion curve. Tokens are what carries across pieces, so every piece uses them:
 
-- **In CSS:** put every token as a custom property in one `:root` block, grouped by prefix: `--color-*`, `--radius-*`, `--space-*`, `--font-*`, `--shadow-*`, `--motion-*` (durations and easings). Then use only the variables in the rest of the CSS, never raw values. Claude Code reads that block to name the tokens in code, so a raw value is a value that gets lost.
+- **In CSS:** put every token as a custom property in one `:root` block, grouped by prefix: `--color-*`, `--radius-*`, `--space-*`, `--font-*`, `--shadow-*`, `--motion-*` (durations and easings). Then use only the variables in the rest of the CSS. Claude Code reads that block to name the tokens in code, so a raw value is a value that gets lost.
 - **In SVG and images:** take colours from the token palette, and name in the chat which token each colour is.
 
-Reuse the tokens earlier designs defined, and extend them; propose new ones where the design needs them. **Token sets**, one spec per line (read each one's **Tokens** table):
+Reuse the tokens earlier designs defined, and extend them; propose new ones where the design needs them. **Token sets**, one design spec per line (read each one's **Tokens** table):
 
 - None yet.
 

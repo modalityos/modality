@@ -16,7 +16,7 @@ Steps 2 to 4 run once per piece; step 5 once for them all.
 
 ## 2. Gather the facts
 
-Facts are your job; dispatch subagents for them in parallel:
+Dispatch subagents for these in parallel:
 
 - What the piece replaces or sits beside: UI under `qml/`, `shell/`, `greeter/` and `apps/`; shipped assets under `data/`.
 - Earlier designs under `design/` that it must match.
@@ -29,9 +29,9 @@ Done when each fact above is found or known to be absent, and every screenshot y
 
 ## 3. Settle the gaps
 
-Every brief section below needs a concrete answer. For each one the conversation hasn't settled (a state nobody named, a size, real copy), run the `grilling` skill on those gaps. Decisions are the user's.
+Every brief section below needs a concrete answer. For each one the conversation hasn't settled (a state nobody named, a size, real copy), run the `grilling` skill on those gaps.
 
-Done when every section has a concrete answer or `None`: every deliverable named, with no "etc.".
+Done when every section has a concrete answer or `None`, with every deliverable named one by one.
 
 ## 4. Write the brief
 
@@ -75,6 +75,8 @@ Anything beyond design/README.md: performance, accessibility (keyboard path, con
 The checklist the handoff must satisfy: every deliverable above, one line each.
 ```
 
+Done when every section is filled or `None`, **Hand back** lists every deliverable, and **Kind** is one listed in `design/README.md`.
+
 A kind missing from `design/README.md` gets its entry there first (under **What happens to your design** and **By kind**), since that file is what every later brief shares; the brief then only fills in the details.
 
 On a redesign, delete the piece's old `spec.md`, `handoff/` and `assets/` in the same commit as the new brief. The last commit keeps them, and a piece with no `spec.md` is one still to design.
@@ -83,10 +85,10 @@ On a redesign, delete the piece's old `spec.md`, `handoff/` and `assets/` in the
 
 Commit the briefs, `refs/` and any `design/README.md` change: `docs(design): brief <slug>[, <slug>]`.
 
-Then give the user these steps, filled in for each piece. They are the whole manual hand-off, so give all of them every time:
+Then give the user these steps, filled in for each piece. They are the whole manual hand-off, so give all of them every time. The menu labels are as of 2026-10; if one has moved, look under Import or Export:
 
 1. Open claude.ai/design and start a new project named `<slug>`. If it asks what to make, pick whatever fits the piece's kind.
-2. Attach the repo's `design/` folder (Import → local directory), so earlier designs and their tokens come along. If that import is refused or missing, attach the files instead: `design/README.md`, everything in `design/<slug>/`, and each spec listed under **Token sets** in the README.
+2. Attach the repo's `design/` folder (Import → local directory), so earlier designs and their tokens come along. If that import is refused or missing, attach the files instead: `design/README.md`, everything in `design/<slug>/`, and each design spec listed under **Token sets** in the README.
 3. Paste this prompt:
 
    ```
@@ -97,6 +99,6 @@ Then give the user these steps, filled in for each piece. They are the whole man
 
 4. Iterate there. When it looks right, say "the design is done": README.md tells Claude Design to check the brief's Hand back list and report what changed.
 5. Export → **Hand off to Claude Code** → **Send to local coding agent**, and copy the whole prompt it gives. If that option is missing, Export → **Download as .zip** instead and note where it was saved.
-6. Back in this session, run `/design-intake` and paste the prompt (or the `.zip` path) after it. Context: keep this session open meanwhile, so `/to-spec` still has the grill; `/compact` if it must end.
+6. Back in this session, run `/design-intake` and paste the prompt (or the `.zip` path) after it.
 
 Then stop.

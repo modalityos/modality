@@ -1,6 +1,6 @@
 # Design spec format
 
-Every `design/<slug>/spec.md` starts with the shared head, then the sections for its kind, then the shared tail. Use `GLOSSARY.md` terms throughout. An implementer builds from the spec without opening `handoff/`, so every value, name and file is in it.
+Every `design/<slug>/spec.md` starts with the shared head, then the sections for its kind, then the shared tail. Use `GLOSSARY.md` terms throughout. An implementer builds from the design spec without opening `handoff/`, so every value, name and file is in it.
 
 ## Shared head
 
