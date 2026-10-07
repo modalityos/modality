@@ -4,9 +4,9 @@ Read this first, before any brief. It holds what every piece of ModalityOS desig
 
 ## The product
 
-ModalityOS is an Arch-based Linux OS with its own Shell, Greeter and Apps. It aims for a beautiful look and feel, taking inspiration from the best parts of macOS, Windows and other OSes: calm, spacious, legible, with depth from light shadows and translucency rather than heavy chrome.
+ModalityOS is an Arch-based Linux OS with its own Shell, Greeter and Apps. It aims for a beautiful look and feel, taking inspiration from the best parts of macOS, Windows, HarmonyOS and other OSes: calm, spacious, legible, with depth from light shadows and translucency rather than heavy chrome.
 
-Inspired by, never copied. Use no assets, fonts, icons, sounds or product names from Apple, Microsoft or any other OS, and make nothing a person could mistake for a screenshot of another OS.
+Inspired by, never copied. Use no assets, fonts, icons, sounds or product names from Apple, Microsoft, Huawei or any other OS, and make nothing a person could mistake for a screenshot of another OS.
 
 The words that matter are defined in each brief's **Terms** section. Use each one exactly as the brief writes it: the desktop UI is the "Shell", the login screen is the "Greeter".
 
@@ -15,7 +15,7 @@ The words that matter are defined in each brief's **Terms** section. Use each on
 Each brief names its **kind**. The kind decides what your work becomes:
 
 - **Screen or component:** your HTML is a mockup. It never ships. Claude Code rebuilds it by hand in QML, so design with what QML builds well (next section) and say plainly where you go beyond it.
-- **Icon set, illustration, logo:** the files you export are what ships, moved into the OS as they are. Export them clean and complete, at every size the brief lists.
+- **Icon set, illustration, logo:** the files you export are what ships, moved into the OS as they are. Export them clean and complete, at every size or variant the brief lists.
 
 ## Screens and components
 
@@ -46,11 +46,9 @@ Design at 1Ã— logical pixels. The brief names the canvas; a full screen is 1920Ã
 A **token** is a named visual value: a colour, radius, spacing step, font, shadow or motion curve. Tokens are what carries across pieces, so every piece uses them:
 
 - **In CSS:** put every token as a custom property in one `:root` block, grouped by prefix: `--color-*`, `--radius-*`, `--space-*`, `--font-*`, `--shadow-*`, `--motion-*` (durations and easings). Then use only the variables in the rest of the CSS. Claude Code reads that block to name the tokens in code, so a raw value is a value that gets lost.
-- **In SVG and images:** take colours from the token palette, and name in the chat which token each colour is.
+- **In SVG and images:** take colours from the token palette, and say in `HANDBACK.md` which token each colour is.
 
-Reuse the tokens earlier designs defined, and extend them; propose new ones where the design needs them. **Token sets**, one design spec per line (read each one's **Tokens** table):
-
-- None yet.
+Reuse the tokens earlier designs defined, and extend them; propose new ones where the design needs them. Earlier designs' tokens arrive as one table per design under `tokens/` in the attached folder; when that folder is empty, there are none yet.
 
 ## By kind
 
@@ -63,7 +61,11 @@ Produce what the brief's kind needs:
 
 ## Handing back
 
-When the user says the design is done:
+When the user says the design is done, write `HANDBACK.md` in the project, so it travels in the export:
 
-1. Check it against the brief's **Hand back** list, and name each item that is still missing from the design.
-2. In the chat, list each decision you changed from the brief and why, and any open question you could not settle.
+1. The brief's **Hand back** list, each item marked present or missing.
+2. Each decision you changed from the brief, and why.
+3. Each open question you could not settle.
+4. For SVG and images: which token each colour is.
+
+Then say in the chat what is missing, so the user can decide before exporting.

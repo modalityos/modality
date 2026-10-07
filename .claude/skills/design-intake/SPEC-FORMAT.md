@@ -12,6 +12,7 @@ Every `design/<slug>/spec.md` starts with the shared head, then the sections for
 
 ## Tokens
 | Token | Value | Code name | Note |
+|---|---|---|---|
 One row per token the design uses: each CSS custom property, or each palette colour an SVG or image uses. Code name is the token in camelCase: --color-surface-raised → colorSurfaceRaised. Note marks tokens new in this design. `None` if the design uses no tokens.
 
 ## Raw values
@@ -45,6 +46,7 @@ Grid size, stroke width, corner radius, colour handling (currentColor or fixed p
 
 ## Icons
 | Name | Meaning | File | Sizes |
+|---|---|---|---|
 One row per icon from the brief. Extract each SVG to assets/<name>.svg, exactly as drawn.
 ```
 
@@ -53,6 +55,7 @@ One row per icon from the brief. Extract each SVG to assets/<name>.svg, exactly 
 ```markdown
 ## Files
 | File | Variant | Size or resolution | Use |
+|---|---|---|---|
 One row per delivered file, extracted to assets/.
 
 ## Usage rules
