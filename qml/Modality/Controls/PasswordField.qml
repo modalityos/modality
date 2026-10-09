@@ -29,6 +29,8 @@ FocusScope {
     readonly property bool shaking: shakeAnimation.running
 
     signal submitted(string password)
+    // A key typed text into the field; the Greeter infers Caps Lock from it.
+    signal typed(string text, int modifiers)
 
     function submit() {
         if (interactive && input.text.length > 0)
@@ -104,6 +106,11 @@ FocusScope {
                 id: tapHandler
             }
 
+            Keys.onPressed: event => {
+                if (control.interactive && event.text.length > 0 && event.text.charCodeAt(0) >= 0x20)
+                    control.typed(event.text, event.modifiers);
+                event.accepted = false;
+            }
             Keys.onReturnPressed: control.submit()
             Keys.onEnterPressed: control.submit()
             Keys.onEscapePressed: {

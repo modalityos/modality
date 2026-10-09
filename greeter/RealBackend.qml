@@ -47,8 +47,31 @@ GreeterBackend {
         }
     }
 
+    // Greetd.available is read fresh each time: Quickshell clears it when the socket fails,
+    // but declares it constant and emits nothing, so a lost greetd is found by checking.
+    property bool unavailableReported: false
+
+    function checkAvailable() {
+        if (Greetd.available || unavailableReported)
+            return Greetd.available;
+        unavailableReported = true;
+        loginUnavailable();
+        return false;
+    }
+
+    // After the whole Greeter exists, so the logic hears it.
+    Component.onCompleted: Qt.callLater(checkAvailable)
+
+    property Timer availabilityTimer: Timer {
+        interval: 1000
+        repeat: true
+        running: !backend.unavailableReported
+        onTriggered: backend.checkAvailable()
+    }
+
     function startAuthentication(user) {
-        Greetd.createSession(user);
+        if (checkAvailable())
+            Greetd.createSession(user);
     }
 
     function answer(response) {

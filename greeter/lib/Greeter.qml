@@ -17,7 +17,8 @@ FocusScope {
         id: logic
 
         backend: greeter.backend
-        passwordLength: userColumn.passwordField.text.length
+        // A rejected password stays in the field while it shakes, but it no longer counts.
+        passwordLength: userColumn.passwordField.shaking ? 0 : userColumn.passwordField.text.length
     }
 
     // The Greeter follows the machine's settings, never a user's.
@@ -47,6 +48,8 @@ FocusScope {
 
         objectName: "content"
         anchors.fill: parent
+        // Fade as one layer, so overlapping Glass elements do not show through each other.
+        layer.enabled: logic.state === "starting"
 
         Clock {
             objectName: "clock"
@@ -65,6 +68,11 @@ FocusScope {
             user: logic.selectedUser
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
+            wrongPasswordShown: logic.wrongPasswordShown
+            capsLockShown: logic.capsLockShown
+            sessionFailed: logic.state === "sessionFailed"
+            unavailable: logic.state === "unavailable"
+            onRetryRequested: logic.retry()
         }
 
         PowerRow {
@@ -80,13 +88,20 @@ FocusScope {
             target: logic
 
             function onPasswordRejected() {
-                userColumn.passwordField.text = "";
+                userColumn.passwordField.shake();
             }
 
-            // A Session that failed to start brings the faded screen back.
+            // A Session that failed to start brings the faded screen back, with focus on
+            // Try again; Try again hands focus back to the field.
             function onStateChanged() {
                 if (logic.state !== "starting")
                     content.opacity = 1;
+                if (logic.state === "sessionFailed") {
+                    userColumn.passwordField.text = "";
+                    userColumn.tryAgainButton.forceActiveFocus();
+                } else if (logic.state === "ready" && !userColumn.passwordField.activeFocus) {
+                    userColumn.passwordField.forceActiveFocus();
+                }
             }
         }
 
@@ -95,6 +110,15 @@ FocusScope {
 
             function onSubmitted(password) {
                 logic.submit(password);
+            }
+
+            function onTyped(text, modifiers) {
+                logic.typed(text, modifiers);
+            }
+
+            function onShakingChanged() {
+                if (!userColumn.passwordField.shaking)
+                    userColumn.passwordField.text = "";
             }
         }
     }

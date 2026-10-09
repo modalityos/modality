@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Modality.Theme
@@ -12,6 +14,14 @@ ColumnLayout {
     property alias passwordField: passwordField
     // The wallpaper the Glass elements blur.
     property Item backdrop
+    property bool wrongPasswordShown: false
+    property bool capsLockShown: false
+    property bool sessionFailed: false
+    // Login unavailable: a message takes the password field's place.
+    property bool unavailable: false
+    readonly property alias tryAgainButton: sessionFailedNotice.actionItem
+
+    signal retryRequested
 
     spacing: Theme.space3
 
@@ -38,6 +48,7 @@ ColumnLayout {
 
         objectName: "passwordField"
         Layout.alignment: Qt.AlignHCenter
+        visible: !column.unavailable
         focus: true
 
         // Beneath the field's own Glass tint.
@@ -47,6 +58,66 @@ ColumnLayout {
             anchors.fill: parent
             source: column.backdrop
             radius: passwordField.radius
+        }
+    }
+
+    UnavailableMessage {
+        objectName: "unavailableMessage"
+        Layout.alignment: Qt.AlignHCenter
+        visible: column.unavailable
+        backdrop: column.backdrop
+    }
+
+    FadingNotice {
+        objectName: "wrongPasswordNotice"
+        shown: column.wrongPasswordShown
+        tone: Notice.Danger
+        glyph: Glyphs.cross
+        text: qsTr("Wrong password")
+    }
+
+    FadingNotice {
+        objectName: "capsLockNotice"
+        shown: column.capsLockShown
+        tone: Notice.Warning
+        glyph: Glyphs.capsLock
+        text: qsTr("Caps Lock is on")
+    }
+
+    FadingNotice {
+        id: sessionFailedNotice
+
+        objectName: "sessionFailedNotice"
+        shown: column.sessionFailed
+        tone: Notice.Danger
+        text: qsTr("Couldn't start the session.")
+        actionText: qsTr("Try again")
+        onActionTriggered: column.retryRequested()
+    }
+
+    // A Notice under the field that fades in and out, over its own frosted wallpaper.
+    component FadingNotice: Notice {
+        id: notice
+
+        property bool shown: false
+
+        Layout.alignment: Qt.AlignHCenter
+        opacity: shown ? 1 : 0
+        visible: shown || opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: Theme.motionDurationNormal
+                easing.type: Easing.Bezier
+                easing.bezierCurve: notice.shown ? Theme.motionEasingOut : Theme.motionEasingIn
+            }
+        }
+
+        Frost {
+            z: -1
+            anchors.fill: parent
+            source: column.backdrop
+            radius: notice.radius
         }
     }
 }
