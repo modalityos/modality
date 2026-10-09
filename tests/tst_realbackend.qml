@@ -325,6 +325,17 @@ TestCase {
         compare(backend.rememberedSessions, { katherine: "plasma", ada: "org.modalityos.kwin" });
     }
 
+    function test_remember_without_a_session_saves_the_last_user_and_keeps_remembered_sessions() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        backend.remember("katherine", "");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "katherine",
+            sessions: { ada: "plasma" }
+        });
+        compare(backend.lastUser, "katherine");
+    }
+
     function test_remember_replaces_a_corrupt_state_file() {
         Files.write(testCase.statePath, "not json");
         const backend = createBackend();

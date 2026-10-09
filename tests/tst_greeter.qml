@@ -393,13 +393,14 @@ TestCase {
         compare(backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 
-    function test_logging_in_remembers_the_user_and_their_session() {
+    // No Session is saved without a pick, so a later change to the default Session reaches the user.
+    function test_logging_in_without_picking_a_session_remembers_only_the_user() {
         const greeter = createGreeter();
         logIn(greeter, "secret");
         greeter.backend.readyToLaunch();
         tryVerify(() => greeter.backend.lastCall()[0] === "launch");
         const calls = greeter.backend.calls;
-        compare(calls[calls.length - 2], ["remember", "katherine", "org.modalityos.kwin"]);
+        compare(calls[calls.length - 2], ["remember", "katherine", ""]);
     }
 
     function test_wrong_password_remembers_nothing() {

@@ -44,7 +44,7 @@ QtObject {
     function launch(session) {
     }
 
-    // Remember the last user, and the Session that user picked.
+    // Remember the last user, and the Session that user picked ("" when they picked none).
     function remember(user, sessionId) {
     }
 

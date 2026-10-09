@@ -114,11 +114,12 @@ QtObject {
     }
 
     // The screen calls this when its fade-out ends. The login is remembered first, since
-    // the Greeter quits once the Session launches.
+    // the Greeter quits once the Session launches; only a picked Session is saved, so users
+    // who never pick follow the machine default.
     function launch() {
         if (phase !== "starting")
             return;
-        backend.remember(selectedUser.name, selectedSession.id);
+        backend.remember(selectedUser.name, chosenSession);
         backend.launch(selectedSession);
     }
 

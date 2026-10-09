@@ -24,10 +24,11 @@ function parseState(text) {
     return { lastUser: lastUser, sessions: sessions };
 }
 
-// The state after user logs in to sessionId.
+// The state after user logs in, picking sessionId; "" picks none and keeps what was saved.
 function withLogin(state, user, sessionId) {
     const sessions = Object.assign({}, state.sessions);
-    sessions[user] = sessionId;
+    if (sessionId !== "")
+        sessions[user] = sessionId;
     return { lastUser: user, sessions: sessions };
 }
 
