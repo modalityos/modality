@@ -11,7 +11,7 @@ The bundle's README tells a coding agent to build the design. This stage saves a
 
 ## 1. Find the brief
 
-The argument is a path to the handoff zip from Claude Design, or to its unpacked folder. Match it to a `design/<slug>/brief.md` that has no `spec.md` yet: the slug in the bundle's name or README, else its content against each such brief. Put the match to the user and wait.
+The argument is a path to the handoff zip from Claude Design, or to its unpacked folder. Match it to a `design/<slug>/brief.md` that has no `spec.md` yet: the slug in the bundle's name or README (the Claude Design project is named `modalityos-<slug>`, so drop that prefix), else its content against each such brief. Put the match to the user and wait.
 
 Done when the user has confirmed the match.
 

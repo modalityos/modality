@@ -98,7 +98,7 @@ tokens/<other>.md    the Tokens table of every other design/*/spec.md, one file 
 
 Give the user these steps, filled in for each piece, with the folder's absolute path. They are the whole manual hand-off, so give all of them every time. The menu labels are as of 2026-10; if one has moved, look under Import or Export:
 
-1. Open claude.ai/design and start a new project named `<slug>`. If it asks what to make, pick whatever fits the piece's kind.
+1. Open claude.ai/design and start a new project named `modalityos-<slug>`: the user's Claude Design projects share one flat list, so the prefix marks it as ModalityOS. If it asks what to make, pick whatever fits the piece's kind.
 2. Import → local directory → `<absolute path of .scratch/design-attach/<slug>>`. If that import is refused or missing, attach the files from that folder one by one instead.
 3. Paste this prompt:
 
