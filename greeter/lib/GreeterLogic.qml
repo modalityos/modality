@@ -18,10 +18,16 @@ QtObject {
     // Set by the screen as the password field changes.
     property int passwordLength: 0
 
+    // The user picked in the Choose a user panel, else the last user to log in, else the first.
     readonly property var selectedUser: {
         const users = backend?.users ?? [];
-        return users.find(user => user.name === backend.lastUser) ?? users[0] ?? null;
+        return users.find(user => user.name === chosenUser)
+            ?? users.find(user => user.name === backend.lastUser) ?? users[0] ?? null;
     }
+    property string chosenUser: ""
+
+    // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel.
+    property string overlay: ""
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
         return sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
@@ -50,6 +56,30 @@ QtObject {
         backend.startAuthentication(selectedUser.name);
     }
 
+    function openOtherUsers() {
+        if (phase !== "checking" && phase !== "starting" && phase !== "unavailable"
+                && (backend?.users.length ?? 0) > 1)
+            overlay = "otherUsers";
+    }
+
+    function closeOverlay() {
+        overlay = "";
+    }
+
+    // A newly picked user starts over with an empty field, after greetd drops what is left
+    // of a failed Session.
+    function chooseUser(name) {
+        if (overlay !== "otherUsers")
+            return;
+        if (phase === "sessionFailed")
+            backend.cancel();
+        chosenUser = name;
+        overlay = "";
+        wrongPasswordShown = false;
+        if (phase !== "unavailable")
+            phase = "ready";
+    }
+
     // Try again after a Session failed to start: back to ready for a fresh login with the
     // same user and Session, after greetd drops what is left of the failed one.
     function retry() {
@@ -59,10 +89,13 @@ QtObject {
         phase = "ready";
     }
 
-    // The screen calls this when its fade-out ends.
+    // The screen calls this when its fade-out ends. The login is remembered first, since
+    // the Greeter quits once the Session launches.
     function launch() {
-        if (phase === "starting")
-            backend.launch(selectedSession);
+        if (phase !== "starting")
+            return;
+        backend.remember(selectedUser.name, selectedSession.id);
+        backend.launch(selectedSession);
     }
 
     // The screen calls this for each character typed into the password field.

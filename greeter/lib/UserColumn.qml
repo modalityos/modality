@@ -11,7 +11,10 @@ ColumnLayout {
 
     // One entry of the Greeter backend's users.
     property var user: null
+    property url defaultAvatar
     property alias passwordField: passwordField
+    property alias otherUsersPill: otherUsersPill
+    property bool otherUsersShown: false
     // The wallpaper the Glass elements blur.
     property Item backdrop
     property bool wrongPasswordShown: false
@@ -25,10 +28,11 @@ ColumnLayout {
 
     spacing: Theme.space3
 
-    Avatar {
+    UserAvatar {
+        objectName: "userAvatar"
         Layout.alignment: Qt.AlignHCenter
-        name: column.user?.realName || column.user?.name || ""
-        source: column.user?.avatar ?? ""
+        user: column.user
+        fallback: column.defaultAvatar
     }
 
     Text {
@@ -93,6 +97,15 @@ ColumnLayout {
         text: qsTr("Couldn't start the session.")
         actionText: qsTr("Try again")
         onActionTriggered: column.retryRequested()
+    }
+
+    OtherUsersPill {
+        id: otherUsersPill
+
+        objectName: "otherUsersPill"
+        Layout.alignment: Qt.AlignHCenter
+        visible: column.otherUsersShown && !column.unavailable
+        backdrop: column.backdrop
     }
 
     // A Notice under the field that fades in and out, over its own frosted wallpaper.

@@ -1,2 +1,3 @@
 module QuickshellStubs
 singleton Processes 1.0 Processes.qml
+singleton Files 1.0 Files.qml

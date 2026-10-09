@@ -6,6 +6,8 @@ import QtQuick
 QtObject {
     // Users: [{ name, realName, avatar (url string, "" for none), systemAccount }].
     property var users: []
+    // The built-in avatar for a user without a picture, or whose picture cannot be read.
+    property url defaultAvatar
     property string lastUser: ""
     // Sessions: [{ id, name, command (argv list), desktopNames (list) }].
     property var sessions: []

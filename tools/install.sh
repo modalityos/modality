@@ -50,8 +50,8 @@ render_wallpapers() {
 
 render_wallpapers
 
-install -d "$root/bin" "$root/lib/qt6/qml" "$root/share/modalityos/greeter" \
-    "$root/share/modalityos/wallpapers" "$root/share/wayland-sessions"
+install -d "$root/bin" "$root/lib/qt6/qml" "$root/lib/tmpfiles.d" "$root/share/modalityos/greeter" \
+    "$root/share/modalityos/avatars" "$root/share/modalityos/wallpapers" "$root/share/wayland-sessions"
 
 # Shared QML modules, where Qt looks for them under the prefix.
 rm -rf "$root/lib/qt6/qml/Modality"
@@ -66,7 +66,10 @@ cp -r "$repo/greeter/shell.qml" "$repo/greeter/RealBackend.qml" "$repo/greeter/l
 install -m 0644 "$repo"/build/wallpapers/*.png "$root/share/modalityos/wallpapers/"
 install -m 0644 "$repo/design/wallpaper-default/assets/LICENSE" "$root/share/modalityos/wallpapers/LICENSE"
 
+install -m 0644 "$repo"/data/avatars/*.png "$root/share/modalityos/avatars/"
+
 install -m 0755 "$repo/session/modalityos-greeter" "$repo/session/modalityos-session-kwin" "$root/bin/"
+install -m 0644 "$repo/session/tmpfiles.d/modalityos-greeter.conf" "$root/lib/tmpfiles.d/"
 sed "s|@PREFIX@|$prefix|g" "$repo/session/org.modalityos.kwin.desktop.in" \
     > "$root/share/wayland-sessions/org.modalityos.kwin.desktop"
 

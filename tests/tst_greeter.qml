@@ -71,6 +71,245 @@ TestCase {
         compare(findChild(greeter, "userName").text, "ian");
     }
 
+    // count human users, in AccountsService order; ian is the third.
+    function someUsers(count) {
+        const names = [
+            ["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["ian", "Ian Gregson"],
+            ["alan", "Alan Turing"], ["edsger", "Edsger Dijkstra"], ["barbara", "Barbara Liskov"],
+            ["ken", "Ken Thompson"], ["margaret", "Margaret Hamilton"]
+        ];
+        return names.slice(0, count).map(([name, realName]) => ({
+                    name: name,
+                    realName: realName,
+                    avatar: "",
+                    systemAccount: false
+                }));
+    }
+
+    function test_without_a_last_user_the_first_user_shows() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "" });
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_last_user_who_is_gone_gives_the_first_user() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "removed" });
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_one_account_has_no_other_users_pill() {
+        const greeter = createGreeter();
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(!pill || !pill.visible);
+    }
+
+    function test_several_accounts_show_the_other_users_pill_data() {
+        return [
+            { tag: "three users", count: 3 },
+            { tag: "eight users", count: 8 }
+        ];
+    }
+
+    function test_several_accounts_show_the_other_users_pill(data) {
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(pill);
+        verify(pill.visible);
+        compare(pill.text, "Other users");
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+    }
+
+    function openOtherUsers(greeter) {
+        mouseClick(findChild(greeter, "otherUsersPill"));
+        const panel = findChild(greeter, "userPanel");
+        verify(panel);
+        tryCompare(panel, "opacity", 1);
+        return panel;
+    }
+
+    function userCells(greeter) {
+        const cells = [];
+        for (let index = 0; ; index++) {
+            const cell = findChild(greeter, `userCell${index}`);
+            if (!cell)
+                return cells;
+            cells.push(cell);
+        }
+    }
+
+    function test_other_users_pill_opens_the_choose_a_user_panel_data() {
+        return [
+            { tag: "three users in one row of three", count: 3, columns: 3 },
+            { tag: "eight users in two rows of four", count: 8, columns: 4 }
+        ];
+    }
+
+    function test_other_users_pill_opens_the_choose_a_user_panel(data) {
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        verify(!findChild(greeter, "userPanel").visible);
+        const panel = openOtherUsers(greeter);
+        compare(greeter.overlay, "otherUsers");
+        verify(panel.visible);
+        compare(findChild(panel, "userPanelTitle").text, "Choose a user");
+        compare(findChild(panel, "userGrid").columns, data.columns);
+        const cells = userCells(greeter);
+        compare(cells.map(cell => cell.text), someUsers(data.count).map(user => user.realName));
+        // The shown user's cell starts highlighted.
+        verify(cells[2].activeFocus);
+    }
+
+    function test_arrows_move_between_users_in_the_choose_a_user_panel() {
+        const greeter = createGreeter({ users: someUsers(8), lastUser: "ian" });
+        openOtherUsers(greeter);
+        const cells = userCells(greeter);
+        tryVerify(() => cells[2].activeFocus);
+        keyClick(Qt.Key_Right);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Right);
+        verify(cells[4].activeFocus);
+        keyClick(Qt.Key_Left);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Down);
+        verify(cells[7].activeFocus);
+        keyClick(Qt.Key_Down);
+        verify(cells[7].activeFocus);
+        keyClick(Qt.Key_Up);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Up);
+        verify(cells[3].activeFocus);
+    }
+
+    function test_enter_picks_the_highlighted_user_and_closes_the_panel() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        typeText("half");
+        const panel = openOtherUsers(greeter);
+        tryVerify(() => userCells(greeter)[2].activeFocus);
+        keyClick(Qt.Key_Left);
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "");
+        tryCompare(panel, "visible", false);
+        compare(findChild(greeter, "userName").text, "Grace Hopper");
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(field.activeFocus);
+
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(greeter.backend.lastCall(), ["startAuthentication", "grace"]);
+    }
+
+    function test_clicking_a_user_picks_them() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(userCells(greeter)[0]);
+        compare(greeter.overlay, "");
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_esc_closes_the_choose_a_user_panel_with_no_change() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const panel = openOtherUsers(greeter);
+        tryVerify(() => userCells(greeter)[2].activeFocus);
+        keyClick(Qt.Key_Left);
+        keyClick(Qt.Key_Escape);
+        compare(greeter.overlay, "");
+        tryCompare(panel, "visible", false);
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        verify(findChild(greeter, "otherUsersPill").activeFocus);
+    }
+
+    function test_cancel_closes_the_choose_a_user_panel_with_no_change() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(findChild(greeter, "userPanelCancel"));
+        compare(greeter.overlay, "");
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+    }
+
+    function test_clicking_outside_the_panel_closes_it() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(greeter, 10, 10);
+        compare(greeter.overlay, "");
+    }
+
+    function test_enter_on_the_other_users_pill_opens_the_panel() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        findChild(greeter, "otherUsersPill").forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "otherUsers");
+    }
+
+    function test_choose_a_user_panel_stays_shut_while_checking() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        mouseClick(findChild(greeter, "otherUsersPill"));
+        compare(greeter.overlay, "");
+    }
+
+    function test_long_name_wraps_within_the_user_column_on_a_short_screen() {
+        const users = someUsers(3);
+        users[2].realName = "Alexandria Montgomery-Fitzwilliam";
+        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        greeter.width = 1366;
+        greeter.height = 768;
+        const name = findChild(greeter, "userName");
+        compare(name.text, "Alexandria Montgomery-Fitzwilliam");
+        // Two lines in Inter; the line count varies with the font installed.
+        verify(name.lineCount <= 2);
+        verify(name.contentWidth <= 280);
+        compare(name.wrapMode, Text.Wrap);
+        const column = name.parent;
+        compare(column.width, 280);
+        const clock = findChild(greeter, "clock");
+        const clockBottom = clock.mapToItem(greeter, 0, clock.height).y;
+        const columnTop = column.mapToItem(greeter, 0, 0).y;
+        verify(columnTop > clockBottom, `column top ${columnTop} under clock bottom ${clockBottom}`);
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(pill.mapToItem(greeter, 0, pill.height).y <= greeter.height - 96);
+    }
+
+    function test_long_name_wraps_within_its_cell_in_the_choose_a_user_panel() {
+        const users = someUsers(8);
+        users[2].realName = "Alexandria Montgomery-Fitzwilliam";
+        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        openOtherUsers(greeter);
+        const cell = userCells(greeter)[2];
+        const label = cell.contentItem.children[1];
+        compare(label.text, "Alexandria Montgomery-Fitzwilliam");
+        verify(label.lineCount >= 2);
+        verify(label.contentWidth <= cell.availableWidth);
+        compare(cell.width, userCells(greeter)[3].width);
+    }
+
+    readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
+    readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
+
+    function test_user_with_a_picture_shows_it() {
+        const greeter = createGreeter({
+            users: [{ name: "ian", realName: "Ian Gregson", avatar: testCase.ballAvatar, systemAccount: false }]
+        });
+        const avatar = findChild(greeter, "userAvatar");
+        compare(avatar.source, testCase.ballAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
+    function test_user_without_a_picture_shows_the_default_avatar() {
+        const greeter = createGreeter();
+        const avatar = findChild(greeter, "userAvatar");
+        compare(avatar.source, testCase.catAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
+    function test_user_whose_picture_cannot_be_read_shows_the_default_avatar() {
+        const greeter = createGreeter({
+            users: [{ name: "ian", realName: "Ian Gregson", avatar: "file:///nonexistent/ian", systemAccount: false }]
+        });
+        const avatar = findChild(greeter, "userAvatar");
+        tryCompare(avatar, "source", testCase.catAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
     function test_clock_shows_the_time_in_display_with_tabular_figures() {
         const greeter = createGreeter();
         const clock = findChild(greeter, "clock");
@@ -152,6 +391,22 @@ TestCase {
         compare(greeter.loginState, "starting");
         tryVerify(() => backend.lastCall()[0] === "launch");
         compare(backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
+
+    function test_logging_in_remembers_the_user_and_their_session() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        const calls = greeter.backend.calls;
+        compare(calls[calls.length - 2], ["remember", "ian", "org.modalityos.kwin"]);
+    }
+
+    function test_wrong_password_remembers_nothing() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        verify(!greeter.backend.calls.some(call => call[0] === "remember"));
     }
 
     function logIn(greeter, password) {
@@ -333,6 +588,26 @@ TestCase {
         compare(message.text, "Login is unavailable. Restart the computer or switch to a text console.");
         verify(findChild(greeter, "userName").visible);
         verify(findChild(greeter, "clock").visible);
+    }
+
+    function test_login_unavailable_removes_the_other_users_pill() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        greeter.backend.loginUnavailable();
+        verify(!findChild(greeter, "otherUsersPill").visible);
+    }
+
+    function test_picking_a_user_after_a_failed_session_starts_a_fresh_login() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        failSession(greeter);
+        openOtherUsers(greeter);
+        mouseClick(userCells(greeter)[0]);
+        compare(greeter.backend.lastCall(), ["cancel"]);
+        compare(greeter.loginState, "ready");
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", false);
+        verify(findChild(greeter, "passwordField").activeFocus);
+        logIn(greeter, "secret");
+        compare(greeter.backend.calls.find(call => call[0] === "startAuthentication" && call[1] === "ada"),
+                ["startAuthentication", "ada"]);
     }
 
     function test_login_unavailable_while_checking_ends_the_attempt() {

@@ -64,6 +64,8 @@ deploy() {
     install -d -m 0755 "$prefix"
     rsync -a --delete --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r "$from/root/" "$prefix/"
     chmod 0755 "$prefix"/bin/*
+    # A dev prefix is outside systemd's tmpfiles.d search path, so apply its rules by name.
+    systemd-tmpfiles --create "$prefix/lib/tmpfiles.d/modalityos-greeter.conf"
 
     install -d -m 0755 /etc/greetd
     sed "s|@PREFIX@|$prefix|g" "$from/config.toml.in" > /etc/greetd/config.toml
@@ -101,7 +103,8 @@ rollback() {
         systemctl enable "$previous"
     fi
     if $purge; then
-        rm -rf "$prefix"
+        rm -rf "$prefix" /var/lib/modalityos/greeter
+        rmdir --ignore-fail-on-non-empty /var/lib/modalityos 2>/dev/null || true
     fi
     rm -f "$state/previous-display-manager" "$state/greetd-config.toml"
 
