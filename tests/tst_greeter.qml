@@ -156,6 +156,96 @@ TestCase {
         verify(cells[2].activeFocus);
     }
 
+    function test_arrows_move_between_users_in_the_choose_a_user_panel() {
+        const greeter = createGreeter({ users: someUsers(8), lastUser: "ian" });
+        openOtherUsers(greeter);
+        const cells = userCells(greeter);
+        tryVerify(() => cells[2].activeFocus);
+        keyClick(Qt.Key_Right);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Right);
+        verify(cells[4].activeFocus);
+        keyClick(Qt.Key_Left);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Down);
+        verify(cells[7].activeFocus);
+        keyClick(Qt.Key_Down);
+        verify(cells[7].activeFocus);
+        keyClick(Qt.Key_Up);
+        verify(cells[3].activeFocus);
+        keyClick(Qt.Key_Up);
+        verify(cells[3].activeFocus);
+    }
+
+    function test_enter_picks_the_highlighted_user_and_closes_the_panel() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        typeText("half");
+        const panel = openOtherUsers(greeter);
+        tryVerify(() => userCells(greeter)[2].activeFocus);
+        keyClick(Qt.Key_Left);
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "");
+        tryCompare(panel, "visible", false);
+        compare(findChild(greeter, "userName").text, "Grace Hopper");
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(field.activeFocus);
+
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(greeter.backend.lastCall(), ["startAuthentication", "grace"]);
+    }
+
+    function test_clicking_a_user_picks_them() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(userCells(greeter)[0]);
+        compare(greeter.overlay, "");
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_esc_closes_the_choose_a_user_panel_with_no_change() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const panel = openOtherUsers(greeter);
+        tryVerify(() => userCells(greeter)[2].activeFocus);
+        keyClick(Qt.Key_Left);
+        keyClick(Qt.Key_Escape);
+        compare(greeter.overlay, "");
+        tryCompare(panel, "visible", false);
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        verify(findChild(greeter, "otherUsersPill").activeFocus);
+    }
+
+    function test_cancel_closes_the_choose_a_user_panel_with_no_change() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(findChild(greeter, "userPanelCancel"));
+        compare(greeter.overlay, "");
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+    }
+
+    function test_clicking_outside_the_panel_closes_it() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        openOtherUsers(greeter);
+        mouseClick(greeter, 10, 10);
+        compare(greeter.overlay, "");
+    }
+
+    function test_enter_on_the_other_users_pill_opens_the_panel() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        findChild(greeter, "otherUsersPill").forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "otherUsers");
+    }
+
+    function test_choose_a_user_panel_stays_shut_while_checking() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        mouseClick(findChild(greeter, "otherUsersPill"));
+        compare(greeter.overlay, "");
+    }
+
     readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
     readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
 
