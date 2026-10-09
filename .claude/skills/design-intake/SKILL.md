@@ -62,4 +62,4 @@ Done when:
 
 Commit `handoff/`, `assets/` and `spec.md`: `docs(design): record <slug> design`.
 
-Then list the pieces briefed in this conversation that still have no `spec.md`. If the Foundations just finished and other pieces wait on them, name `/design-brief` for those and stop. If any remain in their artifacts, name them and stop. Otherwise name `/to-spec` and stop.
+Then list the pieces briefed in this conversation that still have no `spec.md`. If the Foundations just finished and other pieces wait on them, name `/design-brief` for those and stop. If any remain in their artifacts, name them and stop. Otherwise ask whether the user has anything to add before the spec (`/to-spec` writes it from this conversation, so anything they add now lands in it), name `/to-spec` as the next stage for them to run, and stop.
