@@ -11,3 +11,5 @@ Avatar 1.0 Avatar.qml
 PasswordField 1.0 PasswordField.qml
 Spinner 1.0 Spinner.qml
 Notice 1.0 Notice.qml
+Menu 1.0 Menu.qml
+MenuItem 1.0 MenuItem.qml
