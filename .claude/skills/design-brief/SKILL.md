@@ -96,21 +96,23 @@ README.md            copy of design/README.md
 tokens/<other>.md    the Tokens table of every other design/*/spec.md, one file each
 ```
 
-Give the user these steps, filled in for each piece, with the folder's absolute path. They are the whole manual hand-off, so give all of them every time. The menu labels are as of 2026-10; if one has moved, look under Import or Export:
+Give the user these steps, filled in for each piece, with the folder's absolute path. They are the whole manual hand-off, so give all of them every time. The menu labels are as of 2026-10; if one has moved, look near the prompt box or under Export:
 
-1. Open claude.ai/design and start a new project named `modalityos-<slug>`: the user's Claude Design projects share one flat list, so the prefix marks it as ModalityOS. If it asks what to make, pick whatever fits the piece's kind.
-2. Import → local directory → `<absolute path of .scratch/design-attach/<slug>>`. If that import is refused or missing, attach the files from that folder one by one instead.
-3. Paste this prompt:
+1. Open claude.ai/design. On **What should we create?**, choose the **Blank** template and leave **Design system** at None.
+2. Click **+** and attach every file in `<absolute path of .scratch/design-attach/<slug>>`, including those in its subfolders.
+3. Paste this prompt into the box and send it:
 
    ```
-   Among the attached files, read README.md first, then the brief at
-   <slug>/brief.md; token tables are under tokens/. Design what the brief
+   Among the attached files, read README.md first, then brief.md, the
+   brief for <slug>. Any other .md file is a token table from an earlier
+   design; other files are refs the brief names. Design what the brief
    asks for, following README.md. Ask me before changing anything under
    Decisions.
    ```
 
-4. Iterate there. When it looks right, say "the design is done": README.md tells Claude Design to check the brief's Hand back list and write `HANDBACK.md`.
-5. Export → **Hand off to Claude Code** → **Send to local coding agent** → **Download zip instead**, and save the zip. The prompt that dialog offers needs a connector local Claude Code doesn't have, so the zip is the route.
-6. Back in this session, run `/design-intake <path to the zip>`.
+4. Rename the project `modalityos-<slug>`; creation never asks for a name. The user's Claude Design projects share one flat list, so the prefix marks it as ModalityOS.
+5. Iterate there. When it looks right, say "the design is done": README.md tells Claude Design to check the brief's Hand back list and write `HANDBACK.md`.
+6. Export → **Hand off to Claude Code** → **Send to local coding agent** → **Download zip instead**, and save the zip. The prompt that dialog offers needs a connector local Claude Code doesn't have, so the zip is the route.
+7. Back in this session, run `/design-intake <path to the zip>`.
 
 Then stop.
