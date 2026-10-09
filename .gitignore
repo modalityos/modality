@@ -135,3 +135,6 @@ rust-project.json
 # archiso build output
 /iso/work/
 /iso/out/
+
+# Local build output: rendered wallpapers, install staging
+/build/
