@@ -1,0 +1,2 @@
+module QuickshellStubs
+singleton Processes 1.0 Processes.qml
