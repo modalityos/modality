@@ -19,7 +19,7 @@ Done when you hold one brief and its artifact link.
 
 List the artifact's files (Artifact `list`, scope `files`) and read every file of its own: under `project/` for a Design System, and for a Design whatever its type's instructions name as the artifact's own. Leave out the type's fixed files (`index.html`, `SKILL.md`, `artifact-type/`). Read the uploaded assets the artifact's index names too (Artifact `list`, scope `assets`).
 
-Replace `design/<slug>/handoff/` with them at their published paths, and empty `design/<slug>/assets/`. The last commit keeps the earlier round. Write `handoff/SOURCE.md`: the artifact link, the version id the reads returned, and today's date. Stage with `git add -f design/<slug>/handoff/`: the repo's ignore patterns (`*.log`, `debug/`, `target/`) would otherwise drop files silently.
+Large renders an illustration's sources regenerate (PNGs exported from SVG masters, tens of MB) stay out of git: snapshot the sources, list each render's asset id in `SOURCE.md`, and have the spec say how packaging renders them. Replace `design/<slug>/handoff/` with them at their published paths, and empty `design/<slug>/assets/`. The last commit keeps the earlier round. Write `handoff/SOURCE.md`: the artifact link, the version id the reads returned, and today's date. Stage with `git add -f design/<slug>/handoff/`: the repo's ignore patterns (`*.log`, `debug/`, `target/`) would otherwise drop files silently.
 
 Done when `handoff/` holds every file of the artifact's own and every named asset, and you have listed for the user what arrived.
 
