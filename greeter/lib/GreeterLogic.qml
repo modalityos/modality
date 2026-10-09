@@ -27,6 +27,9 @@ QtObject {
         return sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
 
+    // The Wrong password Notice: shown for three seconds, or until typing starts again.
+    property bool wrongPasswordShown: false
+
     property string phase: "ready"
     property string pendingPassword: ""
 
@@ -47,6 +50,16 @@ QtObject {
             backend.launch(selectedSession);
     }
 
+    // The screen calls this for each character typed into the password field.
+    function typed(text, modifiers) {
+        wrongPasswordShown = false;
+    }
+
+    property Timer wrongPasswordTimer: Timer {
+        interval: 3000
+        onTriggered: logic.wrongPasswordShown = false
+    }
+
     property Connections backendConnections: Connections {
         target: logic.backend
 
@@ -62,6 +75,8 @@ QtObject {
                 return;
             logic.pendingPassword = "";
             logic.phase = "wrongPassword";
+            logic.wrongPasswordShown = true;
+            logic.wrongPasswordTimer.restart();
             logic.passwordRejected();
         }
 

@@ -66,6 +66,7 @@ FocusScope {
             user: logic.selectedUser
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
+            wrongPasswordShown: logic.wrongPasswordShown
         }
 
         Connections {
@@ -87,6 +88,10 @@ FocusScope {
 
             function onSubmitted(password) {
                 logic.submit(password);
+            }
+
+            function onTyped(text, modifiers) {
+                logic.typed(text, modifiers);
             }
 
             function onShakingChanged() {

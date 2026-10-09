@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import Modality.Theme
+import Modality.Controls
 import "../greeter/lib"
 import "helpers"
 
@@ -183,6 +184,31 @@ TestCase {
         tryCompare(field, "shaking", false);
         compare(field.text, "");
         compare(greeter.loginState, "wrongPassword");
+    }
+
+    function test_wrong_password_notice_shows_for_three_seconds() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const notice = findChild(greeter, "wrongPasswordNotice");
+        verify(notice);
+        compare(notice.text, "Wrong password");
+        compare(notice.tone, Notice.Danger);
+        tryVerify(() => notice.visible && notice.opacity === 1);
+        wait(2000);
+        verify(notice.visible);
+        tryCompare(notice, "visible", false, 2500);
+        compare(findChild(greeter, "passwordField").text, "");
+    }
+
+    function test_typing_again_hides_the_wrong_password_notice() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const field = findChild(greeter, "passwordField");
+        tryCompare(field, "shaking", false);
+        typeText("s");
+        tryCompare(findChild(greeter, "wrongPasswordNotice"), "visible", false, 1000);
     }
 
     function test_session_that_fails_to_start_brings_the_greeter_back() {

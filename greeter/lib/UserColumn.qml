@@ -12,6 +12,7 @@ ColumnLayout {
     property alias passwordField: passwordField
     // The wallpaper the Glass elements blur.
     property Item backdrop
+    property bool wrongPasswordShown: false
 
     spacing: Theme.space3
 
@@ -47,6 +48,40 @@ ColumnLayout {
             anchors.fill: parent
             source: column.backdrop
             radius: passwordField.radius
+        }
+    }
+
+    FadingNotice {
+        objectName: "wrongPasswordNotice"
+        shown: column.wrongPasswordShown
+        tone: Notice.Danger
+        glyph: Glyphs.cross
+        text: qsTr("Wrong password")
+    }
+
+    // A Notice under the field that fades in and out, over its own frosted wallpaper.
+    component FadingNotice: Notice {
+        id: notice
+
+        property bool shown: false
+
+        Layout.alignment: Qt.AlignHCenter
+        opacity: shown ? 1 : 0
+        visible: opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: Theme.motionDurationNormal
+                easing.type: Easing.Bezier
+                easing.bezierCurve: notice.shown ? Theme.motionEasingOut : Theme.motionEasingIn
+            }
+        }
+
+        Frost {
+            z: -1
+            anchors.fill: parent
+            source: column.backdrop
+            radius: notice.radius
         }
     }
 }
