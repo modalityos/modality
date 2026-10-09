@@ -48,6 +48,8 @@ FocusScope {
 
         objectName: "content"
         anchors.fill: parent
+        // Fade as one layer, so overlapping Glass elements do not show through each other.
+        layer.enabled: logic.state === "starting"
 
         Clock {
             objectName: "clock"
@@ -69,6 +71,7 @@ FocusScope {
             wrongPasswordShown: logic.wrongPasswordShown
             capsLockShown: logic.capsLockShown
             sessionFailed: logic.state === "sessionFailed"
+            unavailable: logic.state === "unavailable"
             onRetryRequested: logic.retry()
         }
 

@@ -15,6 +15,8 @@ ColumnLayout {
     property bool wrongPasswordShown: false
     property bool capsLockShown: false
     property bool sessionFailed: false
+    // Login unavailable: a message takes the password field's place.
+    property bool unavailable: false
     readonly property alias tryAgainButton: sessionFailedNotice.actionItem
 
     signal retryRequested
@@ -44,6 +46,7 @@ ColumnLayout {
 
         objectName: "passwordField"
         Layout.alignment: Qt.AlignHCenter
+        visible: !column.unavailable
         focus: true
 
         // Beneath the field's own Glass tint.
@@ -54,6 +57,13 @@ ColumnLayout {
             source: column.backdrop
             radius: passwordField.radius
         }
+    }
+
+    UnavailableMessage {
+        objectName: "unavailableMessage"
+        Layout.alignment: Qt.AlignHCenter
+        visible: column.unavailable
+        backdrop: column.backdrop
     }
 
     FadingNotice {

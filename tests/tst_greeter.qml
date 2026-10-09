@@ -321,4 +321,38 @@ TestCase {
         tryVerify(() => greeter.backend.lastCall()[0] === "launch");
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
+
+    function test_login_unavailable_replaces_the_password_field_with_a_message() {
+        const greeter = createGreeter();
+        greeter.backend.loginUnavailable();
+        compare(greeter.loginState, "unavailable");
+        verify(!findChild(greeter, "passwordField").visible);
+        const message = findChild(greeter, "unavailableMessage");
+        verify(message);
+        verify(message.visible);
+        compare(message.text, "Login is unavailable. Restart the computer or switch to a text console.");
+        verify(findChild(greeter, "userName").visible);
+        verify(findChild(greeter, "clock").visible);
+    }
+
+    function test_login_unavailable_while_checking_ends_the_attempt() {
+        const greeter = createGreeter();
+        typeText("SECRET");
+        keyClick(Qt.Key_Return);
+        greeter.backend.loginUnavailable();
+        compare(greeter.loginState, "unavailable");
+        greeter.backend.authPrompt("Password:", true);
+        compare(greeter.backend.lastCall(), ["startAuthentication", "ian"]);
+        verify(!findChild(greeter, "capsLockNotice").visible);
+    }
+
+    function test_starting_fades_everything_above_the_wallpaper() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        const content = findChild(greeter, "content");
+        tryCompare(content, "opacity", 0);
+        verify(findChild(greeter, "wallpaper").visible);
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
 }
