@@ -93,7 +93,7 @@ List the artifact types (Artifact `list`, scope `types`) and create the piece's 
 - **Design System** (Foundations): list `react` and `react-dom` 18 in the index's `libraries` and ship a `components/bundle.js` that assigns `window.<namespace>`; without them every preview is a static picture that ignores the Light/Dark switch. Colour values are hex or `rgba()`; motion goes in its own families (`durations`, `easings`), since the type has no motion family.
 - **Design** (everything else): use the ModalityOS Foundations design system, by the **Artifact** link in `design/foundations/spec.md`, and its Tokens by name; propose a missing Token for the Foundations rather than a raw value.
 
-Draft the whole first design from the brief and `design/README.md`. Before publishing, check every text and boundary colour pair the design uses with a script, in every theme, against the floors in **Constraints** and `design/README.md`; fix failures before the user sees them.
+Draft the whole first design from the brief and `design/README.md`. Before publishing, check every text and boundary colour pair the design uses with a script, in every theme, compositing translucent colours over their ground, against the floors in **Constraints** and `design/README.md`; fix failures before the user sees them.
 
 Fill the brief's **Artifact** line with the link.
 

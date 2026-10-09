@@ -58,7 +58,7 @@ Text holds WCAG AA contrast in every theme: 4.5:1 for body text, 3:1 for large t
 
 Produce what the brief's kind needs:
 
-- **Foundations:** every Token in `tokens.json`, in light and dark; a README of usage rules that name Tokens; specimen previews for what the Token views don't show (materials over a busy background with their solid fallbacks, motion demos you can replay); and the proof strip the brief asks for, built only from the Tokens.
+- **Foundations:** every Token in `tokens.json`, in light and dark; a README of usage rules that name Tokens; specimen previews for what the Token views don't show (materials over a busy background with their solid fallbacks, motion demos you can replay); the palette in use, light and dark side by side; and one or two scenes the brief names (a Settings window, a login screen), built only from the Tokens, so the look is judged in context rather than as swatches.
 - **Screen or component:** every state the brief lists, each reachable in the mockup (a state switcher, or one artboard per state). Give each component the name the brief uses. Show hover, focus and keyboard states.
 - **Icon set** (one icon is a set of one): one SVG per icon, named as the brief names it. Draw on the grid the brief gives, with strokes on whole pixels. Use `currentColor` for single-colour (symbolic) icons. Show each icon at every size the brief lists, on light and dark backgrounds.
 - **Illustration** (wallpapers too): SVG where it can be; otherwise PNG at every resolution the brief lists. Wallpapers need a light and a dark variant unless the brief says one.
