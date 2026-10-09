@@ -1,0 +1,102 @@
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Templates as T
+import Modality.Theme
+
+// A user's picture in a circle. Not focusable unless focusPolicy says so.
+T.AbstractButton {
+    id: control
+
+    property string name
+    property url source
+    property int size: Theme.avatarSizeLarge
+
+    readonly property real radius: size / 2
+    readonly property int status: image.status
+    readonly property bool ringShown: activeFocus
+    readonly property var shadow: {
+        if (!enabled)
+            return null;
+        if (pressed)
+            return Theme.shadowRaised;
+        return hovered ? Theme.shadowModal : Theme.shadowFloating;
+    }
+    readonly property real visualScale: !enabled ? 1 : pressed ? 0.96 : hovered ? 1.04 : 1
+    readonly property real visualOpacity: enabled ? 1 : 0.4
+
+    implicitWidth: size
+    implicitHeight: size
+    padding: 0
+    hoverEnabled: true
+    focusPolicy: Qt.NoFocus
+    Accessible.role: Accessible.Button
+    Accessible.name: name
+
+    Keys.onReturnPressed: clicked()
+    Keys.onEnterPressed: clicked()
+
+    contentItem: Item {
+        scale: control.visualScale
+        opacity: control.visualOpacity
+
+        Behavior on scale {
+            NumberAnimation {
+                duration: Theme.motionDurationFast
+                easing.type: Easing.Bezier
+                easing.bezierCurve: Theme.motionEasingStandard
+            }
+        }
+
+        Shadow {
+            anchors.fill: parent
+            token: control.shadow
+            radius: control.radius
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: control.radius
+            color: Theme.fillStrong
+        }
+
+        Image {
+            id: image
+
+            anchors.fill: parent
+            source: control.source
+            sourceSize: Qt.size(control.size * 2, control.size * 2)
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            visible: false
+        }
+
+        MultiEffect {
+            anchors.fill: parent
+            source: image
+            visible: image.status === Image.Ready
+            maskEnabled: true
+            maskSource: mask
+            maskThresholdMin: 0.5
+            maskSpreadAtMin: 1
+        }
+
+        Item {
+            id: mask
+
+            anchors.fill: parent
+            layer.enabled: true
+            visible: false
+
+            Rectangle {
+                anchors.fill: parent
+                radius: control.radius
+            }
+        }
+
+        FocusRing {
+            anchors.fill: parent
+            radius: control.radius
+            shown: control.ringShown
+        }
+    }
+}
