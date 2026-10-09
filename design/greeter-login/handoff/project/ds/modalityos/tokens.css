@@ -1,0 +1,142 @@
+/* ModalityOS Foundations — generated from tokens.json */
+:root, [data-theme="light"] {
+  --bg: #efeeec;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e6e5e3;
+  --surface-overlay: #fbfbfa;
+  --fill: rgba(0, 0, 0, 0.05);
+  --fill-strong: rgba(0, 0, 0, 0.1);
+  --separator: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.48);
+  --text-primary: rgba(0, 0, 0, 0.86);
+  --text-secondary: rgba(0, 0, 0, 0.64);
+  --text-tertiary: rgba(0, 0, 0, 0.58);
+  --text-disabled: rgba(0, 0, 0, 0.26);
+  --accent: #1c6ee8;
+  --accent-hover: #1862d0;
+  --accent-pressed: #1455b8;
+  --accent-subtle: rgba(28, 110, 232, 0.14);
+  --on-accent: #ffffff;
+  --accent-text: #1255b8;
+  --success: #17652f;
+  --success-subtle: rgba(30, 160, 70, 0.14);
+  --warning: #7a4e00;
+  --warning-subtle: rgba(240, 160, 0, 0.16);
+  --danger: #a8231f;
+  --danger-subtle: rgba(230, 50, 40, 0.12);
+  --info: #1255b8;
+  --info-subtle: rgba(28, 110, 232, 0.12);
+  --focus-ring: #1c6ee8;
+  --scrim: rgba(0, 0, 0, 0.28);
+  --wallpaper-1: #6f9dff;
+  --wallpaper-2: #a98cff;
+  --wallpaper-3: #ff9fbf;
+  --material-panel-tint: rgba(246, 245, 243, 0.72);
+  --material-panel-fallback: #f3f2f0;
+  --material-popover-tint: rgba(251, 251, 250, 0.82);
+  --material-popover-fallback: #fbfbfa;
+  --material-sidebar-tint: rgba(236, 234, 231, 0.68);
+  --material-sidebar-fallback: #e9e8e5;
+  --shadow-resting: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-raised: 0 0 0 0.5px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-floating: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 10px 30px rgba(0, 0, 0, 0.16);
+  --shadow-modal: 0 0 0 0.5px rgba(0, 0, 0, 0.14), 0 22px 60px rgba(0, 0, 0, 0.28);
+}
+[data-theme="dark"] {
+  --bg: #1f1e1d;
+  --surface-raised: #2b2a28;
+  --surface-sunken: #181716;
+  --surface-overlay: #2f2e2c;
+  --fill: rgba(255, 255, 255, 0.08);
+  --fill-strong: rgba(255, 255, 255, 0.14);
+  --separator: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.42);
+  --text-primary: rgba(255, 255, 255, 0.88);
+  --text-secondary: rgba(255, 255, 255, 0.64);
+  --text-tertiary: rgba(255, 255, 255, 0.56);
+  --text-disabled: rgba(255, 255, 255, 0.26);
+  --accent: #366bfc;
+  --accent-hover: #2f62ee;
+  --accent-pressed: #2858dc;
+  --accent-subtle: rgba(80, 150, 255, 0.2);
+  --on-accent: #ffffff;
+  --accent-text: #8cbcff;
+  --success: #4fd27a;
+  --success-subtle: rgba(79, 210, 122, 0.16);
+  --warning: #f5b83d;
+  --warning-subtle: rgba(245, 184, 61, 0.16);
+  --danger: #ff8f87;
+  --danger-subtle: rgba(255, 125, 116, 0.12);
+  --info: #8cbcff;
+  --info-subtle: rgba(120, 176, 255, 0.12);
+  --focus-ring: #8cbcff;
+  --scrim: rgba(0, 0, 0, 0.5);
+  --wallpaper-1: #1f45c0;
+  --wallpaper-2: #5530b0;
+  --wallpaper-3: #a0306e;
+  --material-panel-tint: rgba(40, 40, 40, 0.68);
+  --material-panel-fallback: #272624;
+  --material-popover-tint: rgba(32, 32, 34, 0.9);
+  --material-popover-fallback: #2f2e2c;
+  --material-sidebar-tint: rgba(30, 30, 30, 0.62);
+  --material-sidebar-fallback: #242321;
+  --shadow-resting: 0 0 0 0.5px rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 2px 6px rgba(0, 0, 0, 0.5);
+  --shadow-floating: 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow-modal: 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 22px 60px rgba(0, 0, 0, 0.65);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-small: 6px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+  --radius-pill: 9999px;
+  --control-height: 28px;
+  --control-height-small: 24px;
+  --row-height: 28px;
+  --control-height-large: 32px;
+  --row-height-large: 44px;
+  --toolbar-height: 52px;
+  --avatar-size-large: 96px;
+  --material-panel-blur: 30px;
+  --material-popover-blur: 24px;
+  --material-sidebar-blur: 40px;
+  --material-saturation: 1.6;
+  --wallpaper-angle: 135deg;
+  --wallpaper-mid-stop: 55%;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+  --motion-duration-fast: 100ms;
+  --motion-duration-normal: 200ms;
+  --motion-duration-slow: 300ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --font-sans: Inter, "Noto Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Noto Sans Mono", monospace;
+}
+.caption { font-family: var(--font-sans); font-size: 10px; line-height: 13px; font-weight: 500; letter-spacing: 0.01em; }
+.footnote { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 400; }
+.footnote-medium { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 500; }
+.footnote-strong { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 600; }
+.body { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; }
+.body-medium { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 500; }
+.body-strong { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; }
+.headline { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; }
+.title-3 { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 500; }
+.title-2 { font-family: var(--font-sans); font-size: 17px; line-height: 22px; font-weight: 600; }
+.title-1 { font-family: var(--font-sans); font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.large-title { font-family: var(--font-sans); font-size: 26px; line-height: 32px; font-weight: 700; letter-spacing: -0.015em; }
+.display { font-family: var(--font-sans); font-size: 96px; line-height: 100px; font-weight: 600; letter-spacing: -0.03em; }
+.mono { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; }

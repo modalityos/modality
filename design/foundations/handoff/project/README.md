@@ -17,12 +17,12 @@ macOS-first: calm, clear and quietly polished. Frosted glass floats over a colou
 ## Wallpaper and materials
 
 - The default wallpaper is a gradient at `wallpaper-angle` through `wallpaper-1`, `wallpaper-2` (at `wallpaper-mid-stop`) and `wallpaper-3`. The Greeter shows it behind everything.
-- Three frosted materials sit over it: `material-panel-*` for Shell panels and docks, `material-popover-*` for menus, popovers and the Greeter's login controls, `material-sidebar-*` for App sidebars. Each is a tint over a blurred, saturated background (`material-*-blur`, `material-saturation`), a compositor effect. Where blur is missing, as in the Greeter, use the solid `*-fallback`, which holds every text contrast.
+- Three frosted materials sit over it: `material-panel-*` for Shell panels and docks, `material-popover-*` for menus, popovers and the Greeter's login controls, `material-sidebar-*` for App sidebars. Each is a tint over a blurred, saturated background (`material-*-blur`, `material-saturation`), a compositor effect. Where blur is missing, or Reduce transparency is on, use the solid `*-fallback`, which holds every text contrast. The Greeter has no compositor blur, so it blurs its own wallpaper behind its glass.
 
 ## Type
 
 - Inter for the interface (`sans`), JetBrains Mono for code and terminal text (`mono`); Noto Sans covers scripts they lack. Chosen over IBM Plex Sans and Plex Mono for being the closest open match to the macOS feel. No other fonts.
-- Body text is `body`, 13 px; `body-medium` for button labels, sidebar rows and status messages. Titles step up through `headline`, `title-3`, `title-2`, `title-1` and `large-title`; small text steps down to `footnote` and `caption`.
+- Body text is `body`, 13 px; `body-medium` for button labels, sidebar rows and status messages. Titles step up through `headline`, `title-3`, `title-2`, `title-1` and `large-title`; small text steps down to `footnote` (with `footnote-medium` for labels and `footnote-strong` for small headers) and `caption`.
 - `display` is for large clocks (Greeter, lock screen); set clocks and changing numbers with tabular figures.
 - Use sentence case for titles, buttons and menu items.
 
@@ -38,7 +38,7 @@ Four levels, each a hairline plus a soft shadow: `shadow-resting` (grouped boxes
 
 ## Focus
 
-Every focusable element shows a `focus-ring` of `focus-ring-width`, `focus-ring-offset` outside it, holding 3:1 on every ground. Never remove it; style it.
+Every focusable element shows a two-tone focus ring: a `focus-ring-offset` halo in the surface colour it sits on, then a `focus-ring` of `focus-ring-width`, so it holds 3:1 over any ground or wallpaper. Never remove it; style it.
 
 ## Motion
 

@@ -1,6 +1,6 @@
 # ModalityOS Foundations: design spec
 
-**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791541575-b82a, 2026-10-09)
+**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791542467-b02b, 2026-10-09)
 **Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
 
 ## Tokens
@@ -78,7 +78,7 @@ Every Token in `tokens.json` except type styles (see Type). One value in Light f
 | `wallpaper-angle` | `135deg` | — | `wallpaperAngle` | Wallpaper gradient angle |
 | `wallpaper-mid-stop` | `55%` | — | `wallpaperMidStop` | Wallpaper middle stop position |
 | `focus-ring-width` | `3px` | — | `focusRingWidth` | Ring stroke |
-| `focus-ring-offset` | `1px` | — | `focusRingOffset` | Gap element to ring |
+| `focus-ring-offset` | `2px` | — | `focusRingOffset` | Halo between element and ring, in the surface colour |
 | `motion-duration-fast` | `100ms` | — | `motionDurationFast` | Hover, press |
 | `motion-duration-normal` | `200ms` | — | `motionDurationNormal` | Most transitions |
 | `motion-duration-slow` | `300ms` | — | `motionDurationSlow` | Panels, dialogs, fade to Session |
@@ -112,6 +112,8 @@ Values the previews use outside a Token. An implementer needs these to match the
 |---|---|---|---|---|---|---|
 | `caption` | sans | 10px | 13px | 500 | 0.01em | `caption` |
 | `footnote` | sans | 11px | 14px | 400 | 0 | `footnote` |
+| `footnote-medium` | sans | 11px | 14px | 500 | 0 | `footnoteMedium` |
+| `footnote-strong` | sans | 11px | 14px | 600 | 0 | `footnoteStrong` |
 | `body` | sans | 13px | 16px | 400 | 0 | `body` |
 | `body-medium` | sans | 13px | 16px | 500 | 0 | `bodyMedium` |
 | `body-strong` | sans | 13px | 16px | 600 | 0 | `bodyStrong` |
@@ -168,12 +170,14 @@ Reference for the later Greeter design. Not a build target; the Controls in them
 
 ## Settled at intake
 
+- `focus-ring-offset` is `2px` (was `1px`): the focus ring is two-tone, a halo of that width in the surface colour, then the ring, so it holds 3:1 over the wallpaper; `footnote-medium` and `footnote-strong` were added for labels and small headers. Both settled at the `greeter-login` intake.
+
 - `material-popover-tint` in dark is `rgba(32, 32, 34, 0.9)` (was `rgba(50, 50, 50, 0.8)`), so text, `danger` and the `accent` button hold contrast on the Greeter's glass over the brightest part of the Silk wallpaper.
 - `wallpaper-1` to `wallpaper-3` follow the Silk default wallpaper's key colours (`design/wallpaper-default/spec.md`), changed at that piece's intake; the Foundations artifact was updated to match.
 - The spring is a cubic-bezier with overshoot, as decided ("one gentle spring curve"); in QML use `Easing.BezierCurve` with the same control points, or `Easing.OutBack` where a bezier is impractical.
 - Translucent colours become Qt colours with alpha (`Qt.rgba` or `#AARRGGBB`); the code module stores them as given.
 - Easings become `Easing.BezierCurve` with the four control points.
 - Shadows: the 0.5px hairline is a 1px border at half opacity (or a 0.5px border on high-DPI); the soft shadow is a `MultiEffect` shadow with the same offset, blur and colour.
-- Blur and `materialSaturation` are compositor effects; where unavailable, the `*Fallback` colour is used. The Greeter always uses fallbacks (Cage cannot blur).
+- Blur and `materialSaturation` are compositor effects; where unavailable, the `*Fallback` colour is used. The Greeter has no compositor blur, so it blurs its own wallpaper behind its glass (ADR 0001); fallbacks are for Reduce transparency.
 - Font families live in `tokens.json` `type.families`, not as colour-style Tokens; code names `fontSans` and `fontMono`.
 - Dark mode greys are warm, matching "slightly warm greys".
