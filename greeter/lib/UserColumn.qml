@@ -12,8 +12,6 @@ ColumnLayout {
     // One entry of the Greeter backend's users.
     property var user: null
     property url defaultAvatar
-    property alias passwordField: passwordField
-    property alias otherUsersPill: otherUsersPill
     property bool otherUsersShown: false
     // The wallpaper the Glass elements blur.
     property Item backdrop
@@ -24,9 +22,43 @@ ColumnLayout {
     property bool sessionFailed: false
     // Login unavailable: a message takes the password field's place.
     property bool unavailable: false
-    readonly property alias tryAgainButton: sessionFailedNotice.actionItem
+    // Checking or starting: the field shows the spinner and takes no input.
+    property alias busy: passwordField.busy
+    // A rejected password stays in the field while it shakes, but it no longer counts.
+    readonly property int passwordLength: passwordField.shaking ? 0 : passwordField.text.length
+    readonly property bool acceptsTyping: passwordField.visible && passwordField.interactive
 
+    signal submitted(string password)
+    signal typed(string text, int modifiers)
+    signal otherUsersRequested
     signal retryRequested
+
+    // Typing from elsewhere on the screen lands at the end of the field, which takes focus.
+    function typeIntoField(text) {
+        passwordField.forceActiveFocus();
+        passwordField.text += text;
+    }
+
+    function focusField() {
+        passwordField.forceActiveFocus();
+    }
+
+    function clearField() {
+        passwordField.text = "";
+    }
+
+    // A rejected password shakes, then clears.
+    function rejectPassword() {
+        passwordField.shake();
+    }
+
+    function focusTryAgain() {
+        sessionFailedNotice.actionItem.forceActiveFocus();
+    }
+
+    function focusOtherUsers() {
+        otherUsersPill.forceActiveFocus();
+    }
 
     spacing: Theme.space3
 
@@ -56,6 +88,12 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         visible: !column.unavailable
         focus: true
+        onSubmitted: password => column.submitted(password)
+        onTyped: (text, modifiers) => column.typed(text, modifiers)
+        onShakingChanged: {
+            if (!shaking)
+                text = "";
+        }
 
         // Beneath the field's own Glass tint.
         Frost {
@@ -120,6 +158,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         visible: column.otherUsersShown && !column.unavailable
         backdrop: column.backdrop
+        onClicked: column.otherUsersRequested()
     }
 
     // A Notice under the field that fades in and out, over its own frosted wallpaper.

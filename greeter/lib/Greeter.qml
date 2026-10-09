@@ -17,13 +17,11 @@ FocusScope {
     // Typing goes into the password field wherever focus is, except inside an overlay. Keys
     // reach here only when the focused Control left them, so Space and Enter still act on it.
     Keys.onPressed: event => {
-        const field = userColumn.passwordField;
         const printable = event.text.length > 0 && event.text.charCodeAt(0) >= 0x20 && event.text.charCodeAt(0) !== 0x7f;
         const chord = event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier);
-        if (!printable || chord || logic.overlay !== "" || !field.visible || !field.interactive)
+        if (!printable || chord || logic.overlay !== "" || !userColumn.acceptsTyping)
             return;
-        field.forceActiveFocus();
-        field.text += event.text;
+        userColumn.typeIntoField(event.text);
         logic.typed(event.text, event.modifiers);
         event.accepted = true;
     }
@@ -32,8 +30,7 @@ FocusScope {
         id: logic
 
         backend: greeter.backend
-        // A rejected password stays in the field while it shakes, but it no longer counts.
-        passwordLength: userColumn.passwordField.shaking ? 0 : userColumn.passwordField.text.length
+        passwordLength: userColumn.passwordLength
     }
 
     // The Greeter follows the machine's settings, never a user's.
@@ -91,13 +88,16 @@ FocusScope {
             defaultAvatar: greeter.backend?.defaultAvatar ?? ""
             otherUsersShown: (greeter.backend?.users.length ?? 0) > 1
             backdrop: wallpaper
-            passwordField.busy: logic.state === "checking" || logic.state === "starting"
+            busy: logic.state === "checking" || logic.state === "starting"
             wrongPasswordShown: logic.wrongPasswordShown
             authError: logic.authError
             capsLockShown: logic.capsLockShown
             sessionFailed: logic.state === "sessionFailed"
             unavailable: logic.state === "unavailable"
             onRetryRequested: logic.retry()
+            onSubmitted: password => logic.submit(password)
+            onTyped: (text, modifiers) => logic.typed(text, modifiers)
+            onOtherUsersRequested: logic.openOtherUsers()
         }
 
         // Before the PowerRow in the tree, so Options comes before the power buttons in Tab
@@ -116,7 +116,7 @@ FocusScope {
             // A picked Session is followed by the password.
             onPicked: id => {
                 logic.chooseSession(id);
-                userColumn.passwordField.forceActiveFocus();
+                userColumn.focusField();
             }
             onDismissed: {
                 logic.closeOverlay();
@@ -137,11 +137,11 @@ FocusScope {
             target: logic
 
             function onPasswordRejected() {
-                userColumn.passwordField.shake();
+                userColumn.rejectPassword();
             }
 
             function onAttemptEnded() {
-                userColumn.passwordField.text = "";
+                userColumn.clearField();
             }
 
             // A Session that failed to start brings the faded screen back, with focus on
@@ -150,28 +150,11 @@ FocusScope {
                 if (logic.state !== "starting")
                     content.opacity = 1;
                 if (logic.state === "sessionFailed") {
-                    userColumn.passwordField.text = "";
-                    userColumn.tryAgainButton.forceActiveFocus();
-                } else if (logic.state === "ready" && !userColumn.passwordField.activeFocus) {
-                    userColumn.passwordField.forceActiveFocus();
+                    userColumn.clearField();
+                    userColumn.focusTryAgain();
+                } else if (logic.state === "ready") {
+                    userColumn.focusField();
                 }
-            }
-        }
-
-        Connections {
-            target: userColumn.passwordField
-
-            function onSubmitted(password) {
-                logic.submit(password);
-            }
-
-            function onTyped(text, modifiers) {
-                logic.typed(text, modifiers);
-            }
-
-            function onShakingChanged() {
-                if (!userColumn.passwordField.shaking)
-                    userColumn.passwordField.text = "";
             }
         }
     }
@@ -203,20 +186,12 @@ FocusScope {
         // A picked user starts with an empty, focused field.
         onPicked: name => {
             logic.chooseUser(name);
-            userColumn.passwordField.text = "";
-            userColumn.passwordField.forceActiveFocus();
+            userColumn.clearField();
+            userColumn.focusField();
         }
         onCancelled: {
             logic.closeOverlay();
-            userColumn.otherUsersPill.forceActiveFocus();
-        }
-    }
-
-    Connections {
-        target: userColumn.otherUsersPill
-
-        function onClicked() {
-            logic.openOtherUsers();
+            userColumn.focusOtherUsers();
         }
     }
 }
