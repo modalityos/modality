@@ -1,6 +1,6 @@
 # ModalityOS design context
 
-Read this first, before any brief. It holds what every piece of ModalityOS design work shares. Each piece has its own folder here, `<slug>/`, and its `brief.md` says what to design. Where the brief and this file disagree, the brief wins.
+Read this first, before any brief: whoever designs a piece reads it, whether Claude Code drafting the design artifact or Claude in a claude.ai session iterating on it. It holds what every piece of ModalityOS design work shares. Each piece has its own folder here, `<slug>/`, and its `brief.md` says what to design. Where the brief and this file disagree, the brief wins.
 
 ## The product
 
@@ -12,10 +12,11 @@ The words that matter are defined in each brief's **Terms** section. Use each on
 
 ## What happens to your design
 
-Each brief names its **kind**. The kind decides what your work becomes:
+Each piece lives in a claude.ai design artifact until `/design-intake` snapshots it into `<slug>/handoff/`. Each brief names its **kind**, and the kind decides the artifact type and what your work becomes:
 
-- **Screen or component:** your HTML is a mockup. It never ships. Claude Code rebuilds it by hand in QML, so design with what QML builds well (next section) and say plainly where you go beyond it.
-- **Icon set, illustration, logo:** the files you export are what ships, moved into the OS as they are. Export them clean and complete, at every size or variant the brief lists.
+- **Foundations** (a **Design System** artifact): your Token values are what ships. Claude Code copies every Token in `tokens.json` into the OS's token module under the same name; the specimens never ship.
+- **Screen or component** (a **Design** artifact): your design is a mockup. It never ships. Claude Code rebuilds it by hand in QML, so design with what QML builds well (next section) and say plainly where you go beyond it.
+- **Icon set, illustration, logo** (a **Design** artifact): the files you produce are what ships, moved into the OS as they are. Make them clean and complete, at every size or variant the brief lists.
 
 ## Screens and components
 
@@ -43,29 +44,26 @@ Design at 1Ã— logical pixels. The brief names the canvas; a full screen is 1920Ã
 
 ## Tokens
 
-A **token** is a named visual value: a colour, radius, spacing step, font, shadow or motion curve. Tokens are what carries across pieces, so every piece uses them:
+A **Token** is a named visual value: a colour, material, radius, spacing step, font, shadow, focus ring or motion curve. The Foundations define them, in the ModalityOS Foundations design system, and every other piece uses them:
 
-- **In CSS:** put every token as a custom property in one `:root` block, grouped by prefix: `--color-*`, `--radius-*`, `--space-*`, `--font-*`, `--shadow-*`, `--motion-*` (durations and easings). Then use only the variables in the rest of the CSS. Claude Code reads that block to name the tokens in code, so a raw value is a value that gets lost.
-- **In SVG and images:** take colours from the token palette, and say in `HANDBACK.md` which token each colour is.
+- **The Foundations** keep every Token in `tokens.json`, with a light and a dark value for each colour and shadow, and a usage note naming where it is used.
+- **Every other piece** uses the Foundations' Tokens by name (`var(--surface-raised)`), never raw values. Claude Code reads those names to build the code, so a raw value is a value that gets lost. Where the design needs a Token the Foundations lack, propose it for the Foundations.
+- **SVG and images** take colours from the Token palette; name the Token each colour is in the piece's notes.
 
-Reuse the tokens earlier designs defined, and extend them; propose new ones where the design needs them. Earlier designs' tokens arrive as one table per design under `tokens/` in the attached folder; when that folder is empty, there are none yet.
+## Accessibility
+
+Text holds WCAG AA contrast in every theme: 4.5:1 for body text, 3:1 for large text and for Control boundaries, focus rings and meaningful icons. Every focusable element shows the focus ring.
 
 ## By kind
 
 Produce what the brief's kind needs:
 
-- **Screen or component:** every state the brief lists, each reachable in the mockup (a state switcher on one page, or one page per state). Give each component the name the brief uses, as a `data-component="<Name>"` attribute on its root element. Show hover, focus and keyboard states.
+- **Foundations:** every Token in `tokens.json`, in light and dark; a README of usage rules that name Tokens; specimen previews for what the Token views don't show (materials over a busy background with their solid fallbacks, motion demos you can replay); the palette in use, light and dark side by side; and one or two scenes the brief names (a Settings window, a login screen), built only from the Tokens, so the look is judged in context rather than as swatches.
+- **Screen or component:** every state the brief lists, each reachable in the mockup (a state switcher, or one artboard per state). Give each component the name the brief uses. Show hover, focus and keyboard states.
 - **Icon set** (one icon is a set of one): one SVG per icon, named as the brief names it. Draw on the grid the brief gives, with strokes on whole pixels. Use `currentColor` for single-colour (symbolic) icons. Show each icon at every size the brief lists, on light and dark backgrounds.
 - **Illustration** (wallpapers too): SVG where it can be; otherwise PNG at every resolution the brief lists. Wallpapers need a light and a dark variant unless the brief says one.
 - **Logo** (brand marks too): SVG, in full-colour and single-colour versions, with clear space and minimum size shown.
 
-## Handing back
+## When it's done
 
-When the user says the design is done, write `HANDBACK.md` in the project, so it travels in the export:
-
-1. The brief's **Hand back** list, each item marked present or missing.
-2. Each decision you changed from the brief, and why.
-3. Each open question you could not settle.
-4. For SVG and images: which token each colour is.
-
-Then say in the chat what is missing, so the user can decide before exporting.
+Check the design against the brief's **Hand back** list. Say plainly what is missing, which Decision you changed and why, and any question you could not settle, so the user can decide before running `/design-intake`.
