@@ -268,4 +268,57 @@ TestCase {
         compare(greeter.loginState, "sessionFailed");
         tryCompare(findChild(greeter, "content"), "opacity", 1);
     }
+
+    function test_checking_shows_the_spinner_and_ignores_typing() {
+        const greeter = createGreeter();
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "checking");
+        const field = findChild(greeter, "passwordField");
+        verify(field.busy);
+        verify(!field.interactive);
+        keyClick("x");
+        compare(field.text, "secret");
+        greeter.backend.authPrompt("Password:", true);
+        compare(greeter.loginState, "checking");
+        verify(field.busy);
+    }
+
+    function failSession(greeter) {
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        greeter.backend.error("Session failed to start");
+    }
+
+    function test_session_failed_moves_focus_to_try_again() {
+        const greeter = createGreeter();
+        failSession(greeter);
+        const notice = findChild(greeter, "sessionFailedNotice");
+        verify(notice);
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Couldn't start the session.");
+        compare(notice.tone, Notice.Danger);
+        compare(notice.actionText, "Try again");
+        verify(notice.actionItem.activeFocus);
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(!field.activeFocus);
+    }
+
+    function test_try_again_returns_to_ready() {
+        const greeter = createGreeter();
+        failSession(greeter);
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "ready");
+        compare(greeter.backend.lastCall(), ["cancel"]);
+        const field = findChild(greeter, "passwordField");
+        verify(field.activeFocus);
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", false);
+
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
 }

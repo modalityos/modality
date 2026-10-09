@@ -49,6 +49,15 @@ QtObject {
         backend.startAuthentication(selectedUser.name);
     }
 
+    // Try again after a Session failed to start: back to ready for a fresh login with the
+    // same user and Session, after greetd drops what is left of the failed one.
+    function retry() {
+        if (phase !== "sessionFailed")
+            return;
+        backend.cancel();
+        phase = "ready";
+    }
+
     // The screen calls this when its fade-out ends.
     function launch() {
         if (phase === "starting")

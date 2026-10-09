@@ -14,6 +14,10 @@ ColumnLayout {
     property Item backdrop
     property bool wrongPasswordShown: false
     property bool capsLockShown: false
+    property bool sessionFailed: false
+    readonly property alias tryAgainButton: sessionFailedNotice.actionItem
+
+    signal retryRequested
 
     spacing: Theme.space3
 
@@ -68,6 +72,17 @@ ColumnLayout {
         text: qsTr("Caps Lock is on")
     }
 
+    FadingNotice {
+        id: sessionFailedNotice
+
+        objectName: "sessionFailedNotice"
+        shown: column.sessionFailed
+        tone: Notice.Danger
+        text: qsTr("Couldn't start the session.")
+        actionText: qsTr("Try again")
+        onActionTriggered: column.retryRequested()
+    }
+
     // A Notice under the field that fades in and out, over its own frosted wallpaper.
     component FadingNotice: Notice {
         id: notice
@@ -76,7 +91,7 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter
         opacity: shown ? 1 : 0
-        visible: opacity > 0
+        visible: shown || opacity > 0
 
         Behavior on opacity {
             NumberAnimation {

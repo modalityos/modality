@@ -68,6 +68,8 @@ FocusScope {
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
             wrongPasswordShown: logic.wrongPasswordShown
             capsLockShown: logic.capsLockShown
+            sessionFailed: logic.state === "sessionFailed"
+            onRetryRequested: logic.retry()
         }
 
         Connections {
@@ -77,10 +79,17 @@ FocusScope {
                 userColumn.passwordField.shake();
             }
 
-            // A Session that failed to start brings the faded screen back.
+            // A Session that failed to start brings the faded screen back, with focus on
+            // Try again; Try again hands focus back to the field.
             function onStateChanged() {
                 if (logic.state !== "starting")
                     content.opacity = 1;
+                if (logic.state === "sessionFailed") {
+                    userColumn.passwordField.text = "";
+                    userColumn.tryAgainButton.forceActiveFocus();
+                } else if (logic.state === "ready" && !userColumn.passwordField.activeFocus) {
+                    userColumn.passwordField.forceActiveFocus();
+                }
             }
         }
 
