@@ -231,6 +231,14 @@ TestCase {
         tryCompare(menu, "visible", false);
     }
 
+    function test_options_does_not_open_the_session_menu_while_login_is_unavailable() {
+        const greeter = createGreeter(twoSessions());
+        greeter.backend.loginUnavailable();
+        mouseClick(findChild(greeter, "optionsButton"));
+        compare(greeter.overlay, "");
+        verify(!findChild(greeter, "sessionMenu").visible);
+    }
+
     function test_down_and_enter_pick_a_session_in_the_session_menu() {
         const greeter = createGreeter(twoSessions());
         const menu = openOptions(greeter);

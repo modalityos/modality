@@ -49,14 +49,16 @@ QtObject {
     property bool wrongPasswordShown: false
 
     property string phase: "ready"
+    // Whether the screen takes a login or opens an overlay: not while a login is under way,
+    // nor once login is unavailable.
+    readonly property bool acceptsInput: phase !== "checking" && phase !== "starting" && phase !== "unavailable"
     property string pendingPassword: ""
 
     // greetd turned the password down: the screen clears the field.
     signal passwordRejected
 
     function submit(password) {
-        if (phase === "checking" || phase === "starting" || phase === "unavailable"
-                || password.length === 0 || !selectedUser)
+        if (!acceptsInput || password.length === 0 || !selectedUser)
             return;
         pendingPassword = password;
         phase = "checking";
@@ -64,8 +66,7 @@ QtObject {
     }
 
     function openOtherUsers() {
-        if (phase !== "checking" && phase !== "starting" && phase !== "unavailable"
-                && (backend?.users.length ?? 0) > 1)
+        if (acceptsInput && (backend?.users.length ?? 0) > 1)
             overlay = "otherUsers";
     }
 
@@ -73,7 +74,7 @@ QtObject {
     function toggleOptions() {
         if (overlay === "options")
             overlay = "";
-        else if (phase !== "checking" && phase !== "starting" && (backend?.sessions.length ?? 0) > 1)
+        else if (acceptsInput && (backend?.sessions.length ?? 0) > 1)
             overlay = "options";
     }
 
