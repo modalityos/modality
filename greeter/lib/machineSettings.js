@@ -3,7 +3,8 @@
 // Machine settings for the Greeter: Defaults shipped under the install prefix, then Admin
 // overrides from /etc/modalityos on top. A user's own settings never reach the Greeter.
 
-// What the Greeter uses when neither file says otherwise.
+// What the Greeter uses when neither file says otherwise; the backend's and the screen's
+// defaults come from here too.
 const builtIn = {
     theme: "dark",
     clock24Hour: true,

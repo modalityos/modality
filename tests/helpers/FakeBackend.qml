@@ -15,13 +15,13 @@ GreeterBackend {
 
     users: [
         {
-            name: "ian",
-            realName: "Ian Gregson",
+            name: "katherine",
+            realName: "Katherine Johnson",
             avatar: "",
             systemAccount: false
         }
     ]
-    lastUser: "ian"
+    lastUser: "katherine"
     sessions: [
         {
             id: "org.modalityos.kwin",

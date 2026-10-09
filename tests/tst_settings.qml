@@ -84,7 +84,7 @@ TestCase {
         const greeter = createGreeter({
             users: [
                 { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
             ]
         });
         compare(Theme.reduceTransparency, false);
@@ -105,7 +105,7 @@ TestCase {
             reduceTransparency: true,
             users: [
                 { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
             ]
         });
         compare(Theme.reduceTransparency, true);

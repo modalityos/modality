@@ -53,7 +53,7 @@ T.AbstractButton {
             opacity: control.circleOpacity
 
             Behavior on scale {
-                NumberAnimation {
+                ScaleAnimator {
                     duration: Theme.motionDurationFast
                     easing.type: Easing.Bezier
                     easing.bezierCurve: Theme.motionEasingStandard
@@ -69,7 +69,6 @@ T.AbstractButton {
             Glass {
                 anchors.fill: parent
                 radius: width / 2
-                frosted: control.enabled ? !control.down && !control.hoverActive && !control.checked : true
                 color: control.fillColor
 
                 Behavior on color {

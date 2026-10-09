@@ -36,8 +36,10 @@ T.AbstractButton {
         spacing: Theme.space2
 
         UserAvatar {
+            objectName: "userCellAvatar"
             Layout.alignment: Qt.AlignHCenter
             size: cell.avatarSize
+            restingShadow: Theme.shadowRaised
             hoverEnabled: false
             user: cell.user
             fallback: cell.defaultAvatar

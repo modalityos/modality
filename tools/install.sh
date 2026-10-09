@@ -4,8 +4,8 @@
 #
 #   tools/install.sh [--prefix DIR] [--destdir DIR]
 #
-# Wallpapers are rendered from their SVG masters with rsvg-convert (Silk needs its blend
-# modes) and cached in build/wallpapers.
+# Wallpapers are rendered from their SVG masters in data/wallpapers with rsvg-convert (Silk
+# needs its blend modes) and cached in build/wallpapers.
 set -euo pipefail
 
 usage() {
@@ -33,7 +33,7 @@ render_wallpapers() {
     command -v rsvg-convert >/dev/null || { echo "install.sh: rsvg-convert (librsvg) is required" >&2; exit 1; }
     command -v magick >/dev/null || { echo "install.sh: magick (imagemagick) is required" >&2; exit 1; }
     mkdir -p "$out"
-    for svg in "$repo"/design/wallpaper-default/assets/wallpaper-*.svg; do
+    for svg in "$repo"/data/wallpapers/wallpaper-*.svg; do
         name=$(basename "$svg" .svg)
         png="$out/$name-3840x2160.png"
         if [[ ! $png -nt $svg ]]; then
@@ -50,7 +50,7 @@ render_wallpapers() {
 
 render_wallpapers
 
-install -d "$root/bin" "$root/lib/qt6/qml" "$root/lib/tmpfiles.d" "$root/share/modalityos/greeter" \
+install -d "$root/bin" "$root/lib/qt6/qml" "$root/lib/tmpfiles.d" \
     "$root/share/modalityos/avatars" "$root/share/modalityos/wallpapers" "$root/share/wayland-sessions"
 
 # Shared QML modules, where Qt looks for them under the prefix.
@@ -64,7 +64,7 @@ cp -r "$repo/greeter/shell.qml" "$repo/greeter/RealBackend.qml" "$repo/greeter/l
     "$root/share/modalityos/greeter/"
 
 install -m 0644 "$repo"/build/wallpapers/*.png "$root/share/modalityos/wallpapers/"
-install -m 0644 "$repo/design/wallpaper-default/assets/LICENSE" "$root/share/modalityos/wallpapers/LICENSE"
+install -m 0644 "$repo/data/wallpapers/LICENSE" "$root/share/modalityos/wallpapers/LICENSE"
 
 install -m 0644 "$repo"/data/avatars/*.png "$root/share/modalityos/avatars/"
 

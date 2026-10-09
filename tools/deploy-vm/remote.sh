@@ -60,6 +60,8 @@ deploy() {
         fi
     fi
     install -m 0755 "$0" "$state/remote.sh"
+    # Where this deploy went, so a later rollback --purge removes it whatever --prefix it gets.
+    echo "$prefix" > "$state/prefix"
 
     install -d -m 0755 "$prefix"
     rsync -a --delete --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r "$from/root/" "$prefix/"
@@ -76,7 +78,14 @@ deploy() {
     if [[ $previous != none && $previous != greetd.service ]]; then
         systemctl disable "$previous"
     fi
-    systemctl enable greetd.service
+    # Never leave the VM with no display manager: put the previous one back first.
+    if ! systemctl enable greetd.service; then
+        if [[ $previous != none && $previous != greetd.service ]]; then
+            systemctl enable "$previous"
+        fi
+        echo "remote.sh: could not enable greetd; $previous stays the display manager" >&2
+        exit 1
+    fi
 
     echo "Deployed into $prefix; greetd is the display manager (was: $previous)."
     echo "Text console: Ctrl+Alt+F2. Roll back: tools/deploy-vm.sh rollback"
@@ -103,10 +112,16 @@ rollback() {
         systemctl enable "$previous"
     fi
     if $purge; then
-        rm -rf "$prefix" /var/lib/modalityos/greeter
+        local deployed=$prefix
+        [[ -f $state/prefix ]] && deployed=$(cat "$state/prefix")
+        if [[ $deployed != /opt/?* ]]; then
+            echo "remote.sh: stored prefix $deployed is not under /opt; not purging it" >&2
+            exit 1
+        fi
+        rm -rf "$deployed" /var/lib/modalityos/greeter
         rmdir --ignore-fail-on-non-empty /var/lib/modalityos 2>/dev/null || true
     fi
-    rm -f "$state/previous-display-manager" "$state/greetd-config.toml"
+    rm -f "$state/previous-display-manager" "$state/greetd-config.toml" "$state/prefix"
 
     echo "Rolled back: the display manager is $previous again."
 }

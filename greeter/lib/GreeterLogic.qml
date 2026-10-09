@@ -48,24 +48,32 @@ QtObject {
     // The Wrong password Notice: shown for three seconds, or until typing starts again.
     property bool wrongPasswordShown: false
 
+    // What greetd said went wrong with the last login, such as an expired account; shown in
+    // place of Wrong password until typing starts again.
+    property string authError: ""
+
     property string phase: "ready"
+    // Whether the screen takes a login or opens an overlay: not while a login is under way,
+    // nor once login is unavailable.
+    readonly property bool acceptsInput: phase !== "checking" && phase !== "starting" && phase !== "unavailable"
     property string pendingPassword: ""
 
     // greetd turned the password down: the screen clears the field.
     signal passwordRejected
+    // greetd ended the login before checking the password: the screen clears the field.
+    signal attemptEnded
 
     function submit(password) {
-        if (phase === "checking" || phase === "starting" || phase === "unavailable"
-                || password.length === 0 || !selectedUser)
+        if (!acceptsInput || password.length === 0 || !selectedUser)
             return;
         pendingPassword = password;
+        authError = "";
         phase = "checking";
         backend.startAuthentication(selectedUser.name);
     }
 
     function openOtherUsers() {
-        if (phase !== "checking" && phase !== "starting" && phase !== "unavailable"
-                && (backend?.users.length ?? 0) > 1)
+        if (acceptsInput && (backend?.users.length ?? 0) > 1)
             overlay = "otherUsers";
     }
 
@@ -73,7 +81,7 @@ QtObject {
     function toggleOptions() {
         if (overlay === "options")
             overlay = "";
-        else if (phase !== "checking" && phase !== "starting" && (backend?.sessions.length ?? 0) > 1)
+        else if (acceptsInput && (backend?.sessions.length ?? 0) > 1)
             overlay = "options";
     }
 
@@ -99,6 +107,7 @@ QtObject {
         chosenSession = "";
         overlay = "";
         wrongPasswordShown = false;
+        authError = "";
         if (phase !== "unavailable")
             phase = "ready";
     }
@@ -113,17 +122,19 @@ QtObject {
     }
 
     // The screen calls this when its fade-out ends. The login is remembered first, since
-    // the Greeter quits once the Session launches.
+    // the Greeter quits once the Session launches; only a picked Session is saved, so users
+    // who never pick follow the machine default.
     function launch() {
         if (phase !== "starting")
             return;
-        backend.remember(selectedUser.name, selectedSession.id);
+        backend.remember(selectedUser.name, chosenSession);
         backend.launch(selectedSession);
     }
 
     // The screen calls this for each character typed into the password field.
     function typed(text, modifiers) {
         wrongPasswordShown = false;
+        authError = "";
         const upper = text.toUpperCase();
         const lower = text.toLowerCase();
         if (upper !== lower)
@@ -150,9 +161,16 @@ QtObject {
                 return;
             logic.pendingPassword = "";
             logic.phase = "wrongPassword";
-            logic.wrongPasswordShown = true;
-            logic.wrongPasswordTimer.restart();
+            if (logic.authError === "") {
+                logic.wrongPasswordShown = true;
+                logic.wrongPasswordTimer.restart();
+            }
             logic.passwordRejected();
+        }
+
+        function onAuthError(message) {
+            if (logic.phase === "checking")
+                logic.authError = message;
         }
 
         function onReadyToLaunch() {
@@ -167,9 +185,15 @@ QtObject {
             logic.phase = "unavailable";
         }
 
+        // Before the password is accepted, greetd's error ends only this login attempt; after
+        // it, the Session failed to start.
         function onError(message) {
-            if (logic.phase === "checking" || logic.phase === "starting") {
+            if (logic.phase === "checking") {
                 logic.pendingPassword = "";
+                logic.authError = logic.authError || message;
+                logic.phase = "ready";
+                logic.attemptEnded();
+            } else if (logic.phase === "starting") {
                 logic.phase = "sessionFailed";
             }
         }

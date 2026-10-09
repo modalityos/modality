@@ -135,9 +135,8 @@ FocusScope {
     ParallelAnimation {
         id: openAnimation
 
-        NumberAnimation {
+        OpacityAnimator {
             target: menu
-            property: "opacity"
             to: 1
             duration: Theme.motionDurationNormal
             easing.type: Easing.Bezier
@@ -158,9 +157,8 @@ FocusScope {
     ParallelAnimation {
         id: closeAnimation
 
-        NumberAnimation {
+        OpacityAnimator {
             target: menu
-            property: "opacity"
             to: 0
             duration: Theme.motionDurationNormal
             easing.type: Easing.Bezier
