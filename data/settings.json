@@ -1,0 +1,7 @@
+{
+    "theme": "dark",
+    "clock24Hour": true,
+    "defaultSession": "org.modalityos.kwin",
+    "wallpaper": "silk",
+    "reduceTransparency": false
+}
