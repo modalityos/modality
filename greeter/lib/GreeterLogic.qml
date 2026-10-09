@@ -41,10 +41,13 @@ QtObject {
         backend.startAuthentication(selectedUser.name);
     }
 
-    // The screen calls this when its fade-out ends.
+    // The screen calls this when its fade-out ends. The login is remembered first, since
+    // the Greeter quits once the Session launches.
     function launch() {
-        if (phase === "starting")
-            backend.launch(selectedSession);
+        if (phase !== "starting")
+            return;
+        backend.remember(selectedUser.name, selectedSession.id);
+        backend.launch(selectedSession);
     }
 
     property Connections backendConnections: Connections {

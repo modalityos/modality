@@ -153,6 +153,22 @@ TestCase {
         compare(backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 
+    function test_logging_in_remembers_the_user_and_their_session() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        const calls = greeter.backend.calls;
+        compare(calls[calls.length - 2], ["remember", "ian", "org.modalityos.kwin"]);
+    }
+
+    function test_wrong_password_remembers_nothing() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        verify(!greeter.backend.calls.some(call => call[0] === "remember"));
+    }
+
     function logIn(greeter, password) {
         typeText(password);
         keyClick(Qt.Key_Return);
