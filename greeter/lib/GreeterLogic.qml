@@ -29,11 +29,13 @@ QtObject {
     // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel,
     // "options" for the Session Menu.
     property string overlay: ""
-    // The Session picked in the Session Menu, else the machine default, else the first.
-    // A pick is remembered only when its user logs in.
+    // The Session picked in the Session Menu, else the selected user's remembered one, else
+    // the machine default, else the first. A pick is remembered only when its user logs in.
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
+        const remembered = backend?.rememberedSessions[selectedUser?.name ?? ""];
         return sessions.find(session => session.id === chosenSession)
+            ?? sessions.find(session => session.id === remembered)
             ?? sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
     property string chosenSession: ""
@@ -86,14 +88,15 @@ QtObject {
         overlay = "";
     }
 
-    // A newly picked user starts over with an empty field, after greetd drops what is left
-    // of a failed Session.
+    // A newly picked user starts over with an empty field and their own Session, after
+    // greetd drops what is left of a failed Session.
     function chooseUser(name) {
         if (overlay !== "otherUsers")
             return;
         if (phase === "sessionFailed")
             backend.cancel();
         chosenUser = name;
+        chosenSession = "";
         overlay = "";
         wrongPasswordShown = false;
         if (phase !== "unavailable")

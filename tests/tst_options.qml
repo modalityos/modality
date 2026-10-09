@@ -144,4 +144,57 @@ TestCase {
         compare(calls[calls.length - 2], ["remember", "ian", "hyprland"]);
         compare(calls[calls.length - 1], ["launch", "hyprland"]);
     }
+
+    readonly property var twoUsers: [
+        { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
+        { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+    ]
+
+    function rememberedHyprlandForIan() {
+        return twoSessions({
+            users: testCase.twoUsers,
+            lastUser: "ian",
+            rememberedSessions: { ian: "hyprland" }
+        });
+    }
+
+    function test_remembered_session_is_checked_in_the_session_menu() {
+        const greeter = createGreeter(rememberedHyprlandForIan());
+        const menu = openOptions(greeter);
+        compare(menu.model.map(item => item.checked), [false, true]);
+    }
+
+    function test_remembered_session_launches_for_its_user() {
+        const greeter = createGreeter(rememberedHyprlandForIan());
+        logIn(greeter);
+        compare(greeter.backend.lastCall(), ["launch", "hyprland"]);
+    }
+
+    function test_another_user_gets_the_default_session() {
+        const greeter = createGreeter(twoSessions({
+            users: testCase.twoUsers,
+            lastUser: "ada",
+            rememberedSessions: { ian: "hyprland" }
+        }));
+        logIn(greeter);
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
+
+    function test_a_session_picked_for_one_user_does_not_carry_to_the_next_user_picked() {
+        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "ian" }));
+        mouseClick(openOptions(greeter).itemAt(1));
+        mouseClick(findChild(greeter, "otherUsersPill"));
+        const panel = findChild(greeter, "userPanel");
+        tryCompare(panel, "opacity", 1);
+        mouseClick(findChild(greeter, "userCell0"));
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+        logIn(greeter);
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
+
+    function test_remembered_session_that_is_gone_gives_the_default_session() {
+        const greeter = createGreeter(twoSessions({ rememberedSessions: { ian: "sway" } }));
+        logIn(greeter);
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
 }
