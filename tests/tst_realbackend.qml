@@ -317,6 +317,14 @@ TestCase {
         compare(backend.lastUser, "ian");
     }
 
+    function test_remembered_session_is_for_that_user_only() {
+        const backend = createBackend();
+        backend.remember("ian", "plasma");
+        compare(backend.rememberedSessions, { ian: "plasma" });
+        backend.remember("ada", "org.modalityos.kwin");
+        compare(backend.rememberedSessions, { ian: "plasma", ada: "org.modalityos.kwin" });
+    }
+
     function test_remember_replaces_a_corrupt_state_file() {
         Files.write(testCase.statePath, "not json");
         const backend = createBackend();
