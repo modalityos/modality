@@ -1,7 +1,7 @@
 # Default Wallpapers: design spec
 
 **Kind:** illustration · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/QSqpbhHkprD1XQqtS8pzTY · **Source:** handoff/ (1791541046-ed31, 2026-10-09)
-**Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
+**Built by:** #10. From now on the code is the source of truth.
 
 ## Tokens
 | Token | Light | Dark | Code name | Note |

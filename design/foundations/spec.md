@@ -1,7 +1,7 @@
 # ModalityOS Foundations: design spec
 
 **Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791542467-b02b, 2026-10-09)
-**Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
+**Built by:** #10. From now on the code is the source of truth.
 
 ## Tokens
 Every Token in `tokens.json` except type styles (see Type). One value in Light for a Token with no theme; Dark is `—`. Font families are not in this table (see Type). Values are CSS strings as the design gives them: colours are `#rrggbb` or `rgba(r, g, b, a)`, shadows are CSS `box-shadow` lists, easings are CSS `cubic-bezier(x1, y1, x2, y2)`. Note marks Tokens that only make sense with a compositor blur ("blur only"): build them as a compositor effect or use the matching `*Fallback`. All Tokens are new in this design (it is the first).

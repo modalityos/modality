@@ -1,7 +1,7 @@
 # Greeter Login: design spec
 
 **Kind:** screen · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/HcWha4trdzGPenb7DhymTz · **Source:** handoff/ (1791542555-0a47, 2026-10-09)
-**Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
+**Built by:** #10. From now on the code is the source of truth.
 
 The design is the "Other users" layout: only the last user to log in shows, large, with an **Other users** pill when there are more. The mockup's code also holds a row layout and a list layout (`layout="row"`, `layout="list"`); both were set aside in the brief and are not part of this spec.
 
