@@ -80,7 +80,7 @@ Window {
             }
         }
 
-        SheetLabel { text: "Avatar" }
+        SheetLabel { text: qsTr("Avatar") }
         Repeater {
             model: window.states
 
@@ -88,7 +88,7 @@ Window {
                 required property string modelData
 
                 size: 64
-                name: "John Doe"
+                name: qsTr("John Doe")
                 source: Qt.resolvedUrl("../../data/avatars/avatar-cat.png")
                 hoverActive: modelData === "hover"
                 down: modelData === "pressed"
@@ -97,7 +97,7 @@ Window {
             }
         }
 
-        SheetLabel { text: "PasswordField" }
+        SheetLabel { text: qsTr("PasswordField") }
         Repeater {
             model: window.states
 
@@ -111,14 +111,14 @@ Window {
             }
         }
 
-        SheetLabel { text: "Button primary" }
+        SheetLabel { text: qsTr("Button primary") }
         Repeater {
             model: window.states
 
             Button {
                 required property string modelData
 
-                text: "Try again"
+                text: qsTr("Try again")
                 hoverActive: modelData === "hover"
                 down: modelData === "pressed"
                 ringShown: modelData === "focused"
@@ -126,7 +126,7 @@ Window {
             }
         }
 
-        SheetLabel { text: "Button secondary" }
+        SheetLabel { text: qsTr("Button secondary") }
         Repeater {
             model: window.states
 
@@ -134,7 +134,7 @@ Window {
                 required property string modelData
 
                 variant: Button.Secondary
-                text: "Cancel"
+                text: qsTr("Cancel")
                 hoverActive: modelData === "hover"
                 down: modelData === "pressed"
                 ringShown: modelData === "focused"
@@ -142,14 +142,14 @@ Window {
             }
         }
 
-        SheetLabel { text: "IconButton" }
+        SheetLabel { text: qsTr("IconButton") }
         Repeater {
             model: window.states
 
             IconButton {
                 required property string modelData
 
-                text: "Restart"
+                text: qsTr("Restart")
                 glyph: Glyphs.restart
                 hoverActive: modelData === "hover"
                 down: modelData === "pressed"
@@ -158,7 +158,7 @@ Window {
             }
         }
 
-        SheetLabel { text: "Menu item" }
+        SheetLabel { text: qsTr("Menu item") }
         Repeater {
             model: window.states
 
@@ -176,7 +176,7 @@ Window {
 
         SheetLabel {
             Layout.alignment: Qt.AlignTop
-            text: "Notice · Menu · Checking"
+            text: qsTr("Notice · Menu · Checking")
         }
 
         Column {
@@ -186,28 +186,28 @@ Window {
             Notice {
                 tone: Notice.Warning
                 glyph: Glyphs.capsLock
-                text: "Caps Lock is on"
+                text: qsTr("Caps Lock is on")
             }
 
             Notice {
                 tone: Notice.Danger
                 glyph: Glyphs.cross
-                text: "Wrong password"
+                text: qsTr("Wrong password")
             }
         }
 
         Notice {
             Layout.alignment: Qt.AlignTop
             tone: Notice.Danger
-            text: "Couldn't start the session."
-            actionText: "Try again"
+            text: qsTr("Couldn't start the session.")
+            actionText: qsTr("Try again")
         }
 
         Menu {
             id: sessionMenu
 
             Layout.alignment: Qt.AlignTop
-            title: "Session"
+            title: qsTr("Session")
             model: [{ text: "KWin", checked: true }, { text: "Hyprland" }]
             Component.onCompleted: {
                 open();
