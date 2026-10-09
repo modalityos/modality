@@ -249,6 +249,34 @@ TestCase {
                 ["/usr/lib/plasma-dbus-run-session-if-needed", "/usr/bin/startplasma-wayland"]);
     }
 
+    // A hidden entry counts as deleted, so it also hides the same id in a later folder.
+    function test_hidden_sessions_are_skipped() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("wayland-sessions"), [
+            "\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop",
+            "[Desktop Entry]",
+            "Name=Plasma (Wayland)",
+            "Exec=/bin/false",
+            "Hidden=true",
+            "\u001e/usr/share/wayland-sessions/org.modalityos.kwin.desktop",
+            "[Desktop Entry]",
+            "Name=ModalityOS (KWin)",
+            "Exec=/usr/bin/modalityos-session-kwin",
+            "Hidden=false",
+            "\u001e/usr/share/wayland-sessions/gnome-debug.desktop",
+            "[Desktop Entry]",
+            "Name=GNOME (debug)",
+            "Exec=/usr/bin/gnome-session --debug",
+            "NoDisplay=true",
+            "\u001e/usr/share/wayland-sessions/plasma.desktop",
+            "[Desktop Entry]",
+            "Name=Plasma (Wayland)",
+            "Exec=/usr/bin/startplasma-wayland",
+            ""
+        ].join("\n"));
+        compare(backend.sessions.map(session => session.id), ["org.modalityos.kwin"]);
+    }
+
     readonly property string statePath: "/var/lib/modalityos/greeter/state.json"
 
     function test_last_user_comes_from_the_state_file() {
@@ -287,6 +315,14 @@ TestCase {
             sessions: { ada: "plasma", ian: "org.modalityos.kwin" }
         });
         compare(backend.lastUser, "ian");
+    }
+
+    function test_remembered_session_is_for_that_user_only() {
+        const backend = createBackend();
+        backend.remember("ian", "plasma");
+        compare(backend.rememberedSessions, { ian: "plasma" });
+        backend.remember("ada", "org.modalityos.kwin");
+        compare(backend.rememberedSessions, { ian: "plasma", ada: "org.modalityos.kwin" });
     }
 
     function test_remember_replaces_a_corrupt_state_file() {
