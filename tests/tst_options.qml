@@ -192,6 +192,21 @@ TestCase {
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 
+    function test_esc_closes_the_session_menu_and_returns_focus_to_options() {
+        const greeter = createGreeter(twoSessions());
+        const menu = openOptions(greeter);
+        keyClick(Qt.Key_Down);
+        keyClick(Qt.Key_Escape);
+        compare(greeter.overlay, "");
+        tryCompare(menu, "visible", false);
+        verify(findChild(greeter, "optionsButton").activeFocus);
+        // Nothing was picked: Enter on Options reopens the Menu with the same Session checked.
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "options");
+        compare(menu.model.map(item => item.checked), [true, false]);
+        tryVerify(() => menu.itemAt(0).activeFocus);
+    }
+
     function test_remembered_session_that_is_gone_gives_the_default_session() {
         const greeter = createGreeter(twoSessions({ rememberedSessions: { ian: "sway" } }));
         logIn(greeter);

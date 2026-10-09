@@ -95,6 +95,10 @@ FocusScope {
                 logic.chooseSession(id);
                 userColumn.passwordField.forceActiveFocus();
             }
+            onDismissed: {
+                logic.closeOverlay();
+                sessionOptions.button.forceActiveFocus();
+            }
         }
 
         PowerRow {

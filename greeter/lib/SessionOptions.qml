@@ -19,6 +19,7 @@ Item {
 
     signal toggled
     signal picked(string id)
+    signal dismissed
 
     onOpenChanged: {
         if (open)
@@ -67,6 +68,7 @@ Item {
                     checked: session.id === options.currentSession
                 }))
         onTriggered: index => options.picked(options.sessions[index].id)
+        onDismissed: options.dismissed()
 
         Frost {
             z: -1
