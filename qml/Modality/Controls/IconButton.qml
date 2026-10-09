@@ -53,7 +53,7 @@ T.AbstractButton {
             opacity: control.circleOpacity
 
             Behavior on scale {
-                NumberAnimation {
+                ScaleAnimator {
                     duration: Theme.motionDurationFast
                     easing.type: Easing.Bezier
                     easing.bezierCurve: Theme.motionEasingStandard

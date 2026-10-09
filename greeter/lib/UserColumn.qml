@@ -185,7 +185,7 @@ Item {
         visible: shown || opacity > 0
 
         Behavior on opacity {
-            NumberAnimation {
+            OpacityAnimator {
                 duration: Theme.motionDurationNormal
                 easing.type: Easing.Bezier
                 easing.bezierCurve: notice.shown ? Theme.motionEasingOut : Theme.motionEasingIn

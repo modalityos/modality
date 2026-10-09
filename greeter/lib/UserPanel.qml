@@ -43,7 +43,7 @@ FocusScope {
     }
 
     Behavior on opacity {
-        NumberAnimation {
+        OpacityAnimator {
             duration: Theme.motionDurationNormal
             easing.type: Easing.Bezier
             easing.bezierCurve: panel.open ? Theme.motionEasingOut : Theme.motionEasingIn
@@ -72,7 +72,7 @@ FocusScope {
         scale: panel.open ? 1 : 0.98
 
         Behavior on scale {
-            NumberAnimation {
+            ScaleAnimator {
                 duration: Theme.motionDurationNormal
                 easing.type: Easing.Bezier
                 easing.bezierCurve: panel.open ? Theme.motionEasingOut : Theme.motionEasingIn
