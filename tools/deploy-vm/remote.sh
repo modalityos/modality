@@ -78,7 +78,14 @@ deploy() {
     if [[ $previous != none && $previous != greetd.service ]]; then
         systemctl disable "$previous"
     fi
-    systemctl enable greetd.service
+    # Never leave the VM with no display manager: put the previous one back first.
+    if ! systemctl enable greetd.service; then
+        if [[ $previous != none && $previous != greetd.service ]]; then
+            systemctl enable "$previous"
+        fi
+        echo "remote.sh: could not enable greetd; $previous stays the display manager" >&2
+        exit 1
+    fi
 
     echo "Deployed into $prefix; greetd is the display manager (was: $previous)."
     echo "Text console: Ctrl+Alt+F2. Roll back: tools/deploy-vm.sh rollback"
