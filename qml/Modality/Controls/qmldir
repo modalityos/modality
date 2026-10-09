@@ -8,3 +8,5 @@ Icon 1.0 Icon.qml
 IconButton 1.0 IconButton.qml
 singleton Glyphs 1.0 Glyphs.qml
 Avatar 1.0 Avatar.qml
+PasswordField 1.0 PasswordField.qml
+Spinner 1.0 Spinner.qml
