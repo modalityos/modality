@@ -69,7 +69,6 @@ FocusScope {
         anchors.fill: parent
         radius: control.radius
         color: control.fillColor
-        frosted: !control.interactive || !(control.hoverActive || control.down)
 
         Behavior on color {
             FastColorAnimation {}
