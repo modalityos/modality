@@ -32,6 +32,7 @@ GreeterBackend {
     ]
     defaultSession: "org.modalityos.kwin"
     wallpaperFolder: Qt.resolvedUrl("../fixtures/wallpapers")
+    defaultAvatar: Qt.resolvedUrl("../../data/avatars/avatar-cat.png")
 
     function startAuthentication(user) {
         record(["startAuthentication", user]);

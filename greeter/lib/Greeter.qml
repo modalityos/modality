@@ -63,6 +63,7 @@ FocusScope {
             anchors.bottomMargin: greeter.shortScreen ? 96 : 176
             width: 280
             user: logic.selectedUser
+            defaultAvatar: greeter.backend?.defaultAvatar ?? ""
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
         }

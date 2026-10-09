@@ -273,6 +273,11 @@ TestCase {
         compare(backend.defaultSession, "org.modalityos.kwin");
     }
 
+    function test_default_avatar_is_the_built_in_cat_in_the_prefix() {
+        const backend = createBackend();
+        compare(backend.defaultAvatar, "file:///opt/modalityos-dev/share/modalityos/avatars/avatar-cat.png");
+    }
+
     function test_wallpapers_come_from_the_prefix() {
         const backend = createBackend();
         compare(backend.wallpaperFolder, "file:///opt/modalityos-dev/share/modalityos/wallpapers");

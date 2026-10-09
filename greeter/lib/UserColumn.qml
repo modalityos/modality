@@ -9,16 +9,18 @@ ColumnLayout {
 
     // One entry of the Greeter backend's users.
     property var user: null
+    property url defaultAvatar
     property alias passwordField: passwordField
     // The wallpaper the Glass elements blur.
     property Item backdrop
 
     spacing: Theme.space3
 
-    Avatar {
+    UserAvatar {
+        objectName: "userAvatar"
         Layout.alignment: Qt.AlignHCenter
-        name: column.user?.realName || column.user?.name || ""
-        source: column.user?.avatar ?? ""
+        user: column.user
+        fallback: column.defaultAvatar
     }
 
     Text {

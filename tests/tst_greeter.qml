@@ -70,6 +70,34 @@ TestCase {
         compare(findChild(greeter, "userName").text, "ian");
     }
 
+    readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
+    readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
+
+    function test_user_with_a_picture_shows_it() {
+        const greeter = createGreeter({
+            users: [{ name: "ian", realName: "Ian Gregson", avatar: testCase.ballAvatar, systemAccount: false }]
+        });
+        const avatar = findChild(greeter, "userAvatar");
+        compare(avatar.source, testCase.ballAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
+    function test_user_without_a_picture_shows_the_default_avatar() {
+        const greeter = createGreeter();
+        const avatar = findChild(greeter, "userAvatar");
+        compare(avatar.source, testCase.catAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
+    function test_user_whose_picture_cannot_be_read_shows_the_default_avatar() {
+        const greeter = createGreeter({
+            users: [{ name: "ian", realName: "Ian Gregson", avatar: "file:///nonexistent/ian", systemAccount: false }]
+        });
+        const avatar = findChild(greeter, "userAvatar");
+        tryCompare(avatar, "source", testCase.catAvatar);
+        tryCompare(avatar, "status", Image.Ready);
+    }
+
     function test_clock_shows_the_time_in_display_with_tabular_figures() {
         const greeter = createGreeter();
         const clock = findChild(greeter, "clock");

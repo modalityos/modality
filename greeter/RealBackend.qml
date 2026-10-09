@@ -17,6 +17,7 @@ GreeterBackend {
     // Machine settings stay at their Defaults until they are read from files.
     defaultSession: "org.modalityos.kwin"
     wallpaperFolder: `file://${prefix}/share/modalityos/wallpapers`
+    defaultAvatar: `file://${prefix}/share/modalityos/avatars/avatar-cat.png`
 
     // The last user to log in and each user's Session; the greeter user owns the folder.
     property string statePath: "/var/lib/modalityos/greeter/state.json"
