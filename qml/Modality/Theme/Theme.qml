@@ -6,6 +6,9 @@ QtObject {
     // "dark" or "light"; the Greeter defaults to dark.
     property string theme: "dark"
 
+    // Draw materials in their solid *Fallback instead of tint over blur.
+    property bool reduceTransparency: false
+
     readonly property bool dark: theme !== "light"
 
     // Colours
@@ -45,6 +48,8 @@ QtObject {
     readonly property color materialPanelFallback: dark ? "#272624" : "#f3f2f0"
     readonly property color materialPopoverTint: dark ? rgba(32, 32, 34, 0.9) : rgba(251, 251, 250, 0.82)
     readonly property color materialPopoverFallback: dark ? "#2f2e2c" : "#fbfbfa"
+    // The popover material as drawn now: tint over blur, or the fallback when transparency is reduced.
+    readonly property color materialPopover: reduceTransparency ? materialPopoverFallback : materialPopoverTint
     readonly property color materialSidebarTint: dark ? rgba(30, 30, 30, 0.62) : rgba(236, 234, 231, 0.68)
     readonly property color materialSidebarFallback: dark ? "#242321" : "#e9e8e5"
 

@@ -146,6 +146,13 @@ TestCase {
 
     function cleanup() {
         Theme.theme = "dark";
+        Theme.reduceTransparency = false;
+    }
+
+    function test_popover_material_is_the_tint_unless_transparency_is_reduced() {
+        compare(Theme.materialPopover, Theme.materialPopoverTint);
+        Theme.reduceTransparency = true;
+        compare(Theme.materialPopover, Theme.materialPopoverFallback);
     }
 
     function test_greeter_theme_defaults_to_dark() {
