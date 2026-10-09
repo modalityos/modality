@@ -28,6 +28,13 @@ Item {
             menu.close();
     }
 
+    // A click outside the open Menu only closes it; Options, above, still toggles it.
+    MouseArea {
+        anchors.fill: parent
+        enabled: options.open
+        onClicked: options.dismissed()
+    }
+
     IconButton {
         id: button
 

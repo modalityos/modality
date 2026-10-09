@@ -207,6 +207,41 @@ TestCase {
         tryVerify(() => menu.itemAt(0).activeFocus);
     }
 
+    function test_clicking_outside_the_session_menu_closes_it() {
+        const greeter = createGreeter(twoSessions());
+        const menu = openOptions(greeter);
+        mouseClick(greeter, 10, 10);
+        compare(greeter.overlay, "");
+        tryCompare(menu, "visible", false);
+    }
+
+    function test_clicking_outside_the_session_menu_does_not_press_what_is_under_it() {
+        const greeter = createGreeter(twoSessions());
+        openOptions(greeter);
+        mouseClick(findChild(greeter, "sleepButton"));
+        compare(greeter.overlay, "");
+        verify(!greeter.backend.calls.some(call => call[0] === "suspend"));
+    }
+
+    function test_clicking_options_again_closes_the_session_menu() {
+        const greeter = createGreeter(twoSessions());
+        const menu = openOptions(greeter);
+        mouseClick(findChild(greeter, "optionsButton"));
+        compare(greeter.overlay, "");
+        tryCompare(menu, "visible", false);
+    }
+
+    function test_down_and_enter_pick_a_session_in_the_session_menu() {
+        const greeter = createGreeter(twoSessions());
+        const menu = openOptions(greeter);
+        keyClick(Qt.Key_Down);
+        verify(menu.itemAt(1).activeFocus);
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "");
+        logIn(greeter);
+        compare(greeter.backend.lastCall(), ["launch", "hyprland"]);
+    }
+
     function test_remembered_session_that_is_gone_gives_the_default_session() {
         const greeter = createGreeter(twoSessions({ rememberedSessions: { ian: "sway" } }));
         logIn(greeter);

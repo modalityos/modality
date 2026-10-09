@@ -79,11 +79,13 @@ FocusScope {
             onRetryRequested: logic.retry()
         }
 
-        // Before the PowerRow in the tree, so Options comes before the power buttons in Tab order.
+        // Before the PowerRow in the tree, so Options comes before the power buttons in Tab
+        // order, but drawn over it, so a click outside the open Menu reaches nothing else.
         SessionOptions {
             id: sessionOptions
 
             anchors.fill: parent
+            z: 1
             sessions: greeter.backend?.sessions ?? []
             currentSession: logic.selectedSession?.id ?? ""
             open: logic.overlay === "options"
