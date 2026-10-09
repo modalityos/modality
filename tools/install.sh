@@ -68,6 +68,9 @@ install -m 0644 "$repo/design/wallpaper-default/assets/LICENSE" "$root/share/mod
 
 install -m 0644 "$repo"/data/avatars/*.png "$root/share/modalityos/avatars/"
 
+# The machine-setting Defaults; Admin overrides go in /etc/modalityos/settings.json.
+install -m 0644 "$repo/data/settings.json" "$root/share/modalityos/settings.json"
+
 install -m 0755 "$repo/session/modalityos-greeter" "$repo/session/modalityos-session-kwin" "$root/bin/"
 install -m 0644 "$repo/session/tmpfiles.d/modalityos-greeter.conf" "$root/lib/tmpfiles.d/"
 sed "s|@PREFIX@|$prefix|g" "$repo/session/org.modalityos.kwin.desktop.in" \

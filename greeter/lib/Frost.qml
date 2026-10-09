@@ -17,6 +17,9 @@ Item {
     // The part of the wallpaper behind this element, in the wallpaper's coordinates.
     property rect region
 
+    // Reduce transparency: the Glass above draws its solid fallback, so nothing shows through.
+    visible: !Theme.reduceTransparency
+
     function updateRegion() {
         if (source)
             region = mapToItem(source, 0, 0, width, height);

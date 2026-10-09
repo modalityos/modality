@@ -5,6 +5,7 @@ import "lib"
 import "lib/accounts.js" as Accounts
 import "lib/desktopEntries.js" as DesktopEntries
 import "lib/greeterState.js" as GreeterState
+import "lib/machineSettings.js" as MachineSettings
 
 // The Greeter backend on a real machine: the thin Quickshell layer. Login goes through
 // greetd; everything here maps Quickshell's API onto the Greeter backend interface.
@@ -14,9 +15,27 @@ GreeterBackend {
     // The install prefix (MODALITYOS_PREFIX, ADR 0002): where the Greeter's files live.
     property string prefix: "/usr"
 
-    // Machine settings stay at their Defaults until they are read from files.
-    defaultSession: "org.modalityos.kwin"
+    // Machine settings: the Defaults shipped in the prefix, Admin overrides winning.
+    readonly property var machineSettings: MachineSettings.resolveSettings([defaultsFile.text(), adminOverridesFile.text()])
+
+    theme: machineSettings.theme
+    clock24Hour: machineSettings.clock24Hour
+    defaultSession: machineSettings.defaultSession
+    wallpaper: machineSettings.wallpaper
+    reduceTransparency: machineSettings.reduceTransparency
     wallpaperFolder: `file://${prefix}/share/modalityos/wallpapers`
+
+    property FileView defaultsFile: FileView {
+        path: `${backend.prefix}/share/modalityos/settings.json`
+        blockLoading: true
+    }
+
+    property FileView adminOverridesFile: FileView {
+        path: "/etc/modalityos/settings.json"
+        blockLoading: true
+        // Most machines have no Admin overrides; a missing file is not an error.
+        printErrors: false
+    }
     defaultAvatar: `file://${prefix}/share/modalityos/avatars/avatar-cat.png`
 
     // The last user to log in and each user's Session; the greeter user owns the folder.

@@ -7,6 +7,8 @@ ColumnLayout {
     id: clock
 
     property date now: new Date()
+    // From the machine settings: 24-hour ("21:05") or 12-hour ("9:05 PM").
+    property bool clock24Hour: true
 
     spacing: Theme.space1
 
@@ -30,7 +32,7 @@ ColumnLayout {
     Text {
         objectName: "clockTime"
         Layout.alignment: Qt.AlignHCenter
-        text: Qt.formatTime(clock.now, "HH:mm")
+        text: Qt.formatTime(clock.now, clock.clock24Hour ? "HH:mm" : "h:mm AP")
         font.family: Theme.display.font.family
         font.pixelSize: Theme.display.font.pixelSize
         font.weight: Theme.display.font.weight

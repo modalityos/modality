@@ -15,6 +15,20 @@ FocusScope {
 
     focus: true
 
+    // Typing goes into the password field wherever focus is, except inside an overlay. Keys
+    // reach here only when the focused Control left them, so Space and Enter still act on it.
+    Keys.onPressed: event => {
+        const field = userColumn.passwordField;
+        const printable = event.text.length > 0 && event.text.charCodeAt(0) >= 0x20 && event.text.charCodeAt(0) !== 0x7f;
+        const chord = event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier);
+        if (!printable || chord || logic.overlay !== "" || !field.visible || !field.interactive)
+            return;
+        field.forceActiveFocus();
+        field.text += event.text;
+        logic.typed(event.text, event.modifiers);
+        event.accepted = true;
+    }
+
     GreeterLogic {
         id: logic
 
@@ -28,6 +42,12 @@ FocusScope {
         target: Theme
         property: "theme"
         value: greeter.backend?.theme ?? "dark"
+    }
+
+    Binding {
+        target: Theme
+        property: "reduceTransparency"
+        value: greeter.backend?.reduceTransparency ?? false
     }
 
     Rectangle {
@@ -55,6 +75,7 @@ FocusScope {
 
         Clock {
             objectName: "clock"
+            clock24Hour: greeter.backend?.clock24Hour ?? true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: greeter.shortScreen ? 56 : 112
