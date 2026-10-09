@@ -1,4 +1,5 @@
 import QtQuick
+import "machineSettings.js" as MachineSettings
 
 // The Greeter backend: the seam between the Greeter logic and the system (greetd,
 // AccountsService, Sessions, power, machine settings). The real backend and the tests'
@@ -16,12 +17,12 @@ QtObject {
     property var rememberedSessions: ({})
 
     // Machine settings: Defaults plus Admin overrides, never a user's own settings.
-    property string theme: "dark"
-    property bool clock24Hour: true
-    property string wallpaper: "silk"
+    property string theme: MachineSettings.builtIn.theme
+    property bool clock24Hour: MachineSettings.builtIn.clock24Hour
+    property string wallpaper: MachineSettings.builtIn.wallpaper
     // The folder holding the packaged wallpaper renders.
     property url wallpaperFolder
-    property bool reduceTransparency: false
+    property bool reduceTransparency: MachineSettings.builtIn.reduceTransparency
 
     // greetd asks for an answer; secret means hide what is typed (a password).
     signal authPrompt(string message, bool secret)

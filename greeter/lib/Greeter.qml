@@ -1,5 +1,6 @@
 import QtQuick
 import Modality.Theme
+import "machineSettings.js" as MachineSettings
 
 // The Greeter screen: fills the one output Cage gives it. Plain QML over a Greeter backend,
 // so it runs the same under Quickshell and under qmltestrunner.
@@ -43,13 +44,13 @@ FocusScope {
     Binding {
         target: Theme
         property: "theme"
-        value: greeter.backend?.theme ?? "dark"
+        value: greeter.backend?.theme ?? MachineSettings.builtIn.theme
     }
 
     Binding {
         target: Theme
         property: "reduceTransparency"
-        value: greeter.backend?.reduceTransparency ?? false
+        value: greeter.backend?.reduceTransparency ?? MachineSettings.builtIn.reduceTransparency
     }
 
     Rectangle {
@@ -63,7 +64,7 @@ FocusScope {
         objectName: "wallpaper"
         anchors.fill: parent
         folder: greeter.backend?.wallpaperFolder ?? ""
-        name: greeter.backend?.wallpaper ?? "silk"
+        name: greeter.backend?.wallpaper ?? MachineSettings.builtIn.wallpaper
         dark: Theme.dark
     }
 
@@ -77,7 +78,7 @@ FocusScope {
 
         Clock {
             objectName: "clock"
-            clock24Hour: greeter.backend?.clock24Hour ?? true
+            clock24Hour: greeter.backend?.clock24Hour ?? MachineSettings.builtIn.clock24Hour
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: greeter.clockTop
