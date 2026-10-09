@@ -18,7 +18,7 @@ TestCase {
 
     readonly property var twoUsers: [
         { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-        { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+        { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
     ]
     readonly property var twoSessions: [
         { id: "org.modalityos.kwin", name: "ModalityOS (KWin)", command: ["kwin"], desktopNames: ["ModalityOS"] },

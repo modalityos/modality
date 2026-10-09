@@ -72,8 +72,8 @@ TestCase {
 
     function test_starting_authentication_creates_a_greetd_session_for_the_user() {
         const backend = createBackend();
-        backend.startAuthentication("ian");
-        compare(Greetd.lastCall(), ["createSession", "ian"]);
+        backend.startAuthentication("katherine");
+        compare(Greetd.lastCall(), ["createSession", "katherine"]);
     }
 
     function test_greetd_password_prompt_is_a_secret_auth_prompt() {
@@ -159,7 +159,7 @@ TestCase {
         const backend = createBackend();
         const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "loginUnavailable" });
         Greetd.available = false;
-        backend.startAuthentication("ian");
+        backend.startAuthentication("katherine");
         compare(spy.count, 1);
         compare(Greetd.calls, []);
     }
@@ -172,7 +172,7 @@ TestCase {
 
     // busctl GetAll output for org.freedesktop.Accounts.User, one line per user.
     readonly property string accountsOutput: [
-        '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":1000},"UserName":{"type":"s","data":"ian"},"RealName":{"type":"s","data":"Ian Gregson"},"IconFile":{"type":"s","data":"/var/lib/AccountsService/icons/ian"},"SystemAccount":{"type":"b","data":false}}]}',
+        '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":1000},"UserName":{"type":"s","data":"katherine"},"RealName":{"type":"s","data":"Katherine Johnson"},"IconFile":{"type":"s","data":"/var/lib/AccountsService/icons/katherine"},"SystemAccount":{"type":"b","data":false}}]}',
         '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":1001},"UserName":{"type":"s","data":"ada"},"RealName":{"type":"s","data":""},"IconFile":{"type":"s","data":""},"SystemAccount":{"type":"b","data":false}}]}',
         ''
     ].join("\n")
@@ -209,9 +209,9 @@ TestCase {
         verify(process.running);
         Processes.finish(process, testCase.accountsOutput);
         compare(backend.users.length, 2);
-        compare(backend.users[0].name, "ian");
-        compare(backend.users[0].realName, "Ian Gregson");
-        compare(backend.users[0].avatar, "file:///var/lib/AccountsService/icons/ian");
+        compare(backend.users[0].name, "katherine");
+        compare(backend.users[0].realName, "Katherine Johnson");
+        compare(backend.users[0].avatar, "file:///var/lib/AccountsService/icons/katherine");
         compare(backend.users[0].systemAccount, false);
         compare(backend.users[1].name, "ada");
         compare(backend.users[1].avatar, "");
@@ -221,7 +221,7 @@ TestCase {
         const backend = createBackend();
         Processes.finish(Processes.find("org.freedesktop.Accounts"), testCase.accountsOutput
                          + '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":964},"UserName":{"type":"s","data":"greeter"},"RealName":{"type":"s","data":""},"IconFile":{"type":"s","data":""},"SystemAccount":{"type":"b","data":true}}]}\n');
-        compare(backend.users.map(user => user.name), ["ian", "ada"]);
+        compare(backend.users.map(user => user.name), ["katherine", "ada"]);
     }
 
     function test_unreadable_accountsservice_output_gives_no_users() {
@@ -309,29 +309,29 @@ TestCase {
     function test_remember_writes_the_last_user_and_their_session_to_the_state_file() {
         Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
         const backend = createBackend();
-        backend.remember("ian", "org.modalityos.kwin");
+        backend.remember("katherine", "org.modalityos.kwin");
         compare(JSON.parse(Files.read(testCase.statePath)), {
-            lastUser: "ian",
-            sessions: { ada: "plasma", ian: "org.modalityos.kwin" }
+            lastUser: "katherine",
+            sessions: { ada: "plasma", katherine: "org.modalityos.kwin" }
         });
-        compare(backend.lastUser, "ian");
+        compare(backend.lastUser, "katherine");
     }
 
     function test_remembered_session_is_for_that_user_only() {
         const backend = createBackend();
-        backend.remember("ian", "plasma");
-        compare(backend.rememberedSessions, { ian: "plasma" });
+        backend.remember("katherine", "plasma");
+        compare(backend.rememberedSessions, { katherine: "plasma" });
         backend.remember("ada", "org.modalityos.kwin");
-        compare(backend.rememberedSessions, { ian: "plasma", ada: "org.modalityos.kwin" });
+        compare(backend.rememberedSessions, { katherine: "plasma", ada: "org.modalityos.kwin" });
     }
 
     function test_remember_replaces_a_corrupt_state_file() {
         Files.write(testCase.statePath, "not json");
         const backend = createBackend();
-        backend.remember("ian", "org.modalityos.kwin");
+        backend.remember("katherine", "org.modalityos.kwin");
         compare(JSON.parse(Files.read(testCase.statePath)), {
-            lastUser: "ian",
-            sessions: { ian: "org.modalityos.kwin" }
+            lastUser: "katherine",
+            sessions: { katherine: "org.modalityos.kwin" }
         });
     }
 

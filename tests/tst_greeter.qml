@@ -57,24 +57,24 @@ TestCase {
         const greeter = createGreeter({
             users: [
                 { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
             ],
-            lastUser: "ian"
+            lastUser: "katherine"
         });
-        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        compare(findChild(greeter, "userName").text, "Katherine Johnson");
     }
 
     function test_user_without_a_real_name_shows_the_user_name() {
         const greeter = createGreeter({
-            users: [{ name: "ian", realName: "", avatar: "", systemAccount: false }]
+            users: [{ name: "katherine", realName: "", avatar: "", systemAccount: false }]
         });
-        compare(findChild(greeter, "userName").text, "ian");
+        compare(findChild(greeter, "userName").text, "katherine");
     }
 
-    // count human users, in AccountsService order; ian is the third.
+    // count human users, in AccountsService order; katherine is the third.
     function someUsers(count) {
         const names = [
-            ["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["ian", "Ian Gregson"],
+            ["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["katherine", "Katherine Johnson"],
             ["alan", "Alan Turing"], ["edsger", "Edsger Dijkstra"], ["barbara", "Barbara Liskov"],
             ["ken", "Ken Thompson"], ["margaret", "Margaret Hamilton"]
         ];
@@ -110,12 +110,12 @@ TestCase {
     }
 
     function test_several_accounts_show_the_other_users_pill(data) {
-        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "katherine" });
         const pill = findChild(greeter, "otherUsersPill");
         verify(pill);
         verify(pill.visible);
         compare(pill.text, "Other users");
-        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        compare(findChild(greeter, "userName").text, "Katherine Johnson");
     }
 
     function openOtherUsers(greeter) {
@@ -144,7 +144,7 @@ TestCase {
     }
 
     function test_other_users_pill_opens_the_choose_a_user_panel(data) {
-        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "katherine" });
         verify(!findChild(greeter, "userPanel").visible);
         const panel = openOtherUsers(greeter);
         compare(greeter.overlay, "otherUsers");
@@ -158,7 +158,7 @@ TestCase {
     }
 
     function test_arrows_move_between_users_in_the_choose_a_user_panel() {
-        const greeter = createGreeter({ users: someUsers(8), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(8), lastUser: "katherine" });
         openOtherUsers(greeter);
         const cells = userCells(greeter);
         tryVerify(() => cells[2].activeFocus);
@@ -179,7 +179,7 @@ TestCase {
     }
 
     function test_enter_picks_the_highlighted_user_and_closes_the_panel() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         typeText("half");
         const panel = openOtherUsers(greeter);
         tryVerify(() => userCells(greeter)[2].activeFocus);
@@ -198,7 +198,7 @@ TestCase {
     }
 
     function test_clicking_a_user_picks_them() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         openOtherUsers(greeter);
         mouseClick(userCells(greeter)[0]);
         compare(greeter.overlay, "");
@@ -206,41 +206,41 @@ TestCase {
     }
 
     function test_esc_closes_the_choose_a_user_panel_with_no_change() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         const panel = openOtherUsers(greeter);
         tryVerify(() => userCells(greeter)[2].activeFocus);
         keyClick(Qt.Key_Left);
         keyClick(Qt.Key_Escape);
         compare(greeter.overlay, "");
         tryCompare(panel, "visible", false);
-        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        compare(findChild(greeter, "userName").text, "Katherine Johnson");
         verify(findChild(greeter, "otherUsersPill").activeFocus);
     }
 
     function test_cancel_closes_the_choose_a_user_panel_with_no_change() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         openOtherUsers(greeter);
         mouseClick(findChild(greeter, "userPanelCancel"));
         compare(greeter.overlay, "");
-        compare(findChild(greeter, "userName").text, "Ian Gregson");
+        compare(findChild(greeter, "userName").text, "Katherine Johnson");
     }
 
     function test_clicking_outside_the_panel_closes_it() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         openOtherUsers(greeter);
         mouseClick(greeter, 10, 10);
         compare(greeter.overlay, "");
     }
 
     function test_enter_on_the_other_users_pill_opens_the_panel() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         findChild(greeter, "otherUsersPill").forceActiveFocus();
         keyClick(Qt.Key_Return);
         compare(greeter.overlay, "otherUsers");
     }
 
     function test_choose_a_user_panel_stays_shut_while_checking() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         typeText("secret");
         keyClick(Qt.Key_Return);
         mouseClick(findChild(greeter, "otherUsersPill"));
@@ -250,7 +250,7 @@ TestCase {
     function test_long_name_wraps_within_the_user_column_on_a_short_screen() {
         const users = someUsers(3);
         users[2].realName = "Alexandria Montgomery-Fitzwilliam";
-        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        const greeter = createGreeter({ users: users, lastUser: "katherine" });
         greeter.width = 1366;
         greeter.height = 768;
         const name = findChild(greeter, "userName");
@@ -272,7 +272,7 @@ TestCase {
     function test_long_name_wraps_within_its_cell_in_the_choose_a_user_panel() {
         const users = someUsers(8);
         users[2].realName = "Alexandria Montgomery-Fitzwilliam";
-        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        const greeter = createGreeter({ users: users, lastUser: "katherine" });
         openOtherUsers(greeter);
         const cell = userCells(greeter)[2];
         const label = cell.contentItem.children[1];
@@ -287,7 +287,7 @@ TestCase {
 
     function test_user_with_a_picture_shows_it() {
         const greeter = createGreeter({
-            users: [{ name: "ian", realName: "Ian Gregson", avatar: testCase.ballAvatar, systemAccount: false }]
+            users: [{ name: "katherine", realName: "Katherine Johnson", avatar: testCase.ballAvatar, systemAccount: false }]
         });
         const avatar = findChild(greeter, "userAvatar");
         compare(avatar.source, testCase.ballAvatar);
@@ -303,7 +303,7 @@ TestCase {
 
     function test_user_whose_picture_cannot_be_read_shows_the_default_avatar() {
         const greeter = createGreeter({
-            users: [{ name: "ian", realName: "Ian Gregson", avatar: "file:///nonexistent/ian", systemAccount: false }]
+            users: [{ name: "katherine", realName: "Katherine Johnson", avatar: "file:///nonexistent/katherine", systemAccount: false }]
         });
         const avatar = findChild(greeter, "userAvatar");
         tryCompare(avatar, "source", testCase.catAvatar);
@@ -382,7 +382,7 @@ TestCase {
         typeText("secret");
         keyClick(Qt.Key_Return);
         compare(greeter.loginState, "checking");
-        compare(backend.lastCall(), ["startAuthentication", "ian"]);
+        compare(backend.lastCall(), ["startAuthentication", "katherine"]);
 
         backend.authPrompt("Password:", true);
         compare(backend.lastCall(), ["answer", "secret"]);
@@ -399,7 +399,7 @@ TestCase {
         greeter.backend.readyToLaunch();
         tryVerify(() => greeter.backend.lastCall()[0] === "launch");
         const calls = greeter.backend.calls;
-        compare(calls[calls.length - 2], ["remember", "ian", "org.modalityos.kwin"]);
+        compare(calls[calls.length - 2], ["remember", "katherine", "org.modalityos.kwin"]);
     }
 
     function test_wrong_password_remembers_nothing() {
@@ -591,13 +591,13 @@ TestCase {
     }
 
     function test_login_unavailable_removes_the_other_users_pill() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         greeter.backend.loginUnavailable();
         verify(!findChild(greeter, "otherUsersPill").visible);
     }
 
     function test_picking_a_user_after_a_failed_session_starts_a_fresh_login() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
         failSession(greeter);
         openOtherUsers(greeter);
         mouseClick(userCells(greeter)[0]);
@@ -617,7 +617,7 @@ TestCase {
         greeter.backend.loginUnavailable();
         compare(greeter.loginState, "unavailable");
         greeter.backend.authPrompt("Password:", true);
-        compare(greeter.backend.lastCall(), ["startAuthentication", "ian"]);
+        compare(greeter.backend.lastCall(), ["startAuthentication", "katherine"]);
         verify(!findChild(greeter, "capsLockNotice").visible);
     }
 

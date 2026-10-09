@@ -12,7 +12,7 @@ QtObject {
     // Sessions: [{ id, name, command (argv list), desktopNames (list) }].
     property var sessions: []
     property string defaultSession: ""
-    // A user's remembered Session id by user name: { "ian": "org.modalityos.kwin" }.
+    // A user's remembered Session id by user name: { "katherine": "org.modalityos.kwin" }.
     property var rememberedSessions: ({})
 
     // Machine settings: Defaults plus Admin overrides, never a user's own settings.

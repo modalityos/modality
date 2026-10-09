@@ -1,7 +1,7 @@
 .pragma library
 
 // The Greeter's state file: the last user to log in and each user's remembered Session,
-// as JSON: { "lastUser": "ian", "sessions": { "ian": "org.modalityos.kwin" } }.
+// as JSON: { "lastUser": "katherine", "sessions": { "katherine": "org.modalityos.kwin" } }.
 
 // Missing, corrupt or wrongly shaped text gives an empty state, so the Greeter falls back
 // to its first user and the default Session.

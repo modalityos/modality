@@ -58,7 +58,7 @@ TestCase {
         const greeter = createGreeter({
             users: [
                 { name: "alex", realName: "Alexandria Montgomery-Fitzwilliam", avatar: "", systemAccount: false },
-                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
             ],
             lastUser: "alex"
         });

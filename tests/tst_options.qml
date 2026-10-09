@@ -141,31 +141,31 @@ TestCase {
 
         logIn(greeter);
         const calls = greeter.backend.calls;
-        compare(calls[calls.length - 2], ["remember", "ian", "hyprland"]);
+        compare(calls[calls.length - 2], ["remember", "katherine", "hyprland"]);
         compare(calls[calls.length - 1], ["launch", "hyprland"]);
     }
 
     readonly property var twoUsers: [
         { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-        { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+        { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
     ]
 
-    function rememberedHyprlandForIan() {
+    function rememberedHyprlandForKatherine() {
         return twoSessions({
             users: testCase.twoUsers,
-            lastUser: "ian",
-            rememberedSessions: { ian: "hyprland" }
+            lastUser: "katherine",
+            rememberedSessions: { katherine: "hyprland" }
         });
     }
 
     function test_remembered_session_is_checked_in_the_session_menu() {
-        const greeter = createGreeter(rememberedHyprlandForIan());
+        const greeter = createGreeter(rememberedHyprlandForKatherine());
         const menu = openOptions(greeter);
         compare(menu.model.map(item => item.checked), [false, true]);
     }
 
     function test_remembered_session_launches_for_its_user() {
-        const greeter = createGreeter(rememberedHyprlandForIan());
+        const greeter = createGreeter(rememberedHyprlandForKatherine());
         logIn(greeter);
         compare(greeter.backend.lastCall(), ["launch", "hyprland"]);
     }
@@ -174,14 +174,14 @@ TestCase {
         const greeter = createGreeter(twoSessions({
             users: testCase.twoUsers,
             lastUser: "ada",
-            rememberedSessions: { ian: "hyprland" }
+            rememberedSessions: { katherine: "hyprland" }
         }));
         logIn(greeter);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 
     function test_a_session_picked_for_one_user_does_not_carry_to_the_next_user_picked() {
-        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "ian" }));
+        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "katherine" }));
         mouseClick(openOptions(greeter).itemAt(1));
         mouseClick(findChild(greeter, "otherUsersPill"));
         const panel = findChild(greeter, "userPanel");
@@ -243,7 +243,7 @@ TestCase {
     }
 
     function test_options_comes_after_other_users_and_before_sleep_in_tab_order() {
-        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "ian" }));
+        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "katherine" }));
         const field = findChild(greeter, "passwordField");
         tryVerify(() => field.activeFocus);
         keyClick(Qt.Key_Tab);
@@ -257,7 +257,7 @@ TestCase {
     }
 
     function test_one_session_leaves_options_out_of_tab_order() {
-        const greeter = createGreeter({ users: testCase.twoUsers, lastUser: "ian" });
+        const greeter = createGreeter({ users: testCase.twoUsers, lastUser: "katherine" });
         tryVerify(() => findChild(greeter, "passwordField").activeFocus);
         keyClick(Qt.Key_Tab);
         keyClick(Qt.Key_Tab);
@@ -265,7 +265,7 @@ TestCase {
     }
 
     function test_remembered_session_that_is_gone_gives_the_default_session() {
-        const greeter = createGreeter(twoSessions({ rememberedSessions: { ian: "sway" } }));
+        const greeter = createGreeter(twoSessions({ rememberedSessions: { katherine: "sway" } }));
         logIn(greeter);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
