@@ -9,17 +9,37 @@ FocusScope {
 
     property GreeterBackend backend
     readonly property string state: logic.state
-
-    focus: true
-
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
+
+    focus: true
 
     GreeterLogic {
         id: logic
 
         backend: greeter.backend
         passwordLength: userColumn.passwordField.text.length
+    }
+
+    // The Greeter follows the machine's settings, never a user's.
+    Binding {
+        target: Theme
+        property: "theme"
+        value: greeter.backend?.theme ?? "dark"
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.bg
+    }
+
+    Wallpaper {
+        id: wallpaper
+
+        objectName: "wallpaper"
+        anchors.fill: parent
+        folder: greeter.backend?.wallpaperFolder ?? ""
+        name: greeter.backend?.wallpaper ?? "silk"
     }
 
     Item {

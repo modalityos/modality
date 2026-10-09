@@ -1,5 +1,6 @@
 import QtQuick
 import QtTest
+import Modality.Theme
 import "../greeter/lib"
 import "helpers"
 
@@ -33,6 +34,10 @@ TestCase {
         const greeter = createTemporaryObject(greeterComponent, testCase, { backend: backend });
         verify(greeter);
         return greeter;
+    }
+
+    function cleanup() {
+        Theme.theme = "dark";
     }
 
     function typeText(text) {
@@ -84,6 +89,32 @@ TestCase {
         compare(date.text, "Friday 9 October");
         compare(date.font.pixelSize, 22);
         compare(date.font.weight, Font.DemiBold);
+    }
+
+    function test_greeter_shows_silk_dark_in_the_dark_theme() {
+        const greeter = createGreeter();
+        greeter.width = 1920;
+        greeter.height = 1080;
+        compare(Theme.theme, "dark");
+        compare(findChild(greeter, "wallpaper").source,
+                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2160.png"));
+    }
+
+    function test_greeter_shows_silk_light_in_the_light_theme() {
+        const greeter = createGreeter({ theme: "light" });
+        greeter.width = 1920;
+        greeter.height = 1080;
+        compare(Theme.theme, "light");
+        compare(findChild(greeter, "wallpaper").source,
+                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-light-3840x2160.png"));
+    }
+
+    function test_sixteen_by_ten_screen_shows_the_3840x2400_render() {
+        const greeter = createGreeter();
+        greeter.width = 1680;
+        greeter.height = 1050;
+        compare(findChild(greeter, "wallpaper").source,
+                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2400.png"));
     }
 
     function test_correct_password_launches_the_session() {

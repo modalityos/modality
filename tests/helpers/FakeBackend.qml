@@ -31,7 +31,7 @@ GreeterBackend {
         }
     ]
     defaultSession: "org.modalityos.kwin"
-    wallpaperFolder: "file:///usr/share/modalityos/wallpapers"
+    wallpaperFolder: Qt.resolvedUrl("../fixtures/wallpapers")
 
     function startAuthentication(user) {
         record(["startAuthentication", user]);
