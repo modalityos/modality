@@ -45,6 +45,7 @@ FocusScope {
     Item {
         id: content
 
+        objectName: "content"
         anchors.fill: parent
 
         Clock {
@@ -64,6 +65,20 @@ FocusScope {
             user: logic.selectedUser
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
+        }
+
+        Connections {
+            target: logic
+
+            function onPasswordRejected() {
+                userColumn.passwordField.text = "";
+            }
+
+            // A Session that failed to start brings the faded screen back.
+            function onStateChanged() {
+                if (logic.state !== "starting")
+                    content.opacity = 1;
+            }
         }
 
         Connections {

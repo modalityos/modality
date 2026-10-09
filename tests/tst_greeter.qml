@@ -152,4 +152,33 @@ TestCase {
         tryVerify(() => backend.lastCall()[0] === "launch");
         compare(backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
+
+    function logIn(greeter, password) {
+        typeText(password);
+        keyClick(Qt.Key_Return);
+        greeter.backend.authPrompt("Password:", true);
+    }
+
+    function test_wrong_password_clears_the_field_to_try_again() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        compare(greeter.state, "wrongPassword");
+        const field = findChild(greeter, "passwordField");
+        tryCompare(field, "text", "");
+        verify(field.activeFocus);
+
+        logIn(greeter, "secret");
+        compare(greeter.backend.lastCall(), ["answer", "secret"]);
+    }
+
+    function test_session_that_fails_to_start_brings_the_greeter_back() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        greeter.backend.error("Session failed to start");
+        compare(greeter.state, "sessionFailed");
+        tryCompare(findChild(greeter, "content"), "opacity", 1);
+    }
 }

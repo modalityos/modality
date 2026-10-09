@@ -8,11 +8,11 @@ QtObject {
 
     property GreeterBackend backend
 
-    // ready, typing, checking or starting.
+    // ready, typing, checking, wrongPassword, starting or sessionFailed.
     readonly property string state: {
-        if (phase !== "ready")
-            return phase;
-        return passwordLength > 0 ? "typing" : "ready";
+        if ((phase === "ready" || phase === "wrongPassword") && passwordLength > 0)
+            return "typing";
+        return phase;
     }
 
     // Set by the screen as the password field changes.
@@ -30,8 +30,11 @@ QtObject {
     property string phase: "ready"
     property string pendingPassword: ""
 
+    // greetd turned the password down: the screen clears the field.
+    signal passwordRejected
+
     function submit(password) {
-        if (phase !== "ready" || password.length === 0 || !selectedUser)
+        if (phase === "checking" || phase === "starting" || password.length === 0 || !selectedUser)
             return;
         pendingPassword = password;
         phase = "checking";
@@ -54,9 +57,24 @@ QtObject {
             logic.pendingPassword = "";
         }
 
+        function onAuthFailure(message) {
+            if (logic.phase !== "checking")
+                return;
+            logic.pendingPassword = "";
+            logic.phase = "wrongPassword";
+            logic.passwordRejected();
+        }
+
         function onReadyToLaunch() {
             if (logic.phase === "checking")
                 logic.phase = "starting";
+        }
+
+        function onError(message) {
+            if (logic.phase === "checking" || logic.phase === "starting") {
+                logic.pendingPassword = "";
+                logic.phase = "sessionFailed";
+            }
         }
     }
 }
