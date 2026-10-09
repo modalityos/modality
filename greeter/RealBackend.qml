@@ -33,6 +33,8 @@ GreeterBackend {
     property FileView adminOverridesFile: FileView {
         path: "/etc/modalityos/settings.json"
         blockLoading: true
+        // Most machines have no Admin overrides; a missing file is not an error.
+        printErrors: false
     }
     defaultAvatar: `file://${prefix}/share/modalityos/avatars/avatar-cat.png`
 
