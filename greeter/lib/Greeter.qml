@@ -8,7 +8,7 @@ FocusScope {
 
     property GreeterBackend backend
     readonly property string loginState: logic.state
-    // What covers the screen: "" or "otherUsers" (the Choose a user panel).
+    // What covers the screen: "", "otherUsers" (the Choose a user panel) or "options" (the Session Menu).
     readonly property string overlay: logic.overlay
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
@@ -85,8 +85,11 @@ FocusScope {
 
             anchors.fill: parent
             sessions: greeter.backend?.sessions ?? []
+            currentSession: logic.selectedSession?.id ?? ""
+            open: logic.overlay === "options"
             backdrop: wallpaper
             shortScreen: greeter.shortScreen
+            onToggled: logic.toggleOptions()
         }
 
         PowerRow {

@@ -84,4 +84,36 @@ TestCase {
         compare(greeter.width - (place.x + place.width), 40);
         compare(greeter.height - (place.y + place.height), data.bottom);
     }
+
+    function openOptions(greeter) {
+        mouseClick(findChild(greeter, "optionsButton"));
+        const menu = findChild(greeter, "sessionMenu");
+        verify(menu);
+        tryCompare(menu, "opacity", 1);
+        return menu;
+    }
+
+    function test_options_opens_the_session_menu_with_the_default_session_checked_data() {
+        return [
+            { tag: "1280 x 1080", height: 1080, bottom: 112 },
+            { tag: "1366 x 768", height: 768, bottom: 100 }
+        ];
+    }
+
+    function test_options_opens_the_session_menu_with_the_default_session_checked(data) {
+        const greeter = createGreeter(twoSessions(), data.height);
+        verify(!findChild(greeter, "sessionMenu").visible);
+        const menu = openOptions(greeter);
+        compare(greeter.overlay, "options");
+        verify(menu.visible);
+        verify(findChild(greeter, "optionsButton").checked);
+        compare(menu.title, "Session");
+        compare(menu.model.map(item => item.text), ["ModalityOS (KWin)", "Hyprland"]);
+        compare(menu.model.map(item => item.checked), [true, false]);
+        verify(menu.itemAt(0).activeFocus);
+        const place = menu.mapToItem(greeter, 0, 0, menu.width, menu.height);
+        compare(menu.width, 220);
+        compare(greeter.width - (place.x + place.width), 40);
+        compare(greeter.height - (place.y + place.height), data.bottom);
+    }
 }

@@ -26,7 +26,8 @@ QtObject {
     }
     property string chosenUser: ""
 
-    // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel.
+    // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel,
+    // "options" for the Session Menu.
     property string overlay: ""
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
@@ -60,6 +61,14 @@ QtObject {
         if (phase !== "checking" && phase !== "starting" && phase !== "unavailable"
                 && (backend?.users.length ?? 0) > 1)
             overlay = "otherUsers";
+    }
+
+    // Options toggles the Session Menu; there is nothing to choose with one Session.
+    function toggleOptions() {
+        if (overlay === "options")
+            overlay = "";
+        else if (phase !== "checking" && phase !== "starting" && (backend?.sessions.length ?? 0) > 1)
+            overlay = "options";
     }
 
     function closeOverlay() {
