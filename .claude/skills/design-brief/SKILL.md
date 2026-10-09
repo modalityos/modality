@@ -8,7 +8,7 @@ Turn the visual work the grill settled into a **brief** per piece, then design i
 
 ## 1. List the pieces
 
-Read the grill record, `.scratch/grill.md` (see **The grill record** in `CLAUDE.md`). From it and the user's arguments, list each **piece** of visual work still to design and its kind: foundations, screen, component, icon set (one icon is a set of one), illustration (wallpapers too), logo (brand marks too), or a kind you add to `design/README.md` in step 4. One piece is one design artifact and one folder, `design/<slug>/`. The slug names the piece, prefixed by where it lives: `greeter-login`, `shell-dock`, `icons-settings`, `wallpaper-default`; the Foundations are `foundations`.
+Read the grill record, `.scratch/grill-<short-description>.md` (see **The grill record** in `CLAUDE.md`). From it and the user's arguments, list each **piece** of visual work still to design and its kind: foundations, screen, component, icon set (one icon is a set of one), illustration (wallpapers too), logo (brand marks too), or a kind you add to `design/README.md` in step 4. One piece is one design artifact and one folder, `design/<slug>/`. The slug names the piece, prefixed by where it lives: `greeter-login`, `shell-dock`, `icons-settings`, `wallpaper-default`; the Foundations are `foundations`.
 
 A piece that already has a `design/<slug>/spec.md` is designed: leave it off the list and name it separately as a design the change builds from, so `/to-spec` cites it. It goes on the list only when the user says that design is to be replaced; then it keeps its slug.
 

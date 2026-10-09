@@ -48,7 +48,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 
 ## Workflow — IMPORTANT
 
-Every change moves through these stages, in order. Each stage writes only its own output, then ends with a **hand-off**: name the next stage and what to do to the context **before starting it** (the Before-next column), then stop. The user starts every stage; "go", "agreed" or "yes" inside a stage closes that stage only.
+Every change moves through these stages, in order. Each stage writes only its own output, then ends with a **hand-off**: name the next stage and what to do to the context **before starting it** (the Before-next column), then stop. The hand-off's last line is the context reminder, on its own and in bold: **You can `/clear` now:** with the files or issues that hold this stage's work, or **Don't `/clear` yet:** with why. The user starts every stage; "go", "agreed" or "yes" inside a stage closes that stage only.
 
 | Stage | Writes | Hand-off | Before next |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Every change moves through these stages, in order. Each stage writes only its ow
 
 <important if="you are running /grill-with-docs, /design-brief, /design-intake or /to-spec, or the user adds a decision between those stages">
 
-The **grill record**, `.scratch/grill.md` in the change's worktree, carries what the grill settled into the stages after it. The glossary and ADRs keep only terms and hard-to-reverse decisions, and the rest would otherwise live only in the chat.
+The **grill record**, `.scratch/grill-<short-description>.md` in the change's worktree (the short description from the branch name), carries what the grill settled into the stages after it. The glossary and ADRs keep only terms and hard-to-reverse decisions, and the rest would otherwise live only in the chat.
 
 - **`/grill-with-docs`** writes it before its hand-off: the change and its branch; every question settled, one line each, with the answer and any ADR or glossary entry it went to; research facts found, with their sources; questions left open; whether the change has visual work still to design, and the next stage. Done when a fresh session could run the next stage from it alone.
 - **Every later stage up to `/to-spec`** reads it first. `/design-brief` adds each piece's slug. Anything the user decides between stages goes in it at once, not only into the chat.

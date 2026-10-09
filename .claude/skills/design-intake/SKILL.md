@@ -11,7 +11,7 @@ This stage saves and translates; building happens in `/implement`. Everything in
 
 ## 1. Find the brief
 
-Read the grill record, `.scratch/grill.md` (see **The grill record** in `CLAUDE.md`). The argument is a slug or an artifact link. Match it to a `design/<slug>/brief.md` that has no `spec.md` yet, by slug or by the brief's **Artifact** link. With no argument, take the one such brief the grill record names; when there are several, ask which.
+Read the grill record, `.scratch/grill-<short-description>.md` (see **The grill record** in `CLAUDE.md`). The argument is a slug or an artifact link. Match it to a `design/<slug>/brief.md` that has no `spec.md` yet, by slug or by the brief's **Artifact** link. With no argument, take the one such brief the grill record names; when there are several, ask which.
 
 Done when you hold one brief and its artifact link.
 
