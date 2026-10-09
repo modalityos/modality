@@ -185,6 +185,13 @@ TestCase {
         compare(backend.users[1].avatar, "");
     }
 
+    function test_system_accounts_are_hidden() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("org.freedesktop.Accounts"), testCase.accountsOutput
+                         + '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":964},"UserName":{"type":"s","data":"greeter"},"RealName":{"type":"s","data":""},"IconFile":{"type":"s","data":""},"SystemAccount":{"type":"b","data":true}}]}\n');
+        compare(backend.users.map(user => user.name), ["ian", "ada"]);
+    }
+
     function test_unreadable_accountsservice_output_gives_no_users() {
         const backend = createBackend();
         Processes.finish(Processes.find("org.freedesktop.Accounts"), "Failed to connect\n", 1);

@@ -1,7 +1,7 @@
 .pragma library
 
-// Users from busctl's JSON GetAll output for org.freedesktop.Accounts.User, one line per
-// user. Lines that are not such JSON (errors, blanks) are skipped.
+// Human users from busctl's JSON GetAll output for org.freedesktop.Accounts.User, one line
+// per user. System accounts and lines that are not such JSON (errors, blanks) are skipped.
 function parseUsers(text) {
     const users = [];
     for (const line of text.split("\n")) {
@@ -11,7 +11,7 @@ function parseUsers(text) {
         } catch (e) {
             continue;
         }
-        if (!properties?.UserName)
+        if (!properties?.UserName || properties.SystemAccount?.data)
             continue;
         const icon = properties.IconFile?.data ?? "";
         users.push({
