@@ -181,4 +181,14 @@ TestCase {
         compare(menu.titleFont.pixelSize, Theme.footnoteStrong.font.pixelSize);
         compare(menu.titleColor, Theme.textSecondary);
     }
+
+    function test_menu_item_states_can_be_set_through_properties() {
+        const item = createMenuItem({ hoverActive: true });
+        compare(item.fillColor, Theme.accent);
+        item.down = true;
+        compare(item.fillColor, Theme.accentPressed);
+        item.down = false;
+        item.ringShown = true;
+        verify(!item.activeFocus);
+    }
 }

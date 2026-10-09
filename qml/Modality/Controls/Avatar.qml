@@ -13,15 +13,17 @@ T.AbstractButton {
 
     readonly property real radius: size / 2
     readonly property int status: image.status
-    readonly property bool ringShown: activeFocus
+    // Default to the live input state; set them to show a state without input.
+    property bool hoverActive: hovered
+    property bool ringShown: activeFocus
     readonly property var shadow: {
         if (!enabled)
             return null;
-        if (pressed)
+        if (down)
             return Theme.shadowRaised;
-        return hovered ? Theme.shadowModal : Theme.shadowFloating;
+        return hoverActive ? Theme.shadowModal : Theme.shadowFloating;
     }
-    readonly property real visualScale: !enabled ? 1 : pressed ? 0.96 : hovered ? 1.04 : 1
+    readonly property real visualScale: !enabled ? 1 : down ? 0.96 : hoverActive ? 1.04 : 1
     readonly property real visualOpacity: enabled ? 1 : 0.4
 
     implicitWidth: size

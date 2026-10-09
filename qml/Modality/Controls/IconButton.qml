@@ -9,18 +9,20 @@ T.AbstractButton {
 
     property var glyph: null
 
-    readonly property bool ringShown: activeFocus
+    // Default to the live input state; set them to show a state without input.
+    property bool hoverActive: hovered
+    property bool ringShown: activeFocus
     readonly property color fillColor: {
         if (!enabled)
             return Theme.materialPopover;
-        if (pressed)
+        if (down)
             return Theme.surfaceSunken;
-        return hovered || checked ? Theme.surfaceOverlay : Theme.materialPopover;
+        return hoverActive || checked ? Theme.surfaceOverlay : Theme.materialPopover;
     }
     readonly property color glyphColor: enabled ? Theme.textPrimary : Theme.textDisabled
     readonly property color labelColor: Theme.textPrimary
-    readonly property var shadow: !enabled || pressed ? null : hovered ? Theme.shadowFloating : Theme.shadowRaised
-    readonly property real circleScale: pressed ? 0.95 : 1
+    readonly property var shadow: !enabled || down ? null : hoverActive ? Theme.shadowFloating : Theme.shadowRaised
+    readonly property real circleScale: down ? 0.95 : 1
     readonly property real circleOpacity: enabled ? 1 : 0.5
 
     // Raw sizes from the design: 40px circle, 16px glyph, 6px to the label.
@@ -67,7 +69,7 @@ T.AbstractButton {
             Glass {
                 anchors.fill: parent
                 radius: width / 2
-                frosted: control.enabled ? !control.pressed && !control.hovered && !control.checked : true
+                frosted: control.enabled ? !control.down && !control.hoverActive && !control.checked : true
                 color: control.fillColor
 
                 Behavior on color {

@@ -14,17 +14,19 @@ T.Button {
     property int variant: Button.Primary
 
     readonly property bool primary: variant === Button.Primary
-    readonly property bool ringShown: activeFocus
+    // Default to the live input state; set them to show a state without input.
+    property bool hoverActive: hovered
+    property bool ringShown: activeFocus
     readonly property real radius: primary ? Theme.radiusPill : Theme.radiusControl
     readonly property color fillColor: {
         if (!enabled)
             return Theme.fill;
         if (!primary)
-            return pressed || hovered ? Theme.fillStrong : Theme.fill;
-        return pressed ? Theme.accentPressed : hovered ? Theme.accentHover : Theme.accent;
+            return down || hoverActive ? Theme.fillStrong : Theme.fill;
+        return down ? Theme.accentPressed : hoverActive ? Theme.accentHover : Theme.accent;
     }
     readonly property color labelColor: !enabled ? Theme.textDisabled : primary ? Theme.onAccent : Theme.textPrimary
-    readonly property var shadow: primary && enabled && !pressed ? Theme.shadowRaised : null
+    readonly property var shadow: primary && enabled && !down ? Theme.shadowRaised : null
 
     implicitWidth: implicitContentWidth + leftPadding + rightPadding
     implicitHeight: primary ? Theme.controlHeightSmall : Theme.controlHeight

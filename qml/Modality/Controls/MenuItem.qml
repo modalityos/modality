@@ -7,9 +7,11 @@ T.AbstractButton {
     id: control
 
     readonly property real radius: Theme.radiusSmall
-    readonly property bool ringShown: activeFocus
-    readonly property color fillColor: !enabled ? "transparent" : pressed ? Theme.accentPressed : hovered ? Theme.accent : "transparent"
-    readonly property color labelColor: !enabled ? Theme.textDisabled : pressed || hovered ? Theme.onAccent : Theme.textPrimary
+    // Default to the live input state; set them to show a state without input.
+    property bool hoverActive: hovered
+    property bool ringShown: activeFocus
+    readonly property color fillColor: !enabled ? "transparent" : down ? Theme.accentPressed : hoverActive ? Theme.accent : "transparent"
+    readonly property color labelColor: !enabled ? Theme.textDisabled : down || hoverActive ? Theme.onAccent : Theme.textPrimary
     // Raw sizes from the design: 12px check glyph, 10px side padding.
     readonly property int indicatorWidth: 12
 

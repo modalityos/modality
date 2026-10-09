@@ -165,4 +165,14 @@ TestCase {
         tryVerify(() => !field.shaking, 1500);
         compare(field.shakeOffset, 0);
     }
+
+    function test_password_field_states_can_be_set_through_properties() {
+        const field = createField({ hoverActive: true });
+        compare(field.fillColor, Theme.surfaceOverlay);
+        field.down = true;
+        compare(field.shadow, Theme.shadowRaised);
+        field.down = false;
+        field.ringShown = true;
+        verify(!field.activeFocus);
+    }
 }

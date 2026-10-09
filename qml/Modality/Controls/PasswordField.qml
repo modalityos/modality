@@ -18,9 +18,12 @@ FocusScope {
     readonly property bool hovered: hoverHandler.hovered
     readonly property bool pressed: tapHandler.pressed
     readonly property bool interactive: enabled && !busy
-    readonly property bool ringShown: activeFocus && !busy
-    readonly property color fillColor: interactive && (hovered || pressed) ? Theme.surfaceOverlay : Theme.materialPopover
-    readonly property var shadow: !enabled ? null : interactive && pressed ? Theme.shadowRaised : Theme.shadowFloating
+    // Default to the live input state; set them to show a state without input.
+    property bool hoverActive: hovered
+    property bool down: pressed
+    property bool ringShown: activeFocus && !busy
+    readonly property color fillColor: interactive && (hoverActive || down) ? Theme.surfaceOverlay : Theme.materialPopover
+    readonly property var shadow: !enabled ? null : interactive && down ? Theme.shadowRaised : Theme.shadowFloating
     readonly property real visualOpacity: !enabled ? 0.5 : busy ? 0.7 : 1
     readonly property real shakeOffset: shakeTranslate.x
     readonly property bool shaking: shakeAnimation.running
@@ -64,7 +67,7 @@ FocusScope {
         anchors.fill: parent
         radius: control.radius
         color: control.fillColor
-        frosted: !control.interactive || !(control.hovered || control.pressed)
+        frosted: !control.interactive || !(control.hoverActive || control.down)
 
         Behavior on color {
             FastColorAnimation {}

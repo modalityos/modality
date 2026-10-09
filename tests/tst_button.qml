@@ -125,4 +125,15 @@ TestCase {
         compare(button.fillColor, Theme.accent);
         compare(button.fillColor, Qt.color("#1c6ee8"));
     }
+
+    function test_button_states_can_be_set_through_properties() {
+        const button = createButton({ hoverActive: true });
+        compare(button.fillColor, Theme.accentHover);
+        button.down = true;
+        compare(button.fillColor, Theme.accentPressed);
+        button.down = false;
+        button.ringShown = true;
+        verify(button.ringShown);
+        verify(!button.activeFocus);
+    }
 }

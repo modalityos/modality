@@ -92,4 +92,14 @@ TestCase {
         const avatar = createAvatar();
         compare(avatar.Accessible.name, "John Doe");
     }
+
+    function test_avatar_states_can_be_set_through_properties() {
+        const avatar = createAvatar({ size: 64, hoverActive: true });
+        compare(avatar.shadow, Theme.shadowModal);
+        avatar.down = true;
+        compare(avatar.shadow, Theme.shadowRaised);
+        avatar.down = false;
+        avatar.ringShown = true;
+        verify(!avatar.activeFocus);
+    }
 }

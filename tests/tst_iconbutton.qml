@@ -119,4 +119,15 @@ TestCase {
         const button = createIconButton();
         compare(button.Accessible.name, "Restart");
     }
+
+    function test_icon_button_states_can_be_set_through_properties() {
+        const button = createIconButton({ hoverActive: true });
+        compare(button.fillColor, Theme.surfaceOverlay);
+        button.down = true;
+        compare(button.fillColor, Theme.surfaceSunken);
+        compare(button.circleScale, 0.95);
+        button.down = false;
+        button.ringShown = true;
+        verify(!button.activeFocus);
+    }
 }
