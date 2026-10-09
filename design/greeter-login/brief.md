@@ -9,7 +9,7 @@ The Greeter is the first thing anyone sees after boot: the login screen. It show
 - **Foundations:** built only from the ModalityOS Foundations Tokens (`design/foundations/spec.md`); `SceneLogin` there is the starting point.
 - **Wallpaper and glass:** the machine-wide wallpaper (`wallpaper-default`, an Admin override; showing a user's own wallpaper is a later Settings opt-in) fills the screen. Cage cannot blur, so the Greeter blurs its own wallpaper behind the password field, Notices, Menu and buttons, using the Foundations' material tints and blur; the `*-fallback` colours are only for Reduce transparency.
 - **Theme:** dark by default, light possible. The theme and the clock format are machine-wide settings (Defaults plus Admin overrides), set at install or later in Settings by an admin, and read by the Greeter at start; a user's own settings never reach it.
-- **Users:** every human account, from AccountsService; no system accounts, no "Other…". Up to four users: a row of avatars, the selected one larger and carrying the password field. Five or more: only the last user, large, with a **Switch user** button that opens a frosted grid of everyone. The last user to log in is selected in advance. A "Name and password" mode with no avatars is a later admin option, not designed now.
+- **Users:** every human account, from AccountsService; no system accounts. The Greeter shows only the last user to log in, large, with their password field. When there are other users, an **Other users** pill under the field opens a frosted **Choose a user** panel listing everyone. A row or a vertical list of users was considered and set aside. A "Name and password" mode with no avatars is a later admin option, not designed now.
 - **Avatars:** the user's own picture, else a built-in avatar. The built-in set is its own later piece (`avatars-default`, our own illustrations); here, use three or four temporary sample avatars in that style (an animal, a flower, a ball, a landscape).
 - **Sessions:** a machine default Session (KWin for now, an Admin override) is used. The choice is hidden behind an **Options** icon button at the bottom-left, which opens a Menu of Sessions; it shows only when more than one Session is installed, and a pick is remembered for that user only.
 - **Power:** Sleep, Restart and Shut Down at the bottom centre, with no confirmation step.
@@ -30,8 +30,7 @@ The Greeter is the first thing anyone sees after boot: the login screen. It show
 ## What to design
 Components, each named and each a reusable Control unless marked:
 - **Clock** (screen part): date above a large time.
-- **UserRow** (screen part): the row of up to four users; selected and unselected avatars with names.
-- **UserGrid** (screen part): the Switch user panel, a frosted grid of every user.
+- **UserPanel** (screen part): the Choose a user panel, a frosted grid of every user.
 - **Avatar** (Control): picture or placeholder in a circle, at large (selected) and small (row) sizes.
 - **PasswordField** (Control): pill field with placeholder and a submit button inside.
 - **Button** (Control): primary and secondary, used for Try again.
@@ -41,8 +40,8 @@ Components, each named and each a reusable Control unless marked:
 
 States, one artboard each, dark first, then the main ones in light:
 - **Ready:** one user, selected, empty field focused.
-- **Several users:** three users in a row, one selected; five users as the last user plus Switch user.
-- **Switch user open:** the frosted grid of eight users, one highlighted.
+- **Several users:** three users and five users: the last user plus the Other users pill.
+- **Other users open:** the Choose a user panel with three users and with eight, one highlighted.
 - **Typing:** password dots in the field.
 - **Caps Lock on:** warning Notice under the field.
 - **Checking:** spinner replaces the submit arrow; field disabled.
@@ -79,10 +78,10 @@ States, one artboard each, dark first, then the main ones in light:
 - The lock screen and the boot splash.
 
 ## Hand back
-- [ ] Clock, UserRow, Avatar, PasswordField, Button, IconButton, Menu and Notice, each named
+- [ ] Clock, UserPanel, Avatar, PasswordField, Button, IconButton, Menu and Notice, each named
 - [ ] Ready, dark and light
 - [ ] Several users, three and five
-- [ ] Switch user open
+- [ ] Other users open, three and eight
 - [ ] Typing
 - [ ] Caps Lock on
 - [ ] Checking
