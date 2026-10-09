@@ -1,6 +1,5 @@
 import QtQuick
 import Modality.Theme
-import Modality.Controls
 
 // The Greeter screen: fills the one output Cage gives it. Plain QML over a Greeter backend,
 // so it runs the same under Quickshell and under qmltestrunner.
@@ -8,7 +7,7 @@ FocusScope {
     id: greeter
 
     property GreeterBackend backend
-    readonly property string state: logic.state
+    readonly property string loginState: logic.state
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
 
@@ -40,6 +39,7 @@ FocusScope {
         anchors.fill: parent
         folder: greeter.backend?.wallpaperFolder ?? ""
         name: greeter.backend?.wallpaper ?? "silk"
+        dark: Theme.dark
     }
 
     Item {

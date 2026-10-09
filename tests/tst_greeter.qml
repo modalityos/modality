@@ -48,7 +48,7 @@ TestCase {
     function test_typing_goes_into_the_password_field_from_ready() {
         const greeter = createGreeter();
         typeText("se");
-        compare(greeter.state, "typing");
+        compare(greeter.loginState, "typing");
         compare(findChild(greeter, "passwordField").text, "se");
     }
 
@@ -137,18 +137,18 @@ TestCase {
     function test_correct_password_launches_the_session() {
         const greeter = createGreeter();
         const backend = greeter.backend;
-        compare(greeter.state, "ready");
+        compare(greeter.loginState, "ready");
 
         typeText("secret");
         keyClick(Qt.Key_Return);
-        compare(greeter.state, "checking");
+        compare(greeter.loginState, "checking");
         compare(backend.lastCall(), ["startAuthentication", "ian"]);
 
         backend.authPrompt("Password:", true);
         compare(backend.lastCall(), ["answer", "secret"]);
 
         backend.readyToLaunch();
-        compare(greeter.state, "starting");
+        compare(greeter.loginState, "starting");
         tryVerify(() => backend.lastCall()[0] === "launch");
         compare(backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
@@ -163,7 +163,7 @@ TestCase {
         const greeter = createGreeter();
         logIn(greeter, "wrong");
         greeter.backend.authFailure("Authentication failed");
-        compare(greeter.state, "wrongPassword");
+        compare(greeter.loginState, "wrongPassword");
         const field = findChild(greeter, "passwordField");
         tryCompare(field, "text", "");
         verify(field.activeFocus);
@@ -178,7 +178,7 @@ TestCase {
         greeter.backend.readyToLaunch();
         tryVerify(() => greeter.backend.lastCall()[0] === "launch");
         greeter.backend.error("Session failed to start");
-        compare(greeter.state, "sessionFailed");
+        compare(greeter.loginState, "sessionFailed");
         tryCompare(findChild(greeter, "content"), "opacity", 1);
     }
 }
