@@ -26,12 +26,19 @@ QtObject {
     }
     property string chosenUser: ""
 
-    // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel.
+    // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel,
+    // "options" for the Session Menu.
     property string overlay: ""
+    // The Session picked in the Session Menu, else the selected user's remembered one, else
+    // the machine default, else the first. A pick is remembered only when its user logs in.
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
-        return sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
+        const remembered = backend?.rememberedSessions[selectedUser?.name ?? ""];
+        return sessions.find(session => session.id === chosenSession)
+            ?? sessions.find(session => session.id === remembered)
+            ?? sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
+    property string chosenSession: ""
 
     // Caps Lock, inferred from typed letters: Qt reports no lock state, but an upper-case
     // letter without Shift (or lower-case with it) means it is on.
@@ -62,18 +69,34 @@ QtObject {
             overlay = "otherUsers";
     }
 
+    // Options toggles the Session Menu; there is nothing to choose with one Session.
+    function toggleOptions() {
+        if (overlay === "options")
+            overlay = "";
+        else if (phase !== "checking" && phase !== "starting" && (backend?.sessions.length ?? 0) > 1)
+            overlay = "options";
+    }
+
+    function chooseSession(id) {
+        if (overlay !== "options")
+            return;
+        chosenSession = id;
+        overlay = "";
+    }
+
     function closeOverlay() {
         overlay = "";
     }
 
-    // A newly picked user starts over with an empty field, after greetd drops what is left
-    // of a failed Session.
+    // A newly picked user starts over with an empty field and their own Session, after
+    // greetd drops what is left of a failed Session.
     function chooseUser(name) {
         if (overlay !== "otherUsers")
             return;
         if (phase === "sessionFailed")
             backend.cancel();
         chosenUser = name;
+        chosenSession = "";
         overlay = "";
         wrongPasswordShown = false;
         if (phase !== "unavailable")

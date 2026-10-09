@@ -8,7 +8,7 @@ FocusScope {
 
     property GreeterBackend backend
     readonly property string loginState: logic.state
-    // What covers the screen: "" or "otherUsers" (the Choose a user panel).
+    // What covers the screen: "", "otherUsers" (the Choose a user panel) or "options" (the Session Menu).
     readonly property string overlay: logic.overlay
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
@@ -77,6 +77,30 @@ FocusScope {
             sessionFailed: logic.state === "sessionFailed"
             unavailable: logic.state === "unavailable"
             onRetryRequested: logic.retry()
+        }
+
+        // Before the PowerRow in the tree, so Options comes before the power buttons in Tab
+        // order, but drawn over it, so a click outside the open Menu reaches nothing else.
+        SessionOptions {
+            id: sessionOptions
+
+            anchors.fill: parent
+            z: 1
+            sessions: greeter.backend?.sessions ?? []
+            currentSession: logic.selectedSession?.id ?? ""
+            open: logic.overlay === "options"
+            backdrop: wallpaper
+            shortScreen: greeter.shortScreen
+            onToggled: logic.toggleOptions()
+            // A picked Session is followed by the password.
+            onPicked: id => {
+                logic.chooseSession(id);
+                userColumn.passwordField.forceActiveFocus();
+            }
+            onDismissed: {
+                logic.closeOverlay();
+                sessionOptions.button.forceActiveFocus();
+            }
         }
 
         PowerRow {
