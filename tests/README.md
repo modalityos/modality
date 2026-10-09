@@ -14,6 +14,12 @@ The import rule for the shared modules (Theme imports only Qt; Controls only Qt 
 tests/check-imports.sh
 ```
 
+## The Greeter
+
+- `tst_greeter.qml` drives the Greeter screen through `helpers/FakeBackend.qml`, a Greeter backend that records each operation in `calls` and whose events a test emits (`backend.authPrompt("Password:", true)`). Its wallpapers are tiny PNGs in `fixtures/wallpapers/`.
+- `tst_realbackend.qml` runs the real backend against the stubs in `stubs/Quickshell/`. The `Greetd` stub records calls; reset it in `init()`, since singletons outlive a test. Stub `Process`es never run: find one with `Processes.find("<part of its command>")` (module `QuickshellStubs`) and feed it with `Processes.finish(process, output)`.
+- `tst_shell.qml` loads `greeter/shell.qml` against stubbed `ShellRoot`, `FloatingWindow` and `Quickshell.env()`.
+
 ## Preview
 
 The Control states sheet, every Control in every state:
