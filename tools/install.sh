@@ -50,7 +50,7 @@ render_wallpapers() {
 
 render_wallpapers
 
-install -d "$root/bin" "$root/lib/qt6/qml" "$root/lib/tmpfiles.d" "$root/share/modalityos/greeter" \
+install -d "$root/bin" "$root/lib/qt6/qml" "$root/lib/tmpfiles.d" \
     "$root/share/modalityos/avatars" "$root/share/modalityos/wallpapers" "$root/share/wayland-sessions"
 
 # Shared QML modules, where Qt looks for them under the prefix.
