@@ -90,6 +90,22 @@ TestCase {
         compare(authPromptSpy.count, 0);
     }
 
+    function test_greetd_error_message_needing_no_answer_is_an_auth_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "authError" });
+        Greetd.authMessage("Your account has expired", true, false, false);
+        compare(spy.count, 1);
+        compare(spy.signalArguments[0][0], "Your account has expired");
+        compare(authPromptSpy.count, 0);
+    }
+
+    function test_greetd_info_message_is_not_an_auth_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "authError" });
+        Greetd.authMessage("Welcome", false, false, false);
+        compare(spy.count, 0);
+    }
+
     function test_answer_responds_to_greetd() {
         const backend = createBackend();
         backend.answer("secret");

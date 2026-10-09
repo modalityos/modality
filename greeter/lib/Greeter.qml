@@ -93,6 +93,7 @@ FocusScope {
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
             wrongPasswordShown: logic.wrongPasswordShown
+            authError: logic.authError
             capsLockShown: logic.capsLockShown
             sessionFailed: logic.state === "sessionFailed"
             unavailable: logic.state === "unavailable"
@@ -137,6 +138,10 @@ FocusScope {
 
             function onPasswordRejected() {
                 userColumn.passwordField.shake();
+            }
+
+            function onAttemptEnded() {
+                userColumn.passwordField.text = "";
             }
 
             // A Session that failed to start brings the faded screen back, with focus on

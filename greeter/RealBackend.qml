@@ -154,10 +154,13 @@ GreeterBackend {
     property Connections greetdConnections: Connections {
         target: Greetd
 
-        // greetd's info messages need no answer; Quickshell acknowledges them itself.
+        // Messages that need no answer are acknowledged by Quickshell itself; only errors
+        // reach the user, since info messages are noise on a login screen.
         function onAuthMessage(message, error, responseRequired, echoResponse) {
             if (responseRequired)
                 backend.authPrompt(message, !echoResponse);
+            else if (error)
+                backend.authError(message);
         }
 
         function onAuthFailure(message) {

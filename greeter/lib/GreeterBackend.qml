@@ -26,6 +26,8 @@ QtObject {
     // greetd asks for an answer; secret means hide what is typed (a password).
     signal authPrompt(string message, bool secret)
     signal authFailure(string message)
+    // greetd reports a problem that needs no answer, such as an expired account.
+    signal authError(string message)
     signal readyToLaunch
     signal launched
     signal error(string message)

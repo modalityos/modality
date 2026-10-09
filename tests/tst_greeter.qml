@@ -467,6 +467,56 @@ TestCase {
         tryCompare(findChild(greeter, "wrongPasswordNotice"), "visible", false, 1000);
     }
 
+    function test_greetd_error_while_checking_shows_in_a_danger_notice_not_wrong_password() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.authError("Your account has expired");
+        greeter.backend.authFailure("Authentication failed");
+        const notice = findChild(greeter, "authErrorNotice");
+        verify(notice);
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Your account has expired");
+        compare(notice.tone, Notice.Danger);
+        verify(!findChild(greeter, "wrongPasswordNotice").visible);
+        tryCompare(findChild(greeter, "passwordField"), "text", "");
+    }
+
+    function test_greetd_failing_while_checking_is_not_a_failed_session() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.authError("Your account has expired");
+        greeter.backend.error("Account check failed");
+        verify(greeter.loginState !== "sessionFailed");
+        verify(!findChild(greeter, "sessionFailedNotice").visible);
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Your account has expired");
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(field.activeFocus);
+
+        logIn(greeter, "secret");
+        compare(greeter.backend.lastCall(), ["answer", "secret"]);
+    }
+
+    function test_greetd_failing_while_checking_without_a_message_shows_its_error() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.error("Account check failed");
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Account check failed");
+    }
+
+    function test_typing_again_hides_the_greetd_error_notice() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.error("Account check failed");
+        tryCompare(findChild(greeter, "authErrorNotice"), "visible", true);
+        typeText("s");
+        tryCompare(findChild(greeter, "authErrorNotice"), "visible", false, 1000);
+    }
+
     function test_upper_case_letter_without_shift_shows_caps_lock_on() {
         const greeter = createGreeter();
         const notice = findChild(greeter, "capsLockNotice");

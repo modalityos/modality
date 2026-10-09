@@ -18,6 +18,8 @@ ColumnLayout {
     // The wallpaper the Glass elements blur.
     property Item backdrop
     property bool wrongPasswordShown: false
+    // greetd's own account of a failed login; "" for none.
+    property string authError: ""
     property bool capsLockShown: false
     property bool sessionFailed: false
     // Login unavailable: a message takes the password field's place.
@@ -78,6 +80,18 @@ ColumnLayout {
         tone: Notice.Danger
         glyph: Glyphs.cross
         text: qsTr("Wrong password")
+    }
+
+    FadingNotice {
+        objectName: "authErrorNotice"
+        shown: column.authError !== ""
+        tone: Notice.Danger
+        glyph: Glyphs.cross
+        // Keeps the message while it fades out.
+        onShownChanged: {
+            if (shown)
+                text = column.authError;
+        }
     }
 
     FadingNotice {
