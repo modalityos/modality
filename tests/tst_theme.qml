@@ -89,6 +89,24 @@ TestCase {
 
     ]
 
+    // Type styles from the Type table of design/foundations/spec.md.
+    readonly property var typeStyles: [
+        { name: "caption", family: "Inter", size: 10, lineHeight: 13, weight: 500, letterSpacingEm: 0.01 },
+        { name: "footnote", family: "Inter", size: 11, lineHeight: 14, weight: 400, letterSpacingEm: 0 },
+        { name: "footnoteMedium", family: "Inter", size: 11, lineHeight: 14, weight: 500, letterSpacingEm: 0 },
+        { name: "footnoteStrong", family: "Inter", size: 11, lineHeight: 14, weight: 600, letterSpacingEm: 0 },
+        { name: "body", family: "Inter", size: 13, lineHeight: 16, weight: 400, letterSpacingEm: 0 },
+        { name: "bodyMedium", family: "Inter", size: 13, lineHeight: 16, weight: 500, letterSpacingEm: 0 },
+        { name: "bodyStrong", family: "Inter", size: 13, lineHeight: 16, weight: 600, letterSpacingEm: 0 },
+        { name: "headline", family: "Inter", size: 15, lineHeight: 20, weight: 600, letterSpacingEm: 0 },
+        { name: "title3", family: "Inter", size: 15, lineHeight: 20, weight: 500, letterSpacingEm: 0 },
+        { name: "title2", family: "Inter", size: 17, lineHeight: 22, weight: 600, letterSpacingEm: 0 },
+        { name: "title1", family: "Inter", size: 22, lineHeight: 28, weight: 600, letterSpacingEm: -0.01 },
+        { name: "largeTitle", family: "Inter", size: 26, lineHeight: 32, weight: 700, letterSpacingEm: -0.015 },
+        { name: "display", family: "Inter", size: 96, lineHeight: 100, weight: 600, letterSpacingEm: -0.03 },
+        { name: "mono", family: "JetBrains Mono", size: 12, lineHeight: 16, weight: 400, letterSpacingEm: 0 }
+    ]
+
     function cssColor(css) {
         if (css.startsWith("#"))
             return Qt.color(css);
@@ -144,5 +162,22 @@ TestCase {
         Theme.theme = "dark";
         for (const token of tokens)
             compareValue(Theme[token.name], token.dark ?? token.light, `${token.name} (dark)`);
+    }
+
+    function test_font_families_are_inter_and_jetbrains_mono() {
+        compare(Theme.fontSans, "Inter");
+        compare(Theme.fontMono, "JetBrains Mono");
+    }
+
+    function test_every_type_style_has_its_family_size_line_height_weight_and_spacing() {
+        for (const style of typeStyles) {
+            const actual = Theme[style.name];
+            verify(actual !== undefined, `${style.name} is missing`);
+            compare(actual.font.family, style.family, `${style.name} family`);
+            compare(actual.font.pixelSize, style.size, `${style.name} size`);
+            compare(actual.font.weight, style.weight, `${style.name} weight`);
+            compare(actual.lineHeight, style.lineHeight, `${style.name} line height`);
+            fuzzyCompare(actual.font.letterSpacing, style.letterSpacingEm * style.size, 0.05, `${style.name} letter spacing`);
+        }
     }
 }

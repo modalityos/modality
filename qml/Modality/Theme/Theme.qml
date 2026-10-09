@@ -105,6 +105,33 @@ QtObject {
     readonly property var motionEasingOut: [0, 0, 0.2, 1, 1, 1]
     readonly property var motionEasingSpring: [0.34, 1.56, 0.64, 1, 1, 1]
 
+    // Type. Noto Sans and Noto Sans Mono fill in through fontconfig for scripts these lack.
+    readonly property string fontSans: "Inter"
+    readonly property string fontMono: "JetBrains Mono"
+
+    // Each type style is { font, lineHeight }; set Text.lineHeightMode to Text.FixedHeight.
+    readonly property var caption: typeStyle(fontSans, 10, 13, Font.Medium, 0.01)
+    readonly property var footnote: typeStyle(fontSans, 11, 14, Font.Normal, 0)
+    readonly property var footnoteMedium: typeStyle(fontSans, 11, 14, Font.Medium, 0)
+    readonly property var footnoteStrong: typeStyle(fontSans, 11, 14, Font.DemiBold, 0)
+    readonly property var body: typeStyle(fontSans, 13, 16, Font.Normal, 0)
+    readonly property var bodyMedium: typeStyle(fontSans, 13, 16, Font.Medium, 0)
+    readonly property var bodyStrong: typeStyle(fontSans, 13, 16, Font.DemiBold, 0)
+    readonly property var headline: typeStyle(fontSans, 15, 20, Font.DemiBold, 0)
+    readonly property var title3: typeStyle(fontSans, 15, 20, Font.Medium, 0)
+    readonly property var title2: typeStyle(fontSans, 17, 22, Font.DemiBold, 0)
+    readonly property var title1: typeStyle(fontSans, 22, 28, Font.DemiBold, -0.01)
+    readonly property var largeTitle: typeStyle(fontSans, 26, 32, Font.Bold, -0.015)
+    readonly property var display: typeStyle(fontSans, 96, 100, Font.DemiBold, -0.03)
+    readonly property var mono: typeStyle(fontMono, 12, 16, Font.Normal, 0)
+
+    function typeStyle(family, size, lineHeight, weight, letterSpacingEm) {
+        return {
+            font: Qt.font({ family: family, pixelSize: size, weight: weight, letterSpacing: letterSpacingEm * size }),
+            lineHeight: lineHeight
+        };
+    }
+
     function rgba(r, g, b, a) {
         return Qt.rgba(r / 255, g / 255, b / 255, a);
     }
