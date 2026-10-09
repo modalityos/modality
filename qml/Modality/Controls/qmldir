@@ -1,0 +1,15 @@
+module Modality.Controls
+Button 1.0 Button.qml
+FocusRing 1.0 FocusRing.qml
+Shadow 1.0 Shadow.qml
+FastColorAnimation 1.0 FastColorAnimation.qml
+Glass 1.0 Glass.qml
+Icon 1.0 Icon.qml
+IconButton 1.0 IconButton.qml
+singleton Glyphs 1.0 Glyphs.qml
+Avatar 1.0 Avatar.qml
+PasswordField 1.0 PasswordField.qml
+Spinner 1.0 Spinner.qml
+Notice 1.0 Notice.qml
+Menu 1.0 Menu.qml
+MenuItem 1.0 MenuItem.qml
