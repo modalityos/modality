@@ -242,6 +242,28 @@ TestCase {
         compare(greeter.backend.lastCall(), ["launch", "hyprland"]);
     }
 
+    function test_options_comes_after_other_users_and_before_sleep_in_tab_order() {
+        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "ian" }));
+        const field = findChild(greeter, "passwordField");
+        tryVerify(() => field.activeFocus);
+        keyClick(Qt.Key_Tab);
+        verify(findChild(greeter, "otherUsersPill").activeFocus);
+        keyClick(Qt.Key_Tab);
+        verify(findChild(greeter, "optionsButton").activeFocus);
+        keyClick(Qt.Key_Tab);
+        verify(findChild(greeter, "sleepButton").activeFocus);
+        keyClick(Qt.Key_Backtab);
+        verify(findChild(greeter, "optionsButton").activeFocus);
+    }
+
+    function test_one_session_leaves_options_out_of_tab_order() {
+        const greeter = createGreeter({ users: testCase.twoUsers, lastUser: "ian" });
+        tryVerify(() => findChild(greeter, "passwordField").activeFocus);
+        keyClick(Qt.Key_Tab);
+        keyClick(Qt.Key_Tab);
+        verify(findChild(greeter, "sleepButton").activeFocus);
+    }
+
     function test_remembered_session_that_is_gone_gives_the_default_session() {
         const greeter = createGreeter(twoSessions({ rememberedSessions: { ian: "sway" } }));
         logIn(greeter);
