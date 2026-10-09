@@ -117,6 +117,45 @@ TestCase {
         compare(findChild(greeter, "userName").text, "Ian Gregson");
     }
 
+    function openOtherUsers(greeter) {
+        mouseClick(findChild(greeter, "otherUsersPill"));
+        const panel = findChild(greeter, "userPanel");
+        verify(panel);
+        tryCompare(panel, "opacity", 1);
+        return panel;
+    }
+
+    function userCells(greeter) {
+        const cells = [];
+        for (let index = 0; ; index++) {
+            const cell = findChild(greeter, `userCell${index}`);
+            if (!cell)
+                return cells;
+            cells.push(cell);
+        }
+    }
+
+    function test_other_users_pill_opens_the_choose_a_user_panel_data() {
+        return [
+            { tag: "three users in one row of three", count: 3, columns: 3 },
+            { tag: "eight users in two rows of four", count: 8, columns: 4 }
+        ];
+    }
+
+    function test_other_users_pill_opens_the_choose_a_user_panel(data) {
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        verify(!findChild(greeter, "userPanel").visible);
+        const panel = openOtherUsers(greeter);
+        compare(greeter.overlay, "otherUsers");
+        verify(panel.visible);
+        compare(findChild(panel, "userPanelTitle").text, "Choose a user");
+        compare(findChild(panel, "userGrid").columns, data.columns);
+        const cells = userCells(greeter);
+        compare(cells.map(cell => cell.text), someUsers(data.count).map(user => user.realName));
+        // The shown user's cell starts highlighted.
+        verify(cells[2].activeFocus);
+    }
+
     readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
     readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
 

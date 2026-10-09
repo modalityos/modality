@@ -8,6 +8,8 @@ FocusScope {
 
     property GreeterBackend backend
     readonly property string loginState: logic.state
+    // What covers the screen: "" or "otherUsers" (the Choose a user panel).
+    readonly property string overlay: logic.overlay
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
 
@@ -102,5 +104,37 @@ FocusScope {
         easing.bezierCurve: Theme.motionEasingIn
         running: logic.state === "starting"
         onFinished: logic.launch()
+    }
+
+    // Over the Content, which stays at full opacity under the scrim.
+    UserPanel {
+        id: userPanel
+
+        objectName: "userPanel"
+        anchors.fill: parent
+        open: logic.overlay === "otherUsers"
+        users: greeter.backend?.users ?? []
+        currentUser: logic.selectedUser?.name ?? ""
+        defaultAvatar: greeter.backend?.defaultAvatar ?? ""
+        backdrop: wallpaper
+
+        // A picked user starts with an empty, focused field.
+        onPicked: name => {
+            logic.chooseUser(name);
+            userColumn.passwordField.text = "";
+            userColumn.passwordField.forceActiveFocus();
+        }
+        onCancelled: {
+            logic.closeOverlay();
+            userColumn.otherUsersPill.forceActiveFocus();
+        }
+    }
+
+    Connections {
+        target: userColumn.otherUsersPill
+
+        function onClicked() {
+            logic.openOtherUsers();
+        }
     }
 }
