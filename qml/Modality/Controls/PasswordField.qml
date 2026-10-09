@@ -168,28 +168,32 @@ FocusScope {
         id: shakeAnimation
 
         ShakeStep {
+            target: shakeTranslate
             to: -8
         }
 
         ShakeStep {
+            target: shakeTranslate
             to: 8
         }
 
         ShakeStep {
+            target: shakeTranslate
             to: -6
         }
 
         ShakeStep {
+            target: shakeTranslate
             to: 4
         }
 
         ShakeStep {
+            target: shakeTranslate
             to: 0
         }
     }
 
     component ShakeStep: NumberAnimation {
-        target: shakeTranslate
         property: "x"
         duration: Theme.motionDurationSlow * 2 / 5
         easing.type: Easing.Bezier

@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import Modality.Theme
 
@@ -114,16 +115,18 @@ FocusScope {
             model: menu.model
 
             MenuItem {
+                id: menuItem
+
                 required property var modelData
                 required property int index
 
                 width: column.width
-                text: modelData.text
-                checked: modelData.checked === true
-                enabled: modelData.enabled !== false
+                text: menuItem.modelData.text
+                checked: menuItem.modelData.checked === true
+                enabled: menuItem.modelData.enabled !== false
                 onClicked: {
                     menu.close();
-                    menu.triggered(index);
+                    menu.triggered(menuItem.index);
                 }
             }
         }
