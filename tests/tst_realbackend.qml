@@ -249,6 +249,34 @@ TestCase {
                 ["/usr/lib/plasma-dbus-run-session-if-needed", "/usr/bin/startplasma-wayland"]);
     }
 
+    // A hidden entry counts as deleted, so it also hides the same id in a later folder.
+    function test_hidden_sessions_are_skipped() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("wayland-sessions"), [
+            "\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop",
+            "[Desktop Entry]",
+            "Name=Plasma (Wayland)",
+            "Exec=/bin/false",
+            "Hidden=true",
+            "\u001e/usr/share/wayland-sessions/org.modalityos.kwin.desktop",
+            "[Desktop Entry]",
+            "Name=ModalityOS (KWin)",
+            "Exec=/usr/bin/modalityos-session-kwin",
+            "Hidden=false",
+            "\u001e/usr/share/wayland-sessions/gnome-debug.desktop",
+            "[Desktop Entry]",
+            "Name=GNOME (debug)",
+            "Exec=/usr/bin/gnome-session --debug",
+            "NoDisplay=true",
+            "\u001e/usr/share/wayland-sessions/plasma.desktop",
+            "[Desktop Entry]",
+            "Name=Plasma (Wayland)",
+            "Exec=/usr/bin/startplasma-wayland",
+            ""
+        ].join("\n"));
+        compare(backend.sessions.map(session => session.id), ["org.modalityos.kwin"]);
+    }
+
     readonly property string statePath: "/var/lib/modalityos/greeter/state.json"
 
     function test_last_user_comes_from_the_state_file() {
