@@ -84,6 +84,8 @@ Done when every section is filled or `None`, **Hand back** lists every deliverab
 
 A kind missing from `design/README.md` gets its entry there first (under **What happens to your design** and **By kind**), since that file is what every later piece shares; the brief then only fills in the details.
 
+Then put the brief to the user in a few lines (the Decisions, the states, anything you assumed) and ask whether there is anything to add before you draft. Done when the user says go; fold in anything they add first.
+
 On a redesign, delete the piece's old `spec.md`, `handoff/` and `assets/` in the same commit as the new brief. The last commit keeps them, and a piece with no `spec.md` is one still to design. Draft the redesign in the piece's existing artifact.
 
 ## 5. Create the artifact and draft the design
