@@ -246,6 +246,41 @@ TestCase {
         compare(greeter.overlay, "");
     }
 
+    function test_long_name_wraps_within_the_user_column_on_a_short_screen() {
+        const users = someUsers(3);
+        users[2].realName = "Alexandria Montgomery-Fitzwilliam";
+        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        greeter.width = 1366;
+        greeter.height = 768;
+        const name = findChild(greeter, "userName");
+        compare(name.text, "Alexandria Montgomery-Fitzwilliam");
+        // Two lines in Inter; the line count varies with the font installed.
+        verify(name.lineCount <= 2);
+        verify(name.contentWidth <= 280);
+        compare(name.wrapMode, Text.Wrap);
+        const column = name.parent;
+        compare(column.width, 280);
+        const clock = findChild(greeter, "clock");
+        const clockBottom = clock.mapToItem(greeter, 0, clock.height).y;
+        const columnTop = column.mapToItem(greeter, 0, 0).y;
+        verify(columnTop > clockBottom, `column top ${columnTop} under clock bottom ${clockBottom}`);
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(pill.mapToItem(greeter, 0, pill.height).y <= greeter.height - 96);
+    }
+
+    function test_long_name_wraps_within_its_cell_in_the_choose_a_user_panel() {
+        const users = someUsers(8);
+        users[2].realName = "Alexandria Montgomery-Fitzwilliam";
+        const greeter = createGreeter({ users: users, lastUser: "ian" });
+        openOtherUsers(greeter);
+        const cell = userCells(greeter)[2];
+        const label = cell.contentItem.children[1];
+        compare(label.text, "Alexandria Montgomery-Fitzwilliam");
+        verify(label.lineCount >= 2);
+        verify(label.contentWidth <= cell.availableWidth);
+        compare(cell.width, userCells(greeter)[3].width);
+    }
+
     readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
     readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
 
