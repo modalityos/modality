@@ -57,6 +57,7 @@ TestCase {
 
     function init() {
         Greetd.reset();
+        Files.reset();
     }
 
     function createBackend() {
@@ -215,6 +216,56 @@ TestCase {
         compare(backend.sessions[1].id, "plasma");
         compare(backend.sessions[1].command,
                 ["/usr/lib/plasma-dbus-run-session-if-needed", "/usr/bin/startplasma-wayland"]);
+    }
+
+    readonly property string statePath: "/var/lib/modalityos/greeter/state.json"
+
+    function test_last_user_comes_from_the_state_file() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        compare(backend.lastUser, "ada");
+        compare(backend.rememberedSessions, { ada: "plasma" });
+    }
+
+    function test_missing_state_file_gives_no_last_user() {
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_corrupt_state_file_gives_no_last_user() {
+        Files.write(testCase.statePath, '{"lastUser": ');
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_state_file_of_the_wrong_shape_gives_no_last_user() {
+        Files.write(testCase.statePath, '{"lastUser":42,"sessions":["plasma"]}');
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_remember_writes_the_last_user_and_their_session_to_the_state_file() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        backend.remember("ian", "org.modalityos.kwin");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "ian",
+            sessions: { ada: "plasma", ian: "org.modalityos.kwin" }
+        });
+        compare(backend.lastUser, "ian");
+    }
+
+    function test_remember_replaces_a_corrupt_state_file() {
+        Files.write(testCase.statePath, "not json");
+        const backend = createBackend();
+        backend.remember("ian", "org.modalityos.kwin");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "ian",
+            sessions: { ian: "org.modalityos.kwin" }
+        });
     }
 
     function test_default_session_is_modalityos_kwin() {

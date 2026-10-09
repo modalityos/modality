@@ -4,6 +4,7 @@ import Quickshell.Services.Greetd
 import "lib"
 import "lib/accounts.js" as Accounts
 import "lib/desktopEntries.js" as DesktopEntries
+import "lib/greeterState.js" as GreeterState
 
 // The Greeter backend on a real machine: the thin Quickshell layer. Login goes through
 // greetd; everything here maps Quickshell's API onto the Greeter backend interface.
@@ -16,6 +17,20 @@ GreeterBackend {
     // Machine settings stay at their Defaults until they are read from files.
     defaultSession: "org.modalityos.kwin"
     wallpaperFolder: `file://${prefix}/share/modalityos/wallpapers`
+
+    // The last user to log in and each user's Session; the greeter user owns the folder.
+    property string statePath: "/var/lib/modalityos/greeter/state.json"
+    readonly property var storedState: GreeterState.parseState(stateFile.text())
+
+    lastUser: storedState.lastUser
+    rememberedSessions: storedState.sessions
+
+    // Writes block: Quickshell quits as soon as greetd takes the Session.
+    property FileView stateFile: FileView {
+        path: backend.statePath
+        blockLoading: true
+        blockWrites: true
+    }
 
     // Every cached AccountsService user's properties, one JSON line each.
     property Process usersProcess: Process {
@@ -67,6 +82,10 @@ GreeterBackend {
             environment.push(`XDG_SESSION_DESKTOP=${session.desktopNames[0]}`);
         }
         Greetd.launch(session.command, environment, true);
+    }
+
+    function remember(user, sessionId) {
+        stateFile.setText(GreeterState.formatState(GreeterState.withLogin(storedState, user, sessionId)));
     }
 
     property Connections greetdConnections: Connections {
