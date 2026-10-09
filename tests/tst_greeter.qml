@@ -211,6 +211,54 @@ TestCase {
         tryCompare(findChild(greeter, "wrongPasswordNotice"), "visible", false, 1000);
     }
 
+    function test_upper_case_letter_without_shift_shows_caps_lock_on() {
+        const greeter = createGreeter();
+        const notice = findChild(greeter, "capsLockNotice");
+        verify(notice);
+        keyClick("a");
+        verify(!notice.visible);
+        keyClick("B");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Caps Lock is on");
+        compare(notice.tone, Notice.Warning);
+        compare(greeter.loginState, "typing");
+    }
+
+    function test_lower_case_letter_hides_caps_lock_on() {
+        const greeter = createGreeter();
+        const notice = findChild(greeter, "capsLockNotice");
+        keyClick("B");
+        tryCompare(notice, "visible", true);
+        keyClick("c");
+        tryCompare(notice, "visible", false);
+    }
+
+    function test_upper_case_letter_with_shift_is_not_caps_lock() {
+        const greeter = createGreeter();
+        keyClick("B", Qt.ShiftModifier);
+        keyClick("1");
+        wait(Theme.motionDurationNormal);
+        verify(!findChild(greeter, "capsLockNotice").visible);
+    }
+
+    function test_caps_lock_notice_hides_while_checking() {
+        const greeter = createGreeter();
+        typeText("SECRET");
+        const notice = findChild(greeter, "capsLockNotice");
+        tryCompare(notice, "visible", true);
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "checking");
+        tryCompare(notice, "visible", false);
+    }
+
+    function test_escape_clears_the_password_field() {
+        const greeter = createGreeter();
+        typeText("secret");
+        keyClick(Qt.Key_Escape);
+        compare(findChild(greeter, "passwordField").text, "");
+        compare(greeter.loginState, "ready");
+    }
+
     function test_session_that_fails_to_start_brings_the_greeter_back() {
         const greeter = createGreeter();
         logIn(greeter, "secret");

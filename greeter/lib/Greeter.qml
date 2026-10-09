@@ -67,6 +67,7 @@ FocusScope {
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
             wrongPasswordShown: logic.wrongPasswordShown
+            capsLockShown: logic.capsLockShown
         }
 
         Connections {

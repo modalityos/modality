@@ -27,6 +27,11 @@ QtObject {
         return sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
 
+    // Caps Lock, inferred from typed letters: Qt reports no lock state, but an upper-case
+    // letter without Shift (or lower-case with it) means it is on.
+    property bool capsLock: false
+    readonly property bool capsLockShown: capsLock && (state === "ready" || state === "typing" || state === "wrongPassword")
+
     // The Wrong password Notice: shown for three seconds, or until typing starts again.
     property bool wrongPasswordShown: false
 
@@ -53,6 +58,10 @@ QtObject {
     // The screen calls this for each character typed into the password field.
     function typed(text, modifiers) {
         wrongPasswordShown = false;
+        const upper = text.toUpperCase();
+        const lower = text.toLowerCase();
+        if (upper !== lower)
+            capsLock = (text === upper) !== Boolean(modifiers & Qt.ShiftModifier);
     }
 
     property Timer wrongPasswordTimer: Timer {

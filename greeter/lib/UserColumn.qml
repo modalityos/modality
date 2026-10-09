@@ -13,6 +13,7 @@ ColumnLayout {
     // The wallpaper the Glass elements blur.
     property Item backdrop
     property bool wrongPasswordShown: false
+    property bool capsLockShown: false
 
     spacing: Theme.space3
 
@@ -57,6 +58,14 @@ ColumnLayout {
         tone: Notice.Danger
         glyph: Glyphs.cross
         text: qsTr("Wrong password")
+    }
+
+    FadingNotice {
+        objectName: "capsLockNotice"
+        shown: column.capsLockShown
+        tone: Notice.Warning
+        glyph: Glyphs.capsLock
+        text: qsTr("Caps Lock is on")
     }
 
     // A Notice under the field that fades in and out, over its own frosted wallpaper.
