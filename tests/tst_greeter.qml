@@ -117,6 +117,23 @@ TestCase {
                 Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2400.png"));
     }
 
+    function test_password_field_is_frosted_with_the_wallpaper_behind_it() {
+        const greeter = createGreeter();
+        greeter.width = 1920;
+        greeter.height = 1080;
+        const field = findChild(greeter, "passwordField");
+        const frost = findChild(greeter, "passwordFrost");
+        verify(frost);
+        verify(frost.visible);
+        compare(frost.blurRadius, Theme.materialPopoverBlur);
+        fuzzyCompare(frost.saturation, 0.6, 0.001);
+        tryVerify(() => {
+            const behind = field.mapToItem(greeter, 0, 0, field.width, field.height);
+            return frost.region.x === behind.x && frost.region.y === behind.y
+                && frost.region.width === 240 && frost.region.height === Theme.controlHeightLarge;
+        });
+    }
+
     function test_correct_password_launches_the_session() {
         const greeter = createGreeter();
         const backend = greeter.backend;

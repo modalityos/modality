@@ -10,6 +10,8 @@ ColumnLayout {
     // One entry of the Greeter backend's users.
     property var user: null
     property alias passwordField: passwordField
+    // The wallpaper the Glass elements blur.
+    property Item backdrop
 
     spacing: Theme.space3
 
@@ -37,5 +39,14 @@ ColumnLayout {
         objectName: "passwordField"
         Layout.alignment: Qt.AlignHCenter
         focus: true
+
+        // Beneath the field's own Glass tint.
+        Frost {
+            objectName: "passwordFrost"
+            z: -1
+            anchors.fill: parent
+            source: column.backdrop
+            radius: passwordField.radius
+        }
     }
 }
