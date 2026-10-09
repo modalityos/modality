@@ -79,6 +79,16 @@ FocusScope {
             onRetryRequested: logic.retry()
         }
 
+        // Before the PowerRow in the tree, so Options comes before the power buttons in Tab order.
+        SessionOptions {
+            id: sessionOptions
+
+            anchors.fill: parent
+            sessions: greeter.backend?.sessions ?? []
+            backdrop: wallpaper
+            shortScreen: greeter.shortScreen
+        }
+
         PowerRow {
             objectName: "powerRow"
             anchors.horizontalCenter: parent.horizontalCenter
