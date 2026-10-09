@@ -1,6 +1,6 @@
 # Foundations: design brief
 
-**Kind:** foundations
+**Kind:** foundations · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2
 
 ## Purpose
 The Foundations are the Tokens every part of ModalityOS takes its look from: the Shell, the Greeter and every App. Nobody sees them as a screen; everyone sees them in every screen. This is the first ModalityOS design, and the first screen built on it is the Greeter, the login screen.
