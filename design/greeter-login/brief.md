@@ -7,10 +7,10 @@ The Greeter is the first thing anyone sees after boot: the login screen. It show
 
 ## Decisions
 - **Foundations:** built only from the ModalityOS Foundations Tokens (`design/foundations/spec.md`); `SceneLogin` there is the starting point.
-- **No blur:** the Greeter runs in Cage, which cannot blur. Every material uses its solid `*-fallback` colour. The wallpaper gradient shows behind everything.
+- **Wallpaper and glass:** the machine-wide wallpaper (`wallpaper-default`, an Admin override; showing a user's own wallpaper is a later Settings opt-in) fills the screen. Cage cannot blur, so the Greeter blurs its own wallpaper behind the password field, Notices, Menu and buttons, using the Foundations' material tints and blur; the `*-fallback` colours are only for Reduce transparency.
 - **Theme:** dark by default, light possible. The theme and the clock format are machine-wide settings (Defaults plus Admin overrides), set at install or later in Settings by an admin, and read by the Greeter at start; a user's own settings never reach it.
-- **Users:** every human account, from AccountsService; no system accounts, no "Other…". Up to six avatars in a row; beyond that the row scrolls sideways. The last user to log in is selected in advance; the selected avatar grows and carries the password field.
-- **Avatars:** the user's own picture, else a built-in avatar. The built-in set is its own later piece (`avatars-default`, our own illustrations); here, use one neutral placeholder picture.
+- **Users:** every human account, from AccountsService; no system accounts, no "Other…". Up to four users: a row of avatars, the selected one larger and carrying the password field. Five or more: only the last user, large, with a **Switch user** button that opens a frosted grid of everyone. The last user to log in is selected in advance. A "Name and password" mode with no avatars is a later admin option, not designed now.
+- **Avatars:** the user's own picture, else a built-in avatar. The built-in set is its own later piece (`avatars-default`, our own illustrations); here, use three or four temporary sample avatars in that style (an animal, a flower, a ball, a landscape).
 - **Sessions:** a machine default Session (KWin for now, an Admin override) is used. The choice is hidden behind an **Options** icon button at the bottom-left, which opens a Menu of Sessions; it shows only when more than one Session is installed, and a pick is remembered for that user only.
 - **Power:** Sleep, Restart and Shut Down at the bottom centre, with no confirmation step.
 - **Clock:** 24-hour by default (`09:41`), date as "Friday 9 October".
@@ -30,7 +30,8 @@ The Greeter is the first thing anyone sees after boot: the login screen. It show
 ## What to design
 Components, each named and each a reusable Control unless marked:
 - **Clock** (screen part): date above a large time.
-- **UserRow** (screen part): the row of users; selected and unselected avatars with names.
+- **UserRow** (screen part): the row of up to four users; selected and unselected avatars with names.
+- **UserGrid** (screen part): the Switch user panel, a frosted grid of every user.
 - **Avatar** (Control): picture or placeholder in a circle, at large (selected) and small (row) sizes.
 - **PasswordField** (Control): pill field with placeholder and a submit button inside.
 - **Button** (Control): primary and secondary, used for Try again.
@@ -40,7 +41,8 @@ Components, each named and each a reusable Control unless marked:
 
 States, one artboard each, dark first, then the main ones in light:
 - **Ready:** one user, selected, empty field focused.
-- **Several users:** five users, one selected; plus the overflow case with eight.
+- **Several users:** three users in a row, one selected; five users as the last user plus Switch user.
+- **Switch user open:** the frosted grid of eight users, one highlighted.
 - **Typing:** password dots in the field.
 - **Caps Lock on:** warning Notice under the field.
 - **Checking:** spinner replaces the submit arrow; field disabled.
@@ -61,6 +63,7 @@ States, one artboard each, dark first, then the main ones in light:
 - Power labels "Sleep", "Restart", "Shut Down"; Options label "Options"; Sessions "KWin", "Hyprland".
 
 ## Reuse
+- `design/wallpaper-default/spec.md`: the default wallpaper, designed first.
 - The ModalityOS Foundations design system and its Tokens, by name.
 - `refs/scene-login.html`: the Foundations' login scene. Keep its layout (date and clock top centre, user bottom centre, power row at the bottom) and its proportions; replace its blurred materials with the solid fallbacks.
 
@@ -78,7 +81,8 @@ States, one artboard each, dark first, then the main ones in light:
 ## Hand back
 - [ ] Clock, UserRow, Avatar, PasswordField, Button, IconButton, Menu and Notice, each named
 - [ ] Ready, dark and light
-- [ ] Several users, five and eight
+- [ ] Several users, three and five
+- [ ] Switch user open
 - [ ] Typing
 - [ ] Caps Lock on
 - [ ] Checking
