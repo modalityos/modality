@@ -69,6 +69,26 @@ GreeterBackend {
         Greetd.launch(session.command, environment, true);
     }
 
+    // Power goes through logind; a polkit rule lets the greeter user do it.
+    property Process powerProcess: Process {}
+
+    function runPower(verb) {
+        powerProcess.command = ["systemctl", verb];
+        powerProcess.running = true;
+    }
+
+    function suspend() {
+        runPower("suspend");
+    }
+
+    function reboot() {
+        runPower("reboot");
+    }
+
+    function powerOff() {
+        runPower("poweroff");
+    }
+
     property Connections greetdConnections: Connections {
         target: Greetd
 

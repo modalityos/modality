@@ -67,6 +67,15 @@ FocusScope {
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
         }
 
+        PowerRow {
+            objectName: "powerRow"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: greeter.shortScreen ? 28 : Theme.space10
+            backend: greeter.backend
+            backdrop: wallpaper
+        }
+
         Connections {
             target: logic
 

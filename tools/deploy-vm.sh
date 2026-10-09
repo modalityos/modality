@@ -9,14 +9,15 @@
 # default /opt/modalityos-dev.
 #
 # deploy installs the build into the dev root, installs greetd, Cage, Quickshell and the
-# fonts, points greetd at the Greeter and makes greetd the display manager. SSH and a text
-# console on tty2 stay enabled. rollback restores the previous display manager and greetd
-# config; --purge also removes the dev root. From a text console in the VM, rollback is
+# fonts, points greetd at the Greeter, lets the greeter user suspend, restart and shut down
+# (a polkit rule) and makes greetd the display manager. SSH and a text console on tty2 stay
+# enabled. rollback restores the previous display manager and greetd config and removes the
+# polkit rule; --purge also removes the dev root. From a text console in the VM, rollback is
 #   sudo /var/lib/modalityos-dev-deploy/remote.sh rollback
 set -euo pipefail
 
 usage() {
-    sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
     exit "${1:-0}"
 }
 
@@ -67,7 +68,8 @@ if [[ $action == deploy ]]; then
     rm -rf "$stage"
     "$repo/tools/install.sh" --prefix "$prefix" --destdir "$stage"
     rsync -a --delete "$stage$prefix/" "$vm:$remote_dir/root/"
-    rsync -a "$repo/session/greetd/config.toml.in" "$vm:$remote_dir/"
+    rsync -a "$repo/session/greetd/config.toml.in" "$repo/session/polkit/50-modalityos-greeter.rules" \
+        "$vm:$remote_dir/"
 fi
 
 # -t gives sudo a terminal to ask for the password.
