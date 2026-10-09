@@ -6,7 +6,7 @@ import Modality.Theme
 import Modality.Controls
 
 // The shown user: Avatar, name and password field, centred above the power row.
-ColumnLayout {
+Item {
     id: column
 
     // One entry of the Greeter backend's users.
@@ -60,105 +60,118 @@ ColumnLayout {
         otherUsersPill.forceActiveFocus();
     }
 
-    spacing: Theme.space3
+    // The design's minimum height: with the spare room below the content, a Notice appearing
+    // grows into it instead of pushing the Avatar and name up.
+    readonly property int minimumHeight: 236
 
-    UserAvatar {
-        objectName: "userAvatar"
-        Layout.alignment: Qt.AlignHCenter
-        user: column.user
-        fallback: column.defaultAvatar
-    }
+    implicitHeight: Math.max(layout.implicitHeight, minimumHeight)
 
-    Text {
-        objectName: "userName"
-        Layout.fillWidth: true
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.Wrap
-        text: column.user?.realName || column.user?.name || ""
-        font: Theme.headline.font
-        lineHeight: Theme.headline.lineHeight
-        lineHeightMode: Text.FixedHeight
-        color: Theme.textPrimary
-    }
+    ColumnLayout {
+        id: layout
 
-    PasswordField {
-        id: passwordField
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        spacing: Theme.space3
 
-        objectName: "passwordField"
-        Layout.alignment: Qt.AlignHCenter
-        visible: !column.unavailable
-        focus: true
-        onSubmitted: password => column.submitted(password)
-        onTyped: (text, modifiers) => column.typed(text, modifiers)
-        onShakingChanged: {
-            if (!shaking)
-                text = "";
+        UserAvatar {
+            objectName: "userAvatar"
+            Layout.alignment: Qt.AlignHCenter
+            user: column.user
+            fallback: column.defaultAvatar
         }
 
-        // Beneath the field's own Glass tint.
-        Frost {
-            objectName: "passwordFrost"
-            z: -1
-            anchors.fill: parent
-            source: column.backdrop
-            radius: passwordField.radius
+        Text {
+            objectName: "userName"
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            text: column.user?.realName || column.user?.name || ""
+            font: Theme.headline.font
+            lineHeight: Theme.headline.lineHeight
+            lineHeightMode: Text.FixedHeight
+            color: Theme.textPrimary
         }
-    }
 
-    UnavailableMessage {
-        objectName: "unavailableMessage"
-        Layout.alignment: Qt.AlignHCenter
-        visible: column.unavailable
-        backdrop: column.backdrop
-    }
+        PasswordField {
+            id: passwordField
 
-    FadingNotice {
-        objectName: "wrongPasswordNotice"
-        shown: column.wrongPasswordShown
-        tone: Notice.Danger
-        glyph: Glyphs.cross
-        text: qsTr("Wrong password")
-    }
+            objectName: "passwordField"
+            Layout.alignment: Qt.AlignHCenter
+            visible: !column.unavailable
+            focus: true
+            onSubmitted: password => column.submitted(password)
+            onTyped: (text, modifiers) => column.typed(text, modifiers)
+            onShakingChanged: {
+                if (!shaking)
+                    text = "";
+            }
 
-    FadingNotice {
-        objectName: "authErrorNotice"
-        shown: column.authError !== ""
-        tone: Notice.Danger
-        glyph: Glyphs.cross
-        // Keeps the message while it fades out.
-        onShownChanged: {
-            if (shown)
-                text = column.authError;
+            // Beneath the field's own Glass tint.
+            Frost {
+                objectName: "passwordFrost"
+                z: -1
+                anchors.fill: parent
+                source: column.backdrop
+                radius: passwordField.radius
+            }
         }
-    }
 
-    FadingNotice {
-        objectName: "capsLockNotice"
-        shown: column.capsLockShown
-        tone: Notice.Warning
-        glyph: Glyphs.capsLock
-        text: qsTr("Caps Lock is on")
-    }
+        UnavailableMessage {
+            objectName: "unavailableMessage"
+            Layout.alignment: Qt.AlignHCenter
+            visible: column.unavailable
+            backdrop: column.backdrop
+        }
 
-    FadingNotice {
-        id: sessionFailedNotice
+        FadingNotice {
+            objectName: "wrongPasswordNotice"
+            shown: column.wrongPasswordShown
+            tone: Notice.Danger
+            glyph: Glyphs.cross
+            text: qsTr("Wrong password")
+        }
 
-        objectName: "sessionFailedNotice"
-        shown: column.sessionFailed
-        tone: Notice.Danger
-        text: qsTr("Couldn't start the session.")
-        actionText: qsTr("Try again")
-        onActionTriggered: column.retryRequested()
-    }
+        FadingNotice {
+            objectName: "authErrorNotice"
+            shown: column.authError !== ""
+            tone: Notice.Danger
+            glyph: Glyphs.cross
+            // Keeps the message while it fades out.
+            onShownChanged: {
+                if (shown)
+                    text = column.authError;
+            }
+        }
 
-    OtherUsersPill {
-        id: otherUsersPill
+        FadingNotice {
+            objectName: "capsLockNotice"
+            shown: column.capsLockShown
+            tone: Notice.Warning
+            glyph: Glyphs.capsLock
+            text: qsTr("Caps Lock is on")
+        }
 
-        objectName: "otherUsersPill"
-        Layout.alignment: Qt.AlignHCenter
-        visible: column.otherUsersShown && !column.unavailable
-        backdrop: column.backdrop
-        onClicked: column.otherUsersRequested()
+        FadingNotice {
+            id: sessionFailedNotice
+
+            objectName: "sessionFailedNotice"
+            shown: column.sessionFailed
+            tone: Notice.Danger
+            text: qsTr("Couldn't start the session.")
+            actionText: qsTr("Try again")
+            onActionTriggered: column.retryRequested()
+        }
+
+        OtherUsersPill {
+            id: otherUsersPill
+
+            objectName: "otherUsersPill"
+            Layout.alignment: Qt.AlignHCenter
+            visible: column.otherUsersShown && !column.unavailable
+            backdrop: column.backdrop
+            onClicked: column.otherUsersRequested()
+        }
     }
 
     // A Notice under the field that fades in and out, over its own frosted wallpaper.

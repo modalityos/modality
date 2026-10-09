@@ -81,7 +81,28 @@ TestCase {
         verify(clock.y + clock.height <= avatar.y, `the Clock (bottom ${clock.y + clock.height}) stays above the Avatar (top ${avatar.y})`);
         verify(pill.y + pill.height <= power.y, `the user column (bottom ${pill.y + pill.height}) stays above the power row (top ${power.y})`);
         compare(clock.y, 56);
+        compare(pill.y + pill.height, 768 - 96);
         compare(power.y + power.height, 768 - 28);
+    }
+
+    function test_a_notice_does_not_move_the_avatar_or_the_name() {
+        const greeter = createGreeter();
+        const avatarBefore = box(greeter, "userAvatar");
+        const nameBefore = box(greeter, "userName");
+        keyClick("x");
+        keyClick(Qt.Key_Return);
+        greeter.backend.authPrompt("Password:", true);
+        greeter.backend.authFailure("Authentication failed");
+        tryVerify(() => findChild(greeter, "wrongPasswordNotice").opacity === 1, 2000);
+        compare(box(greeter, "userAvatar").y, avatarBefore.y);
+        compare(box(greeter, "userName").y, nameBefore.y);
+    }
+
+    function test_user_column_is_at_least_236px_tall() {
+        const greeter = createGreeter();
+        const avatar = box(greeter, "userAvatar");
+        // The column's bottom sits 96px above the bottom edge on a short screen.
+        compare(768 - 96 - avatar.y, 236);
     }
 
     function test_options_fits_at_1366x768() {
