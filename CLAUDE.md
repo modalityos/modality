@@ -53,8 +53,8 @@ Every change moves through these stages, in order. Each stage writes only its ow
 | Stage | Writes | Hand-off | Before next |
 |---|---|---|---|
 | `/grill-with-docs` | `GLOSSARY.md`, `docs/adr/` | `/design-brief` if the change has visual work still to design, else `/to-spec` | Keep |
-| `/design-brief` | `design/<slug>/brief.md` and `refs/`, `design/README.md` | the user designs in Claude Design, then `/design-intake` | Keep the session open while designing; if it closed, `claude --resume` it |
-| `/design-intake` | `design/<slug>/handoff/`, `assets/` and `spec.md` | `/design-intake` for the next piece, then `/to-spec` | Keep |
+| `/design-brief` | `design/<slug>/brief.md` and `refs/`, `design/README.md`; the design artifact, drafted | the user reviews the artifact and asks for changes, then `/design-intake <slug>` | Keep the session open while designing; if it closed, `claude --resume` it |
+| `/design-intake` | `design/<slug>/handoff/`, `assets/` and `spec.md` | `/design-brief` for pieces that waited on the Foundations, `/design-intake` for the next piece, then `/to-spec` | Keep |
 | `/to-spec` | the spec issue | `/to-tickets #<spec>` | Keep |
 | `/to-tickets` | ticket issues | `/implement #<ticket>` per ticket, or `/implement-spec #<spec>` | `/clear`: the issues hold everything |
 | `/implement` | code, tests; the PR after the last ticket | the next ticket's `/implement`; after the last, the user merges | `/clear` |
@@ -72,9 +72,9 @@ Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are wri
 
 <important if="a /grill-with-docs session is ending, or you are running /to-spec, /to-tickets, /implement, /implement-spec or /prototype on a change that has visual work, or opening or readying a PR for one">
 
-**Visual work** is anything a person sees that is designed before it is built: a screen, a component, an icon set, an illustration or wallpaper, a logo, or a kind not yet named. A change has visual work when it designs some, or builds some from a design spec. **Visual work still to design** is a new piece with no `design/<slug>/spec.md` yet, or a redesign of a built one; that is what goes to `/design-brief`. When unsure at the end of a grill, name both hand-offs and your pick.
+**Visual work** is anything a person sees that is designed before it is built: the Foundations, a screen, a component, an icon set, an illustration or wallpaper, a logo, or a kind not yet named. A change has visual work when it designs some, or builds some from a design spec. **Visual work still to design** is a new piece with no `design/<slug>/spec.md` yet, or a redesign of a built one; that is what goes to `/design-brief`. When unsure at the end of a grill, name both hand-offs and your pick.
 
-- **Designing** happens in Claude Design, outside Claude Code, reached through `/design-brief`. `/prototype` is for logic and state questions; take "what should this look like?" to `/design-brief`.
+- **Designing** happens in a claude.ai design artifact that `/design-brief` creates and drafts from this session; the user reviews it there and asks for changes. The Foundations are a Design System artifact designed before any other piece; every other piece is a Design artifact built on them. `/prototype` is for logic and state questions; take "what should this look like?" to `/design-brief`.
 - **`/to-spec`:** the change's design specs are those of the pieces briefed in this conversation, plus any existing `design/<slug>/spec.md` the change builds from. Read each first, and cite each by path in the spec issue's Implementation Decisions. An implementer uses the design spec its ticket names.
 - **`/to-tickets`:** each ticket that builds visual work names its `design/<slug>/spec.md` and the sections it builds. Its acceptance criteria cover what a test can prove (states, inputs, token and component names; for assets, the files present at their names and sizes), plus one marked **User check:** the result matches the design in `design/<slug>/handoff/`. Tokens and Controls new or changed by the change get their own ticket, which blocks every ticket that uses them: the one deliberate horizontal slice, since they are shared by every screen and testable on their own.
 - **Paths:** `design/<slug>/` paths are the one exception to the no-file-paths rule in `/to-spec` and `/to-tickets`.
