@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wallpaper under the Greeter</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/modalityos/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: var(--font-sans); color: var(--text-primary);">
+  <img src="{{src}}" alt="" style="position: absolute; inset: 0; width: 1920px; height: 1080px;">
+  <div style="position: absolute; left: 0; right: 0; top: 112px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+    <div class="title-1">Friday 9 October</div>
+    <div class="display" style="font-variant-numeric: tabular-nums;">09:41</div>
+  </div>
+  <div style="position: absolute; left: 0; right: 0; top: 660px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+    <div style="width: 96px; height: 96px; border-radius: var(--radius-pill); background: linear-gradient(160deg, var(--wallpaper-1), var(--accent)); box-shadow: var(--shadow-floating);"></div>
+    <div class="headline">John Doe</div>
+    <div style="display: flex; align-items: center; gap: 8px; width: 240px; height: var(--control-height-large); box-sizing: border-box; padding: 0 4px 0 16px; border-radius: var(--radius-pill); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-floating);">
+      <input type="password" aria-label="Password" placeholder="Enter password" class="body" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--text-primary);">
+      <button aria-label="Log in" style="width: 24px; height: 24px; border-radius: var(--radius-pill); border: 0; padding: 0; background: var(--accent); color: var(--on-accent); display: grid; place-items: center;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5"/></svg></button>
+    </div>
+  </div>
+  <div style="position: absolute; left: 0; right: 0; bottom: 40px; display: flex; justify-content: center; gap: 32px;">
+    <button aria-label="Sleep" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.5 10A5.5 5.5 0 0 1 6 3.5a5.5 5.5 0 1 0 6.5 6.5z"/></svg></button>
+    <button aria-label="Restart" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3"/></svg></button>
+    <button aria-label="Shut Down" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5v6M4.5 3.8a5 5 0 1 0 7 0"/></svg></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() { const t = this.props.theme ?? 'light'; return { theme: t, src: t === 'dark' ? '/_blob/2d7fcdd653b6a0971968d421cdad230b' : '/_blob/47a58f52ecf23b8a137cbe06ddd8a486' }; }
+}
+</script>
+</body>
+</html>

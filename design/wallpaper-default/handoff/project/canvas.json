@@ -1,0 +1,90 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-09T13:10:00Z"
+  },
+  "title": "ModalityOS Default Wallpaper",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1920,
+      "h": 1080,
+      "title": "Light"
+    },
+    "Dark.dc.html": {
+      "x": 2000,
+      "y": 0,
+      "w": 1920,
+      "h": 1080,
+      "title": "Dark"
+    },
+    "Context.dc.html": {
+      "x": 0,
+      "y": 1200,
+      "w": 1920,
+      "h": 1080,
+      "title": "Under the Greeter's glass \u00b7 light"
+    },
+    "ContextDark.dc.html": {
+      "x": 2000,
+      "y": 1200,
+      "w": 1920,
+      "h": 1080,
+      "title": "Under the Greeter's glass \u00b7 dark"
+    },
+    "Ratios.dc.html": {
+      "x": 0,
+      "y": 2400,
+      "w": 1920,
+      "h": 760,
+      "title": "16:10 crops"
+    },
+    "KeyColours.dc.html": {
+      "x": 2000,
+      "y": 2400,
+      "w": 1920,
+      "h": 760,
+      "title": "Key colours"
+    },
+    "Options.dc.html": {
+      "x": 4000,
+      "y": 0,
+      "w": 1920,
+      "h": 2300,
+      "title": "Directions: D default, B and C extras"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Dark.dc.html",
+    "Context.dc.html",
+    "ContextDark.dc.html",
+    "Ratios.dc.html",
+    "KeyColours.dc.html",
+    "Options.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "text": "ModalityOS Default Wallpaper",
+      "kind": "title1",
+      "maxW": 5920
+    }
+  },
+  "designSystems": [
+    {
+      "title": "ModalityOS Foundations",
+      "namespace": "modalityos",
+      "artifact": "https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2",
+      "version": "1791539302-a8d1",
+      "copiedAt": "2026-10-09T13:10:00Z"
+    }
+  ]
+}

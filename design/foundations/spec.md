@@ -1,6 +1,6 @@
 # ModalityOS Foundations: design spec
 
-**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791539302-a8d1, 2026-10-09)
+**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791541273-07dc, 2026-10-09)
 **Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
 
 ## Tokens
@@ -36,9 +36,9 @@ Every Token in `tokens.json` except type styles (see Type). One value in Light f
 | `info-subtle` | `rgba(28, 110, 232, 0.12)` | `rgba(120, 176, 255, 0.12)` | `infoSubtle` | Info message background |
 | `focus-ring` | `#1c6ee8` | `#8cbcff` | `focusRing` | Keyboard focus ring |
 | `scrim` | `rgba(0, 0, 0, 0.28)` | `rgba(0, 0, 0, 0.5)` | `scrim` | Dims behind modals |
-| `wallpaper-1` | `#7fb2ff` | `#0e2a5c` | `wallpaper1` | Wallpaper top-left |
-| `wallpaper-2` | `#b9a4ff` | `#3a1f6b` | `wallpaper2` | Wallpaper middle |
-| `wallpaper-3` | `#ffc3a8` | `#7a2e3a` | `wallpaper3` | Wallpaper bottom-right |
+| `wallpaper-1` | `#6f9dff` | `#1f45c0` | `wallpaper1` | Silk key colour 1; gradient stop 1 where no wallpaper image |
+| `wallpaper-2` | `#a98cff` | `#5530b0` | `wallpaper2` | Silk key colour 2; gradient stop 2 |
+| `wallpaper-3` | `#ff9fbf` | `#a0306e` | `wallpaper3` | Silk key colour 3; gradient stop 3 |
 | `material-panel-tint` | `rgba(246, 245, 243, 0.72)` | `rgba(40, 40, 40, 0.68)` | `materialPanelTint` | Shell panels, docks; blur only, tint over blur |
 | `material-panel-fallback` | `#f3f2f0` | `#272624` | `materialPanelFallback` | Shell panels, docks; solid when no blur |
 | `material-popover-tint` | `rgba(251, 251, 250, 0.82)` | `rgba(50, 50, 50, 0.8)` | `materialPopoverTint` | Menus, popovers, login card; blur only, tint over blur |
@@ -167,6 +167,8 @@ Reference for the later Greeter design. Not a build target; the Controls in them
 - The Settings scene shows the accent as a single "Blue" pop-up, not a row of alternatives, matching "no alternative accents yet".
 
 ## Settled at intake
+
+- `wallpaper-1` to `wallpaper-3` follow the Silk default wallpaper's key colours (`design/wallpaper-default/spec.md`), changed at that piece's intake; the Foundations artifact was updated to match.
 - The spring is a cubic-bezier with overshoot, as decided ("one gentle spring curve"); in QML use `Easing.BezierCurve` with the same control points, or `Easing.OutBack` where a bezier is impractical.
 - Translucent colours become Qt colours with alpha (`Qt.rgba` or `#AARRGGBB`); the code module stores them as given.
 - Easings become `Easing.BezierCurve` with the four control points.
