@@ -11,6 +11,8 @@ ColumnLayout {
     property var user: null
     property url defaultAvatar
     property alias passwordField: passwordField
+    property alias otherUsersPill: otherUsersPill
+    property bool otherUsersShown: false
     // The wallpaper the Glass elements blur.
     property Item backdrop
 
@@ -50,5 +52,14 @@ ColumnLayout {
             source: column.backdrop
             radius: passwordField.radius
         }
+    }
+
+    OtherUsersPill {
+        id: otherUsersPill
+
+        objectName: "otherUsersPill"
+        Layout.alignment: Qt.AlignHCenter
+        visible: column.otherUsersShown
+        backdrop: column.backdrop
     }
 }

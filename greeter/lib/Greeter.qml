@@ -64,6 +64,7 @@ FocusScope {
             width: 280
             user: logic.selectedUser
             defaultAvatar: greeter.backend?.defaultAvatar ?? ""
+            otherUsersShown: (greeter.backend?.users.length ?? 0) > 1
             backdrop: wallpaper
             passwordField.busy: logic.state === "checking" || logic.state === "starting"
         }

@@ -70,6 +70,53 @@ TestCase {
         compare(findChild(greeter, "userName").text, "ian");
     }
 
+    // count human users, in AccountsService order; ian is the third.
+    function someUsers(count) {
+        const names = [
+            ["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["ian", "Ian Gregson"],
+            ["alan", "Alan Turing"], ["edsger", "Edsger Dijkstra"], ["barbara", "Barbara Liskov"],
+            ["ken", "Ken Thompson"], ["margaret", "Margaret Hamilton"]
+        ];
+        return names.slice(0, count).map(([name, realName]) => ({
+                    name: name,
+                    realName: realName,
+                    avatar: "",
+                    systemAccount: false
+                }));
+    }
+
+    function test_without_a_last_user_the_first_user_shows() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "" });
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_last_user_who_is_gone_gives_the_first_user() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "removed" });
+        compare(findChild(greeter, "userName").text, "Ada Lovelace");
+    }
+
+    function test_one_account_has_no_other_users_pill() {
+        const greeter = createGreeter();
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(!pill || !pill.visible);
+    }
+
+    function test_several_accounts_show_the_other_users_pill_data() {
+        return [
+            { tag: "three users", count: 3 },
+            { tag: "eight users", count: 8 }
+        ];
+    }
+
+    function test_several_accounts_show_the_other_users_pill(data) {
+        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "ian" });
+        const pill = findChild(greeter, "otherUsersPill");
+        verify(pill);
+        verify(pill.visible);
+        compare(pill.text, "Other users");
+        compare(findChild(greeter, "userName").text, "Ian Gregson");
+    }
+
     readonly property url ballAvatar: Qt.resolvedUrl("../data/avatars/avatar-ball.png")
     readonly property url catAvatar: Qt.resolvedUrl("../data/avatars/avatar-cat.png")
 
