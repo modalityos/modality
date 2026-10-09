@@ -1,0 +1,13 @@
+#!/bin/sh
+# The Greeter: Quickshell running the Greeter config inside Cage, as greetd's default
+# session. -s keeps VT switching on (Ctrl+Alt+F2 reaches a text console); -m last puts the
+# Greeter on one output only (ADR 0001).
+set -eu
+
+prefix=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+export MODALITYOS_PREFIX="$prefix"
+export QML_IMPORT_PATH="$prefix/lib/qt6/qml${QML_IMPORT_PATH:+:$QML_IMPORT_PATH}"
+# The greeter user may have no writable home; Quickshell's cache goes to the runtime dir.
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${XDG_RUNTIME_DIR:-/tmp}/modalityos-greeter-cache}"
+
+exec cage -s -m last -- quickshell -p "$prefix/share/modalityos/greeter"

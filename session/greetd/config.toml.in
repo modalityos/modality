@@ -1,0 +1,8 @@
+# greetd runs the ModalityOS Greeter as the greeter user. It authenticates with greetd's
+# own PAM service (/etc/pam.d/greetd) and restarts the Greeter when a Session ends.
+[terminal]
+vt = 1
+
+[default_session]
+command = "@PREFIX@/bin/modalityos-greeter"
+user = "greeter"
