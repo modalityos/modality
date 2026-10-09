@@ -25,6 +25,12 @@ TestCase {
         }
     }
 
+    Component {
+        id: spyComponent
+
+        SignalSpy {}
+    }
+
     SignalSpy {
         id: authPromptSpy
 
@@ -116,6 +122,14 @@ TestCase {
                     "XDG_CURRENT_DESKTOP=ModalityOS",
                     "XDG_SESSION_DESKTOP=ModalityOS"
                 ], true]);
+    }
+
+    function test_greetd_error_is_an_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "error" });
+        Greetd.error("Session failed to start");
+        compare(spy.count, 1);
+        compare(spy.signalArguments[0][0], "Session failed to start");
     }
 
     function test_greetd_launched_is_launched() {

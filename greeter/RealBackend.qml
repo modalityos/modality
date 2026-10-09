@@ -89,5 +89,9 @@ GreeterBackend {
         function onLaunched() {
             backend.launched();
         }
+
+        function onError(error) {
+            backend.error(error);
+        }
     }
 }
