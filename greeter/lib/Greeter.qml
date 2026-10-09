@@ -55,6 +55,7 @@ FocusScope {
 
         Clock {
             objectName: "clock"
+            clock24Hour: greeter.backend?.clock24Hour ?? true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: greeter.shortScreen ? 56 : 112
