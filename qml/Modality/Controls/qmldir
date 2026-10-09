@@ -1,0 +1,5 @@
+module Modality.Controls
+Button 1.0 Button.qml
+FocusRing 1.0 FocusRing.qml
+Shadow 1.0 Shadow.qml
+FastColorAnimation 1.0 FastColorAnimation.qml
