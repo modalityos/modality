@@ -1,6 +1,6 @@
 # ModalityOS Foundations: design spec
 
-**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791541273-07dc, 2026-10-09)
+**Kind:** foundations · **Brief:** brief.md · **Artifact:** https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2 · **Source:** handoff/ (1791541575-b82a, 2026-10-09)
 **Built by:** not yet built. Implementing replaces this with the spec issue, `#<number>`; from then on the code is the source of truth.
 
 ## Tokens
@@ -41,7 +41,7 @@ Every Token in `tokens.json` except type styles (see Type). One value in Light f
 | `wallpaper-3` | `#ff9fbf` | `#a0306e` | `wallpaper3` | Silk key colour 3; gradient stop 3 |
 | `material-panel-tint` | `rgba(246, 245, 243, 0.72)` | `rgba(40, 40, 40, 0.68)` | `materialPanelTint` | Shell panels, docks; blur only, tint over blur |
 | `material-panel-fallback` | `#f3f2f0` | `#272624` | `materialPanelFallback` | Shell panels, docks; solid when no blur |
-| `material-popover-tint` | `rgba(251, 251, 250, 0.82)` | `rgba(50, 50, 50, 0.8)` | `materialPopoverTint` | Menus, popovers, login card; blur only, tint over blur |
+| `material-popover-tint` | `rgba(251, 251, 250, 0.82)` | `rgba(32, 32, 34, 0.9)` | `materialPopoverTint` | Menus, popovers, login card; blur only, tint over blur |
 | `material-popover-fallback` | `#fbfbfa` | `#2f2e2c` | `materialPopoverFallback` | Menus, popovers, login card; solid when no blur |
 | `material-sidebar-tint` | `rgba(236, 234, 231, 0.68)` | `rgba(30, 30, 30, 0.62)` | `materialSidebarTint` | App sidebars; blur only, tint over blur |
 | `material-sidebar-fallback` | `#e9e8e5` | `#242321` | `materialSidebarFallback` | App sidebars; solid when no blur |
@@ -168,6 +168,7 @@ Reference for the later Greeter design. Not a build target; the Controls in them
 
 ## Settled at intake
 
+- `material-popover-tint` in dark is `rgba(32, 32, 34, 0.9)` (was `rgba(50, 50, 50, 0.8)`), so text, `danger` and the `accent` button hold contrast on the Greeter's glass over the brightest part of the Silk wallpaper.
 - `wallpaper-1` to `wallpaper-3` follow the Silk default wallpaper's key colours (`design/wallpaper-default/spec.md`), changed at that piece's intake; the Foundations artifact was updated to match.
 - The spring is a cubic-bezier with overshoot, as decided ("one gentle spring curve"); in QML use `Easing.BezierCurve` with the same control points, or `Easing.OutBack` where a bezier is impractical.
 - Translucent colours become Qt colours with alpha (`Qt.rgba` or `#AARRGGBB`); the code module stores them as given.
