@@ -65,6 +65,27 @@ TestCase {
         compare(findChild(greeter, "userName").text, "ian");
     }
 
+    function test_clock_shows_the_time_in_display_with_tabular_figures() {
+        const greeter = createGreeter();
+        const clock = findChild(greeter, "clock");
+        clock.now = new Date(2026, 9, 9, 9, 41);
+        const time = findChild(greeter, "clockTime");
+        compare(time.text, "09:41");
+        compare(time.font.pixelSize, 96);
+        compare(time.font.weight, Font.DemiBold);
+        compare(time.font.features.tnum, 1);
+    }
+
+    function test_clock_shows_the_date_in_title1() {
+        const greeter = createGreeter();
+        const clock = findChild(greeter, "clock");
+        clock.now = new Date(2026, 9, 9, 9, 41);
+        const date = findChild(greeter, "clockDate");
+        compare(date.text, "Friday 9 October");
+        compare(date.font.pixelSize, 22);
+        compare(date.font.weight, Font.DemiBold);
+    }
+
     function test_correct_password_launches_the_session() {
         const greeter = createGreeter();
         const backend = greeter.backend;

@@ -27,6 +27,13 @@ FocusScope {
 
         anchors.fill: parent
 
+        Clock {
+            objectName: "clock"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: greeter.shortScreen ? 56 : 112
+        }
+
         UserColumn {
             id: userColumn
 
