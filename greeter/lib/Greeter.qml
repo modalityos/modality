@@ -12,11 +12,14 @@ FocusScope {
 
     focus: true
 
+    // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
+    readonly property bool shortScreen: height < 900
+
     GreeterLogic {
         id: logic
 
         backend: greeter.backend
-        passwordLength: passwordField.text.length
+        passwordLength: userColumn.passwordField.text.length
     }
 
     Item {
@@ -24,13 +27,23 @@ FocusScope {
 
         anchors.fill: parent
 
-        PasswordField {
-            id: passwordField
+        UserColumn {
+            id: userColumn
 
-            anchors.centerIn: parent
-            focus: true
-            busy: logic.state === "checking" || logic.state === "starting"
-            onSubmitted: password => logic.submit(password)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: greeter.shortScreen ? 96 : 176
+            width: 280
+            user: logic.selectedUser
+            passwordField.busy: logic.state === "checking" || logic.state === "starting"
+        }
+
+        Connections {
+            target: userColumn.passwordField
+
+            function onSubmitted(password) {
+                logic.submit(password);
+            }
         }
     }
 
