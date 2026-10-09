@@ -18,6 +18,7 @@ Item {
     readonly property alias button: button
 
     signal toggled
+    signal picked(string id)
 
     onOpenChanged: {
         if (open)
@@ -65,6 +66,7 @@ Item {
                     text: session.name,
                     checked: session.id === options.currentSession
                 }))
+        onTriggered: index => options.picked(options.sessions[index].id)
 
         Frost {
             z: -1

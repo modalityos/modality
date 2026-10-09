@@ -29,10 +29,14 @@ QtObject {
     // What covers the screen: "" for nothing, "otherUsers" for the Choose a user panel,
     // "options" for the Session Menu.
     property string overlay: ""
+    // The Session picked in the Session Menu, else the machine default, else the first.
+    // A pick is remembered only when its user logs in.
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
-        return sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
+        return sessions.find(session => session.id === chosenSession)
+            ?? sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
+    property string chosenSession: ""
 
     // Caps Lock, inferred from typed letters: Qt reports no lock state, but an upper-case
     // letter without Shift (or lower-case with it) means it is on.
@@ -69,6 +73,13 @@ QtObject {
             overlay = "";
         else if (phase !== "checking" && phase !== "starting" && (backend?.sessions.length ?? 0) > 1)
             overlay = "options";
+    }
+
+    function chooseSession(id) {
+        if (overlay !== "options")
+            return;
+        chosenSession = id;
+        overlay = "";
     }
 
     function closeOverlay() {

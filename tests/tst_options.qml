@@ -116,4 +116,32 @@ TestCase {
         compare(greeter.width - (place.x + place.width), 40);
         compare(greeter.height - (place.y + place.height), data.bottom);
     }
+
+    function logIn(greeter) {
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        greeter.backend.authPrompt("Password:", true);
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+    }
+
+    function typeText(text) {
+        for (const character of text)
+            keyClick(character);
+    }
+
+    function test_picked_session_launches_and_is_remembered_for_the_user() {
+        const greeter = createGreeter(twoSessions());
+        const menu = openOptions(greeter);
+        mouseClick(menu.itemAt(1));
+        compare(greeter.overlay, "");
+        tryCompare(menu, "visible", false);
+        const field = findChild(greeter, "passwordField");
+        verify(field.activeFocus);
+
+        logIn(greeter);
+        const calls = greeter.backend.calls;
+        compare(calls[calls.length - 2], ["remember", "ian", "hyprland"]);
+        compare(calls[calls.length - 1], ["launch", "hyprland"]);
+    }
 }

@@ -90,6 +90,11 @@ FocusScope {
             backdrop: wallpaper
             shortScreen: greeter.shortScreen
             onToggled: logic.toggleOptions()
+            // A picked Session is followed by the password.
+            onPicked: id => {
+                logic.chooseSession(id);
+                userColumn.passwordField.forceActiveFocus();
+            }
         }
 
         PowerRow {
