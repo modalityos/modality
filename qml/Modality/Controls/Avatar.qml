@@ -69,17 +69,13 @@ T.AbstractButton {
             sourceSize: Qt.size(control.size * 2, control.size * 2)
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
-            visible: false
-        }
-
-        MultiEffect {
-            anchors.fill: parent
-            source: image
-            visible: image.status === Image.Ready
-            maskEnabled: true
-            maskSource: mask
-            maskThresholdMin: 0.5
-            maskSpreadAtMin: 1
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                maskEnabled: true
+                maskSource: mask
+                maskThresholdMin: 0.5
+                maskSpreadAtMin: 1
+            }
         }
 
         Item {
