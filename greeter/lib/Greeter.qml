@@ -11,6 +11,12 @@ FocusScope {
     readonly property string overlay: logic.overlay
     // Screens under 900px tall (1366 x 768) pull the Clock and the user column in.
     readonly property bool shortScreen: height < 900
+    // Screen layout from the design spec (greeter-login, Build notes): the Clock's top, the
+    // user column's bottom and width, and the power row's bottom.
+    readonly property int clockTop: shortScreen ? 56 : 112
+    readonly property int userColumnBottom: shortScreen ? 96 : 176
+    readonly property int userColumnWidth: 280
+    readonly property int powerRowBottom: shortScreen ? 28 : Theme.space10
 
     focus: true
 
@@ -74,7 +80,7 @@ FocusScope {
             clock24Hour: greeter.backend?.clock24Hour ?? true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: greeter.shortScreen ? 56 : 112
+            anchors.topMargin: greeter.clockTop
         }
 
         UserColumn {
@@ -82,8 +88,8 @@ FocusScope {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: greeter.shortScreen ? 96 : 176
-            width: 280
+            anchors.bottomMargin: greeter.userColumnBottom
+            width: greeter.userColumnWidth
             user: logic.selectedUser
             defaultAvatar: greeter.backend?.defaultAvatar ?? ""
             otherUsersShown: (greeter.backend?.users.length ?? 0) > 1
@@ -128,7 +134,7 @@ FocusScope {
             objectName: "powerRow"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: greeter.shortScreen ? 28 : Theme.space10
+            anchors.bottomMargin: greeter.powerRowBottom
             backend: greeter.backend
             backdrop: wallpaper
         }

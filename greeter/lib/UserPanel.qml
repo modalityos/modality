@@ -19,6 +19,8 @@ FocusScope {
 
     readonly property int columns: Math.max(1, Math.min(users.length, 4))
     readonly property real radius: Theme.radiusPanel
+    // The card's width from the design spec (greeter-login, Build notes).
+    readonly property int cardWidth: 640
 
     signal picked(string name)
     signal cancelled
@@ -66,8 +68,7 @@ FocusScope {
         id: card
 
         anchors.centerIn: parent
-        // Raw width from the design.
-        width: 640
+        width: panel.cardWidth
         height: layout.implicitHeight + 2 * Theme.space6
         scale: panel.open ? 1 : 0.98
 
@@ -125,7 +126,7 @@ FocusScope {
                 objectName: "userGrid"
                 Layout.fillWidth: true
                 columns: panel.columns
-                rowSpacing: 20
+                rowSpacing: Theme.space5
                 columnSpacing: Theme.space3
 
                 Repeater {
