@@ -70,4 +70,55 @@ TestCase {
         const greeter = createGreeter({ clock24Hour: false });
         compare(clockTimeAt(greeter, data.hours, data.minutes), data.time);
     }
+
+    // Every frosted wallpaper behind a Glass element, shown or not.
+    function frosts(item) {
+        let found = item.blurRadius !== undefined && item.region !== undefined ? [item] : [];
+        for (const child of item.children)
+            found = found.concat(frosts(child));
+        return found;
+    }
+
+    function test_glass_is_frosted_by_default() {
+        const greeter = createGreeter({
+            users: [
+                { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
+                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+            ]
+        });
+        compare(Theme.reduceTransparency, false);
+        compare(findChild(greeter, "passwordField").fillColor, Qt.rgba(32 / 255, 32 / 255, 34 / 255, 0.9));
+        verify(findChild(greeter, "passwordFrost").visible);
+    }
+
+    function test_reduce_transparency_draws_glass_solid_without_frost_data() {
+        return [
+            { tag: "dark", theme: "dark", fallback: "#2f2e2c" },
+            { tag: "light", theme: "light", fallback: "#fbfbfa" }
+        ];
+    }
+
+    function test_reduce_transparency_draws_glass_solid_without_frost(data) {
+        const greeter = createGreeter({
+            theme: data.theme,
+            reduceTransparency: true,
+            users: [
+                { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
+                { name: "ian", realName: "Ian Gregson", avatar: "", systemAccount: false }
+            ]
+        });
+        compare(Theme.reduceTransparency, true);
+        verify(Qt.colorEqual(findChild(greeter, "passwordField").fillColor, data.fallback));
+        const all = frosts(greeter);
+        verify(all.length >= 5, `found ${all.length} Frosts`);
+        for (const frost of all)
+            verify(!frost.visible, `a Frost still shows under ${frost.parent}`);
+    }
+
+    function test_light_theme_turns_the_text_dark() {
+        const greeter = createGreeter({ theme: "light" });
+        // textPrimary in light: rgba(0, 0, 0, 0.86).
+        verify(Qt.colorEqual(findChild(greeter, "clockTime").color, "#db000000"));
+        verify(Qt.colorEqual(findChild(greeter, "userName").color, "#db000000"));
+    }
 }

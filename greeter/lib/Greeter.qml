@@ -30,6 +30,12 @@ FocusScope {
         value: greeter.backend?.theme ?? "dark"
     }
 
+    Binding {
+        target: Theme
+        property: "reduceTransparency"
+        value: greeter.backend?.reduceTransparency ?? false
+    }
+
     Rectangle {
         anchors.fill: parent
         color: Theme.bg
