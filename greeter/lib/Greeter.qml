@@ -17,7 +17,8 @@ FocusScope {
         id: logic
 
         backend: greeter.backend
-        passwordLength: userColumn.passwordField.text.length
+        // A rejected password stays in the field while it shakes, but it no longer counts.
+        passwordLength: userColumn.passwordField.shaking ? 0 : userColumn.passwordField.text.length
     }
 
     // The Greeter follows the machine's settings, never a user's.
@@ -71,7 +72,7 @@ FocusScope {
             target: logic
 
             function onPasswordRejected() {
-                userColumn.passwordField.text = "";
+                userColumn.passwordField.shake();
             }
 
             // A Session that failed to start brings the faded screen back.
@@ -86,6 +87,11 @@ FocusScope {
 
             function onSubmitted(password) {
                 logic.submit(password);
+            }
+
+            function onShakingChanged() {
+                if (!userColumn.passwordField.shaking)
+                    userColumn.passwordField.text = "";
             }
         }
     }

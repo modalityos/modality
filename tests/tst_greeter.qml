@@ -172,6 +172,19 @@ TestCase {
         compare(greeter.backend.lastCall(), ["answer", "secret"]);
     }
 
+    function test_wrong_password_shakes_the_field_then_clears_it() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const field = findChild(greeter, "passwordField");
+        verify(field.shaking);
+        compare(field.text, "wrong");
+        compare(greeter.loginState, "wrongPassword");
+        tryCompare(field, "shaking", false);
+        compare(field.text, "");
+        compare(greeter.loginState, "wrongPassword");
+    }
+
     function test_session_that_fails_to_start_brings_the_greeter_back() {
         const greeter = createGreeter();
         logIn(greeter, "secret");
