@@ -53,6 +53,13 @@ TestCase {
         verify(!avatar.ringShown);
     }
 
+    function test_avatar_resting_shadow_can_be_raised_instead() {
+        const avatar = createAvatar({ size: 64, restingShadow: Theme.shadowRaised });
+        compare(avatar.shadow, Theme.shadowRaised);
+        avatar.hoverActive = true;
+        compare(avatar.shadow, Theme.shadowModal);
+    }
+
     function test_avatar_hover_lifts_to_modal_shadow_and_grows() {
         const avatar = createAvatar({ size: 64 });
         mouseMove(avatar, 32, 32);

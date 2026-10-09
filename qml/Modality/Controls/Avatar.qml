@@ -17,12 +17,14 @@ T.AbstractButton {
     // Default to the live input state; set them to show a state without input.
     property bool hoverActive: hovered
     property bool ringShown: activeFocus
+    // The elevation at rest and while focused; small Avatars in a panel sit lower.
+    property var restingShadow: Theme.shadowFloating
     readonly property var shadow: {
         if (!enabled)
             return null;
         if (down)
             return Theme.shadowRaised;
-        return hoverActive ? Theme.shadowModal : Theme.shadowFloating;
+        return hoverActive ? Theme.shadowModal : restingShadow;
     }
     readonly property real visualScale: !enabled ? 1 : down ? 0.96 : hoverActive ? 1.04 : 1
     readonly property real visualOpacity: enabled ? 1 : 0.4

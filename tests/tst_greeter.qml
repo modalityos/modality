@@ -157,6 +157,15 @@ TestCase {
         verify(cells[2].activeFocus);
     }
 
+    function test_avatars_in_the_choose_a_user_panel_rest_on_the_raised_shadow() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        openOtherUsers(greeter);
+        const avatar = findChild(userCells(greeter)[0], "userCellAvatar");
+        verify(avatar);
+        compare(avatar.size, 64);
+        compare(avatar.shadow, Theme.shadowRaised);
+    }
+
     function test_arrows_move_between_users_in_the_choose_a_user_panel() {
         const greeter = createGreeter({ users: someUsers(8), lastUser: "katherine" });
         openOtherUsers(greeter);
