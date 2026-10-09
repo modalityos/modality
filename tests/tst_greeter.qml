@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import Modality.Theme
+import Modality.Controls
 import "../greeter/lib"
 import "helpers"
 
@@ -427,6 +428,92 @@ TestCase {
         compare(greeter.backend.lastCall(), ["answer", "secret"]);
     }
 
+    function test_wrong_password_shakes_the_field_then_clears_it() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const field = findChild(greeter, "passwordField");
+        verify(field.shaking);
+        compare(field.text, "wrong");
+        compare(greeter.loginState, "wrongPassword");
+        tryCompare(field, "shaking", false);
+        compare(field.text, "");
+        compare(greeter.loginState, "wrongPassword");
+    }
+
+    function test_wrong_password_notice_shows_for_three_seconds() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const notice = findChild(greeter, "wrongPasswordNotice");
+        verify(notice);
+        compare(notice.text, "Wrong password");
+        compare(notice.tone, Notice.Danger);
+        tryVerify(() => notice.visible && notice.opacity === 1);
+        wait(2000);
+        verify(notice.visible);
+        tryCompare(notice, "visible", false, 2500);
+        compare(findChild(greeter, "passwordField").text, "");
+    }
+
+    function test_typing_again_hides_the_wrong_password_notice() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const field = findChild(greeter, "passwordField");
+        tryCompare(field, "shaking", false);
+        typeText("s");
+        tryCompare(findChild(greeter, "wrongPasswordNotice"), "visible", false, 1000);
+    }
+
+    function test_upper_case_letter_without_shift_shows_caps_lock_on() {
+        const greeter = createGreeter();
+        const notice = findChild(greeter, "capsLockNotice");
+        verify(notice);
+        keyClick("a");
+        verify(!notice.visible);
+        keyClick("B");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Caps Lock is on");
+        compare(notice.tone, Notice.Warning);
+        compare(greeter.loginState, "typing");
+    }
+
+    function test_lower_case_letter_hides_caps_lock_on() {
+        const greeter = createGreeter();
+        const notice = findChild(greeter, "capsLockNotice");
+        keyClick("B");
+        tryCompare(notice, "visible", true);
+        keyClick("c");
+        tryCompare(notice, "visible", false);
+    }
+
+    function test_upper_case_letter_with_shift_is_not_caps_lock() {
+        const greeter = createGreeter();
+        keyClick("B", Qt.ShiftModifier);
+        keyClick("1");
+        wait(Theme.motionDurationNormal);
+        verify(!findChild(greeter, "capsLockNotice").visible);
+    }
+
+    function test_caps_lock_notice_hides_while_checking() {
+        const greeter = createGreeter();
+        typeText("SECRET");
+        const notice = findChild(greeter, "capsLockNotice");
+        tryCompare(notice, "visible", true);
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "checking");
+        tryCompare(notice, "visible", false);
+    }
+
+    function test_escape_clears_the_password_field() {
+        const greeter = createGreeter();
+        typeText("secret");
+        keyClick(Qt.Key_Escape);
+        compare(findChild(greeter, "passwordField").text, "");
+        compare(greeter.loginState, "ready");
+    }
+
     function test_session_that_fails_to_start_brings_the_greeter_back() {
         const greeter = createGreeter();
         logIn(greeter, "secret");
@@ -435,5 +522,112 @@ TestCase {
         greeter.backend.error("Session failed to start");
         compare(greeter.loginState, "sessionFailed");
         tryCompare(findChild(greeter, "content"), "opacity", 1);
+    }
+
+    function test_checking_shows_the_spinner_and_ignores_typing() {
+        const greeter = createGreeter();
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "checking");
+        const field = findChild(greeter, "passwordField");
+        verify(field.busy);
+        verify(!field.interactive);
+        keyClick("x");
+        compare(field.text, "secret");
+        greeter.backend.authPrompt("Password:", true);
+        compare(greeter.loginState, "checking");
+        verify(field.busy);
+    }
+
+    function failSession(greeter) {
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        greeter.backend.error("Session failed to start");
+    }
+
+    function test_session_failed_moves_focus_to_try_again() {
+        const greeter = createGreeter();
+        failSession(greeter);
+        const notice = findChild(greeter, "sessionFailedNotice");
+        verify(notice);
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Couldn't start the session.");
+        compare(notice.tone, Notice.Danger);
+        compare(notice.actionText, "Try again");
+        verify(notice.actionItem.activeFocus);
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(!field.activeFocus);
+    }
+
+    function test_try_again_returns_to_ready() {
+        const greeter = createGreeter();
+        failSession(greeter);
+        keyClick(Qt.Key_Return);
+        compare(greeter.loginState, "ready");
+        compare(greeter.backend.lastCall(), ["cancel"]);
+        const field = findChild(greeter, "passwordField");
+        verify(field.activeFocus);
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", false);
+
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryVerify(() => greeter.backend.lastCall()[0] === "launch");
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
+    }
+
+    function test_login_unavailable_replaces_the_password_field_with_a_message() {
+        const greeter = createGreeter();
+        greeter.backend.loginUnavailable();
+        compare(greeter.loginState, "unavailable");
+        verify(!findChild(greeter, "passwordField").visible);
+        const message = findChild(greeter, "unavailableMessage");
+        verify(message);
+        verify(message.visible);
+        compare(message.text, "Login is unavailable. Restart the computer or switch to a text console.");
+        verify(findChild(greeter, "userName").visible);
+        verify(findChild(greeter, "clock").visible);
+    }
+
+    function test_login_unavailable_removes_the_other_users_pill() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        greeter.backend.loginUnavailable();
+        verify(!findChild(greeter, "otherUsersPill").visible);
+    }
+
+    function test_picking_a_user_after_a_failed_session_starts_a_fresh_login() {
+        const greeter = createGreeter({ users: someUsers(3), lastUser: "ian" });
+        failSession(greeter);
+        openOtherUsers(greeter);
+        mouseClick(userCells(greeter)[0]);
+        compare(greeter.backend.lastCall(), ["cancel"]);
+        compare(greeter.loginState, "ready");
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", false);
+        verify(findChild(greeter, "passwordField").activeFocus);
+        logIn(greeter, "secret");
+        compare(greeter.backend.calls.find(call => call[0] === "startAuthentication" && call[1] === "ada"),
+                ["startAuthentication", "ada"]);
+    }
+
+    function test_login_unavailable_while_checking_ends_the_attempt() {
+        const greeter = createGreeter();
+        typeText("SECRET");
+        keyClick(Qt.Key_Return);
+        greeter.backend.loginUnavailable();
+        compare(greeter.loginState, "unavailable");
+        greeter.backend.authPrompt("Password:", true);
+        compare(greeter.backend.lastCall(), ["startAuthentication", "ian"]);
+        verify(!findChild(greeter, "capsLockNotice").visible);
+    }
+
+    function test_starting_fades_everything_above_the_wallpaper() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        const content = findChild(greeter, "content");
+        tryCompare(content, "opacity", 0);
+        verify(findChild(greeter, "wallpaper").visible);
+        compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 }

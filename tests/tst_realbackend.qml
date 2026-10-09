@@ -133,6 +133,37 @@ TestCase {
         compare(spy.signalArguments[0][0], "Session failed to start");
     }
 
+    function test_unreachable_greetd_at_start_is_login_unavailable() {
+        Greetd.available = false;
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "loginUnavailable" });
+        tryCompare(spy, "count", 1);
+    }
+
+    function test_reachable_greetd_is_not_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "loginUnavailable" });
+        wait(50);
+        compare(spy.count, 0);
+    }
+
+    function test_losing_greetd_is_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "loginUnavailable" });
+        wait(50);
+        Greetd.available = false;
+        tryCompare(spy, "count", 1, 2000);
+    }
+
+    function test_starting_authentication_without_greetd_is_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, { target: backend, signalName: "loginUnavailable" });
+        Greetd.available = false;
+        backend.startAuthentication("ian");
+        compare(spy.count, 1);
+        compare(Greetd.calls, []);
+    }
+
     function test_greetd_launched_is_launched() {
         createBackend();
         Greetd.launched();

@@ -63,8 +63,31 @@ GreeterBackend {
         }
     }
 
+    // Greetd.available is read fresh each time: Quickshell clears it when the socket fails,
+    // but declares it constant and emits nothing, so a lost greetd is found by checking.
+    property bool unavailableReported: false
+
+    function checkAvailable() {
+        if (Greetd.available || unavailableReported)
+            return Greetd.available;
+        unavailableReported = true;
+        loginUnavailable();
+        return false;
+    }
+
+    // After the whole Greeter exists, so the logic hears it.
+    Component.onCompleted: Qt.callLater(checkAvailable)
+
+    property Timer availabilityTimer: Timer {
+        interval: 1000
+        repeat: true
+        running: !backend.unavailableReported
+        onTriggered: backend.checkAvailable()
+    }
+
     function startAuthentication(user) {
-        Greetd.createSession(user);
+        if (checkAvailable())
+            Greetd.createSession(user);
     }
 
     function answer(response) {
@@ -87,6 +110,26 @@ GreeterBackend {
 
     function remember(user, sessionId) {
         stateFile.setText(GreeterState.formatState(GreeterState.withLogin(storedState, user, sessionId)));
+    }
+
+    // Power goes through logind; a polkit rule lets the greeter user do it.
+    property Process powerProcess: Process {}
+
+    function runPower(verb) {
+        powerProcess.command = ["systemctl", verb];
+        powerProcess.running = true;
+    }
+
+    function suspend() {
+        runPower("suspend");
+    }
+
+    function reboot() {
+        runPower("reboot");
+    }
+
+    function powerOff() {
+        runPower("poweroff");
     }
 
     property Connections greetdConnections: Connections {

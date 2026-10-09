@@ -4,6 +4,7 @@
 set -euo pipefail
 
 state=/var/lib/modalityos-dev-deploy
+polkit_rule=/etc/polkit-1/rules.d/50-modalityos-greeter.rules
 
 action=${1:-}
 [[ -n $action ]] && shift
@@ -68,6 +69,7 @@ deploy() {
 
     install -d -m 0755 /etc/greetd
     sed "s|@PREFIX@|$prefix|g" "$from/config.toml.in" > /etc/greetd/config.toml
+    install -D -m 0644 "$from/50-modalityos-greeter.rules" "$polkit_rule"
 
     local previous
     previous=$(cat "$state/previous-display-manager")
@@ -96,6 +98,7 @@ rollback() {
     else
         rm -f /etc/greetd/config.toml
     fi
+    rm -f "$polkit_rule"
     if [[ $previous != none && $previous != greetd.service ]]; then
         systemctl enable "$previous"
     fi

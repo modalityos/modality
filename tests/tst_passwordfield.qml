@@ -19,6 +19,14 @@ TestCase {
         }
     }
 
+    Component {
+        id: typedSpyComponent
+
+        SignalSpy {
+            signalName: "typed"
+        }
+    }
+
     SignalSpy {
         id: submittedSpy
 
@@ -164,6 +172,21 @@ TestCase {
         tryVerify(() => field.shakeOffset !== 0, 300);
         tryVerify(() => !field.shaking, 1500);
         compare(field.shakeOffset, 0);
+    }
+
+    function test_typed_reports_each_typed_character_with_its_modifiers() {
+        const field = createField();
+        const spy = createTemporaryObject(typedSpyComponent, this, { target: field });
+        field.forceActiveFocus();
+        keyClick("A");
+        keyClick("b", Qt.ShiftModifier);
+        keyClick(Qt.Key_Left);
+        compare(spy.count, 2);
+        compare(spy.signalArguments[0][0], "A");
+        compare(spy.signalArguments[0][1], Qt.NoModifier);
+        compare(spy.signalArguments[1][0], "b");
+        compare(spy.signalArguments[1][1], Qt.ShiftModifier);
+        compare(field.text, "Ab");
     }
 
     function test_password_field_states_can_be_set_through_properties() {
