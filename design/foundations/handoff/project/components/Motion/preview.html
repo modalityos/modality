@@ -1,0 +1,26 @@
+<!-- @dsCard group="Specimens" height=260 subtitle="Durations and curves; press Replay" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  body{margin:0;background:var(--bg);color:var(--text-primary);font:400 13px/16px var(--font-sans);padding:var(--space-6)}
+  .r{display:grid;grid-template-columns:220px 1fr;align-items:center;gap:var(--space-4);margin-bottom:var(--space-3)}
+  .r span{color:var(--text-secondary);font-size:12px;line-height:16px;font-family:var(--font-mono)}
+  .track{position:relative;height:24px;background:var(--surface-sunken);border-radius:var(--radius-pill)}
+  .dot{position:absolute;left:0;top:0;width:24px;height:24px;border-radius:var(--radius-pill);background:var(--accent)}
+  .go .dot{left:calc(100% - 24px)}
+  .shake{width:200px;padding:var(--space-2) var(--space-3);background:var(--surface-sunken);border:1px solid var(--danger);border-radius:var(--radius-control);color:var(--text-tertiary)}
+  .go .shake{animation:shake calc(var(--motion-duration-slow) * 2) var(--motion-easing-spring)}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+  button{font:500 13px/16px var(--font-sans);background:var(--accent);color:var(--on-accent);border:0;border-radius:var(--radius-control);padding:var(--space-2) var(--space-4)}
+  button:focus-visible{outline:var(--focus-ring-width) solid var(--focus-ring);outline-offset:var(--focus-ring-offset)}
+</style>
+<div id="m">
+  <div class="r"><span>fast · standard</span><div class="track"><div class="dot" style="transition:left var(--motion-duration-fast) var(--motion-easing-standard)"></div></div></div>
+  <div class="r"><span>normal · out (arriving)</span><div class="track"><div class="dot" style="transition:left var(--motion-duration-normal) var(--motion-easing-out)"></div></div></div>
+  <div class="r"><span>slow · in (leaving)</span><div class="track"><div class="dot" style="transition:left var(--motion-duration-slow) var(--motion-easing-in)"></div></div></div>
+  <div class="r"><span>spring · wrong password</span><div class="shake">Wrong password</div></div>
+</div>
+<button id="b">Replay</button>
+<script>
+  const m=document.getElementById('m');
+  document.getElementById('b').onclick=()=>{m.classList.remove('go');void m.offsetWidth;requestAnimationFrame(()=>m.classList.add('go'));setTimeout(()=>m.classList.remove('go'),1600)};
+</script>

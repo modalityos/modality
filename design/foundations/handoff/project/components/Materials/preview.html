@@ -1,0 +1,20 @@
+<!-- @dsCard group="Specimens" height=300 subtitle="Each material over a busy background, then its solid fallback" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  body{margin:0;background:var(--bg);color:var(--text-primary);font:400 13px/16px var(--font-sans)}
+  .busy{margin:var(--space-6);border-radius:var(--radius-panel);padding:var(--space-6);display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);
+    background:radial-gradient(circle at 20% 30%,var(--accent) 0 14%,transparent 15%),radial-gradient(circle at 75% 70%,var(--warning) 0 10%,transparent 11%),linear-gradient(var(--wallpaper-angle),var(--wallpaper-1),var(--wallpaper-2) var(--wallpaper-mid-stop),var(--wallpaper-3))}
+  .m{border-radius:var(--radius-card);padding:var(--space-4);box-shadow:var(--shadow-floating);display:flex;flex-direction:column;gap:var(--space-1)}
+  .m b{font-weight:600} .m span{color:var(--text-secondary);font-size:12px;line-height:16px}
+  .panel{background:var(--material-panel-tint);backdrop-filter:blur(var(--material-panel-blur)) saturate(var(--material-saturation))}
+  .popover{background:var(--material-popover-tint);backdrop-filter:blur(var(--material-popover-blur)) saturate(var(--material-saturation))}
+  .sidebar{background:var(--material-sidebar-tint);backdrop-filter:blur(var(--material-sidebar-blur)) saturate(var(--material-saturation))}
+  .fb .panel{background:var(--material-panel-fallback);backdrop-filter:none}
+  .fb .popover{background:var(--material-popover-fallback);backdrop-filter:none}
+  .fb .sidebar{background:var(--material-sidebar-fallback);backdrop-filter:none}
+  .lbl{margin:0 var(--space-6);font-size:12px;color:var(--text-tertiary)}
+</style>
+<div class="lbl">With blur (compositor effect)</div>
+<div class="busy"><div class="m panel"><b>Panel</b><span>Shell panels, docks</span></div><div class="m popover"><b>Popover</b><span>Menus, popovers</span></div><div class="m sidebar"><b>Sidebar</b><span>App sidebars</span></div></div>
+<div class="lbl">Fallback (no blur, as in the Greeter)</div>
+<div class="busy fb"><div class="m panel"><b>Panel</b><span>Shell panels, docks</span></div><div class="m popover"><b>Popover</b><span>Menus, popovers</span></div><div class="m sidebar"><b>Sidebar</b><span>App sidebars</span></div></div>

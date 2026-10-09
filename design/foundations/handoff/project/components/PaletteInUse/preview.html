@@ -1,0 +1,56 @@
+<!-- @dsCard group="Specimens" height=470 subtitle="The colours doing their jobs, light and dark side by side" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:400 13px/16px var(--font-sans);-webkit-font-smoothing:antialiased}
+  .two{display:grid;grid-template-columns:1fr 1fr}
+  .t{background:var(--bg);color:var(--text-primary);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-4)}
+  .h{font-weight:600;color:var(--text-secondary);font-size:11px;line-height:14px;text-transform:uppercase;letter-spacing:.04em}
+  .layers{display:flex;flex-direction:column;gap:6px}
+  .ly{border-radius:var(--radius-control);padding:var(--space-2) var(--space-3);display:flex;gap:var(--space-3);align-items:baseline}
+  .ly b{width:110px;font-weight:600;font-family:var(--font-mono);font-size:11px}
+  .s1{background:var(--bg);box-shadow:inset 0 0 0 1px var(--separator)} .s2{background:var(--surface-raised);box-shadow:var(--shadow-resting)} .s3{background:var(--surface-sunken)} .s4{background:var(--surface-overlay);box-shadow:var(--shadow-floating)} .s5{background:var(--fill)}
+  .t2{color:var(--text-secondary)} .t3{color:var(--text-tertiary)} .t4{color:var(--text-disabled)}
+  .btns{display:flex;gap:var(--space-2);flex-wrap:wrap;align-items:center}
+  .b{height:var(--control-height);padding:0 var(--space-3);border-radius:var(--radius-control);display:grid;place-items:center;font-weight:500;background:var(--accent);color:var(--on-accent)}
+  .b.h2{background:var(--accent-hover)} .b.p{background:var(--accent-pressed)} .b.d{background:var(--fill);color:var(--text-disabled)} .b.sub{background:var(--accent-subtle);color:var(--text-primary)}
+  .link{color:var(--accent-text);text-decoration:underline}
+  .msgs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .m{border-radius:var(--radius-control);padding:6px var(--space-3);font-weight:500}
+</style>
+<div class="two">
+  <div class="t" data-theme="light">
+    <div class="h">light</div>
+    <div class="layers">
+      <div class="ly s1"><b>bg</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s2"><b>surface-raised</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s3"><b>surface-sunken</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s4"><b>surface-overlay</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s5"><b>fill</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+    </div>
+    <div class="btns"><div class="b">Accent</div><div class="b h2">Hover</div><div class="b p">Pressed</div><div class="b d">Disabled</div><div class="b sub">Subtle</div><span class="link">A link</span></div>
+    <div class="msgs">
+      <div class="m" style="background:var(--success-subtle);color:var(--success)">✓ Saved</div>
+      <div class="m" style="background:var(--warning-subtle);color:var(--warning)">⇪ Caps Lock is on</div>
+      <div class="m" style="background:var(--danger-subtle);color:var(--danger)">✕ Wrong password</div>
+      <div class="m" style="background:var(--info-subtle);color:var(--info)">i Update ready</div>
+    </div>
+  </div>
+  <div class="t" data-theme="dark">
+    <div class="h">dark</div>
+    <div class="layers">
+      <div class="ly s1"><b>bg</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s2"><b>surface-raised</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s3"><b>surface-sunken</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s4"><b>surface-overlay</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+      <div class="ly s5"><b>fill</b>Primary <span class="t2">Secondary</span> <span class="t3">Tertiary</span> <span class="t4">Disabled</span></div>
+    </div>
+    <div class="btns"><div class="b">Accent</div><div class="b h2">Hover</div><div class="b p">Pressed</div><div class="b d">Disabled</div><div class="b sub">Subtle</div><span class="link">A link</span></div>
+    <div class="msgs">
+      <div class="m" style="background:var(--success-subtle);color:var(--success)">✓ Saved</div>
+      <div class="m" style="background:var(--warning-subtle);color:var(--warning)">⇪ Caps Lock is on</div>
+      <div class="m" style="background:var(--danger-subtle);color:var(--danger)">✕ Wrong password</div>
+      <div class="m" style="background:var(--info-subtle);color:var(--info)">i Update ready</div>
+    </div>
+  </div>
+</div>
