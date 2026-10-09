@@ -1,0 +1,16 @@
+// Lets the Greeter's greeter user suspend, restart and shut down the machine, also while
+// another user is logged in (the -multiple-sessions actions). Installed into
+// /etc/polkit-1/rules.d/ by tools/deploy-vm.sh.
+polkit.addRule(function (action, subject) {
+    var allowed = [
+        "org.freedesktop.login1.suspend",
+        "org.freedesktop.login1.suspend-multiple-sessions",
+        "org.freedesktop.login1.reboot",
+        "org.freedesktop.login1.reboot-multiple-sessions",
+        "org.freedesktop.login1.power-off",
+        "org.freedesktop.login1.power-off-multiple-sessions"
+    ];
+    if (subject.user == "greeter" && allowed.indexOf(action.id) >= 0) {
+        return polkit.Result.YES;
+    }
+});
