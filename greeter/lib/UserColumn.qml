@@ -24,9 +24,15 @@ Item {
     property bool unavailable: false
     // Checking or starting: the field shows the spinner and takes no input.
     property alias busy: passwordField.busy
+    // The overlay open on the screen, "" for none: under one the field, and the pill, take no
+    // focus or input.
+    property string overlay: ""
     // A rejected password stays in the field while it shakes, but it no longer counts.
     readonly property int passwordLength: passwordField.shaking ? 0 : passwordField.text.length
-    readonly property bool acceptsTyping: passwordField.visible && passwordField.interactive
+    // The field drops keys while it shakes and while an overlay is open: its text stays as it
+    // was, and Enter does nothing.
+    readonly property bool fieldLocked: passwordField.shaking || overlay !== ""
+    readonly property bool acceptsTyping: passwordField.visible && passwordField.interactive && !fieldLocked
 
     signal submitted(string password)
     signal typed(string text, int modifiers)
@@ -35,6 +41,8 @@ Item {
 
     // Typing from elsewhere on the screen lands at the end of the field, which takes focus.
     function typeIntoField(text) {
+        if (fieldLocked)
+            return;
         passwordField.forceActiveFocus();
         passwordField.text += text;
     }
@@ -44,6 +52,7 @@ Item {
     }
 
     function clearField() {
+        passwordField.keptText = "";
         passwordField.text = "";
     }
 
@@ -98,13 +107,29 @@ Item {
 
             objectName: "passwordField"
             Layout.alignment: Qt.AlignHCenter
+            // The text as it stood when the field locked; a locked field puts it back.
+            property string keptText
+
             visible: !column.unavailable
             focus: true
-            onSubmitted: password => column.submitted(password)
-            onTyped: (text, modifiers) => column.typed(text, modifiers)
+            activeFocusOnTab: column.overlay === ""
+            onSubmitted: password => {
+                if (!column.fieldLocked)
+                    column.submitted(password);
+            }
+            onTyped: (text, modifiers) => {
+                if (!column.fieldLocked)
+                    column.typed(text, modifiers);
+            }
+            onTextChanged: {
+                if (column.fieldLocked)
+                    text = keptText;
+                else
+                    keptText = text;
+            }
             onShakingChanged: {
                 if (!shaking)
-                    text = "";
+                    column.clearField();
             }
 
             // Beneath the field's own Glass tint.
@@ -133,14 +158,21 @@ Item {
         }
 
         FadingNotice {
+            id: authErrorNotice
+
             objectName: "authErrorNotice"
             shown: column.authError !== ""
             tone: Notice.Danger
             glyph: Glyphs.cross
-            // Keeps the message while it fades out.
-            onShownChanged: {
-                if (shown)
-                    text = column.authError;
+
+            // Follows greetd's latest message while shown, and keeps the last one while it
+            // fades out.
+            Binding {
+                target: authErrorNotice
+                property: "text"
+                value: column.authError
+                when: column.authError !== ""
+                restoreMode: Binding.RestoreNone
             }
         }
 
@@ -169,8 +201,12 @@ Item {
             objectName: "otherUsersPill"
             Layout.alignment: Qt.AlignHCenter
             visible: column.otherUsersShown && !column.unavailable
+            focusPolicy: column.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
             backdrop: column.backdrop
-            onClicked: column.otherUsersRequested()
+            onClicked: {
+                if (column.overlay === "")
+                    column.otherUsersRequested();
+            }
         }
     }
 

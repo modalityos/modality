@@ -12,6 +12,9 @@ Item {
     // The id of the Session a login would start: checked in the Menu.
     property string currentSession
     property bool open: false
+    // The overlay open on the screen, "" for none: Options takes no focus under one, and
+    // under the Choose a user panel it does not act.
+    property string overlay: ""
     // The wallpaper the Glass blurs.
     property Item backdrop
     property bool shortScreen: false
@@ -45,9 +48,14 @@ Item {
         anchors.bottomMargin: options.shortScreen ? 28 : Theme.space10
         visible: options.sessions.length > 1
         checked: options.open
+        focusPolicy: options.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
         text: qsTr("Options")
         glyph: Glyphs.options
-        onClicked: options.toggled()
+        // A click on Options while its Menu is open closes the Menu.
+        onClicked: {
+            if (options.overlay === "" || options.overlay === "options")
+                options.toggled();
+        }
 
         // Beneath the circle's own Glass tint.
         Frost {

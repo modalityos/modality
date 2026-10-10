@@ -32,6 +32,17 @@ FocusScope {
             cell.forceActiveFocus();
     }
 
+    // Tab and Shift+Tab cycle through the cells and Cancel, never to what lies under the scrim.
+    function cycleFocus(step) {
+        const stops = [];
+        for (let index = 0; index < cells.count; index++)
+            stops.push(cells.itemAt(index));
+        stops.push(cancelButton);
+        const from = stops.findIndex(item => item.activeFocus);
+        const to = from < 0 ? (step > 0 ? 0 : stops.length - 1) : (from + step + stops.length) % stops.length;
+        stops[to].forceActiveFocus(step > 0 ? Qt.TabFocusReason : Qt.BacktabFocusReason);
+    }
+
     function focusCurrentUser() {
         const index = Math.max(0, users.findIndex(user => user.name === currentUser));
         cells.itemAt(index)?.forceActiveFocus();
@@ -150,16 +161,23 @@ FocusScope {
                         Keys.onRightPressed: panel.moveFocus(index, 1)
                         Keys.onUpPressed: panel.moveFocus(index, -panel.columns)
                         Keys.onDownPressed: panel.moveFocus(index, panel.columns)
+                        // On each stop: a focused item takes Tab itself before the panel sees it.
+                        Keys.onTabPressed: panel.cycleFocus(1)
+                        Keys.onBacktabPressed: panel.cycleFocus(-1)
                     }
                 }
             }
 
             Button {
+                id: cancelButton
+
                 objectName: "userPanelCancel"
                 Layout.alignment: Qt.AlignHCenter
                 variant: Button.Secondary
                 text: qsTr("Cancel")
                 onClicked: panel.cancelled()
+                Keys.onTabPressed: panel.cycleFocus(1)
+                Keys.onBacktabPressed: panel.cycleFocus(-1)
             }
         }
     }

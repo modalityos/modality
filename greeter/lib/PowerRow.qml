@@ -11,11 +11,23 @@ RowLayout {
     property GreeterBackend backend
     // The wallpaper the buttons' Glass circles frost.
     property Item backdrop
+    // The overlay open on the screen, "" for none: under one the buttons take no focus and
+    // do nothing.
+    property string overlay: ""
 
     spacing: Theme.space8
 
     component PowerButton: IconButton {
         id: button
+
+        // The backend operation the button runs.
+        required property var operation
+
+        focusPolicy: row.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
+        onClicked: {
+            if (row.overlay === "")
+                operation();
+        }
 
         // Beneath the circle's own Glass tint.
         Frost {
@@ -32,20 +44,20 @@ RowLayout {
         objectName: "sleepButton"
         text: qsTr("Sleep")
         glyph: Glyphs.sleep
-        onClicked: row.backend.suspend()
+        operation: () => row.backend.suspend()
     }
 
     PowerButton {
         objectName: "restartButton"
         text: qsTr("Restart")
         glyph: Glyphs.restart
-        onClicked: row.backend.reboot()
+        operation: () => row.backend.reboot()
     }
 
     PowerButton {
         objectName: "shutDownButton"
         text: qsTr("Shut Down")
         glyph: Glyphs.shutDown
-        onClicked: row.backend.powerOff()
+        operation: () => row.backend.powerOff()
     }
 }
