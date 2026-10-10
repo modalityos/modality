@@ -39,17 +39,26 @@ TestCase {
     }
 
     function test_warning_notice_is_in_the_warning_colour() {
-        const notice = createNotice({ tone: Notice.Warning, glyph: Glyphs.capsLock });
+        const notice = createNotice({
+            tone: Notice.Warning,
+            glyph: Glyphs.capsLock
+        });
         compare(notice.toneColor, Theme.warning);
     }
 
     function test_danger_notice_is_in_the_danger_colour() {
-        const notice = createNotice({ tone: Notice.Danger, text: "Wrong password", glyph: Glyphs.cross });
+        const notice = createNotice({
+            tone: Notice.Danger,
+            text: "Wrong password",
+            glyph: Glyphs.cross
+        });
         compare(notice.toneColor, Theme.danger);
     }
 
     function test_notice_tones_follow_the_light_theme() {
-        const notice = createNotice({ tone: Notice.Danger });
+        const notice = createNotice({
+            tone: Notice.Danger
+        });
         Theme.theme = "light";
         compare(notice.toneColor, Qt.color("#a8231f"));
         notice.tone = Notice.Warning;
@@ -68,7 +77,11 @@ TestCase {
     }
 
     function test_notice_with_action_floats_and_reports_its_action() {
-        const notice = createNotice({ tone: Notice.Danger, text: "Couldn't start the session.", actionText: "Try again" });
+        const notice = createNotice({
+            tone: Notice.Danger,
+            text: "Couldn't start the session.",
+            actionText: "Try again"
+        });
         actionSpy.target = notice;
         compare(notice.shadow, Theme.shadowFloating);
         verify(notice.actionItem.visible);
@@ -78,7 +91,11 @@ TestCase {
     }
 
     function test_focused_action_runs_on_enter() {
-        const notice = createNotice({ tone: Notice.Danger, text: "Couldn't start the session.", actionText: "Try again" });
+        const notice = createNotice({
+            tone: Notice.Danger,
+            text: "Couldn't start the session.",
+            actionText: "Try again"
+        });
         actionSpy.target = notice;
         notice.actionItem.forceActiveFocus();
         verify(notice.actionItem.ringShown);

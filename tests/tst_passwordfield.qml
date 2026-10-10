@@ -47,7 +47,10 @@ TestCase {
 
     // The submit button is the 24px circle 4px in from the field's right edge.
     function submitButtonCentre(field) {
-        return { x: field.width - 4 - Theme.controlHeightSmall / 2, y: field.height / 2 };
+        return {
+            x: field.width - 4 - Theme.controlHeightSmall / 2,
+            y: field.height / 2
+        };
     }
 
     function cleanup() {
@@ -145,7 +148,9 @@ TestCase {
     }
 
     function test_disabled_password_field_fades_without_shadow() {
-        const field = createField({ enabled: false });
+        const field = createField({
+            enabled: false
+        });
         compare(field.visualOpacity, 0.5);
         compare(field.shadow, null);
         compare(field.fillColor, Theme.materialPopoverTint);
@@ -176,7 +181,9 @@ TestCase {
 
     function test_typed_reports_each_typed_character_with_its_modifiers() {
         const field = createField();
-        const spy = createTemporaryObject(typedSpyComponent, this, { target: field });
+        const spy = createTemporaryObject(typedSpyComponent, this, {
+            target: field
+        });
         field.forceActiveFocus();
         keyClick("A");
         keyClick("b", Qt.ShiftModifier);
@@ -190,7 +197,9 @@ TestCase {
     }
 
     function test_password_field_states_can_be_set_through_properties() {
-        const field = createField({ hoverActive: true });
+        const field = createField({
+            hoverActive: true
+        });
         compare(field.fillColor, Theme.surfaceOverlay);
         field.down = true;
         compare(field.shadow, Theme.shadowRaised);

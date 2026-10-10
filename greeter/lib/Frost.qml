@@ -43,8 +43,7 @@ Item {
 
         anchors.fill: blur
         sourceItem: frost.source
-        sourceRect: Qt.rect(frost.region.x - frost.blurRadius, frost.region.y - frost.blurRadius,
-                            frost.region.width + 2 * frost.blurRadius, frost.region.height + 2 * frost.blurRadius)
+        sourceRect: Qt.rect(frost.region.x - frost.blurRadius, frost.region.y - frost.blurRadius, frost.region.width + 2 * frost.blurRadius, frost.region.height + 2 * frost.blurRadius)
         visible: false
     }
 

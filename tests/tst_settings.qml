@@ -32,7 +32,9 @@ TestCase {
 
     function createGreeter(backendProperties) {
         const backend = createTemporaryObject(backendComponent, testCase, backendProperties ?? {});
-        const greeter = createTemporaryObject(greeterComponent, testCase, { backend: backend });
+        const greeter = createTemporaryObject(greeterComponent, testCase, {
+            backend: backend
+        });
         verify(greeter);
         return greeter;
     }
@@ -49,26 +51,55 @@ TestCase {
 
     function test_24_hour_clock_data() {
         return [
-            { tag: "morning", hours: 9, minutes: 41, time: "09:41" },
-            { tag: "evening", hours: 21, minutes: 5, time: "21:05" }
+            {
+                tag: "morning",
+                hours: 9,
+                minutes: 41,
+                time: "09:41"
+            },
+            {
+                tag: "evening",
+                hours: 21,
+                minutes: 5,
+                time: "21:05"
+            }
         ];
     }
 
     function test_24_hour_clock(data) {
-        const greeter = createGreeter({ clock24Hour: true });
+        const greeter = createGreeter({
+            clock24Hour: true
+        });
         compare(clockTimeAt(greeter, data.hours, data.minutes), data.time);
     }
 
     function test_12_hour_clock_data() {
         return [
-            { tag: "morning", hours: 9, minutes: 41, time: "9:41 AM" },
-            { tag: "evening", hours: 21, minutes: 5, time: "9:05 PM" },
-            { tag: "midnight", hours: 0, minutes: 30, time: "12:30 AM" }
+            {
+                tag: "morning",
+                hours: 9,
+                minutes: 41,
+                time: "9:41 AM"
+            },
+            {
+                tag: "evening",
+                hours: 21,
+                minutes: 5,
+                time: "9:05 PM"
+            },
+            {
+                tag: "midnight",
+                hours: 0,
+                minutes: 30,
+                time: "12:30 AM"
+            }
         ];
     }
 
     function test_12_hour_clock(data) {
-        const greeter = createGreeter({ clock24Hour: false });
+        const greeter = createGreeter({
+            clock24Hour: false
+        });
         compare(clockTimeAt(greeter, data.hours, data.minutes), data.time);
     }
 
@@ -83,8 +114,18 @@ TestCase {
     function test_glass_is_frosted_by_default() {
         const greeter = createGreeter({
             users: [
-                { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+                {
+                    name: "ada",
+                    realName: "Ada Lovelace",
+                    avatar: "",
+                    systemAccount: false
+                },
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "",
+                    systemAccount: false
+                }
             ]
         });
         compare(Theme.reduceTransparency, false);
@@ -94,8 +135,16 @@ TestCase {
 
     function test_reduce_transparency_draws_glass_solid_without_frost_data() {
         return [
-            { tag: "dark", theme: "dark", fallback: "#2f2e2c" },
-            { tag: "light", theme: "light", fallback: "#fbfbfa" }
+            {
+                tag: "dark",
+                theme: "dark",
+                fallback: "#2f2e2c"
+            },
+            {
+                tag: "light",
+                theme: "light",
+                fallback: "#fbfbfa"
+            }
         ];
     }
 
@@ -104,8 +153,18 @@ TestCase {
             theme: data.theme,
             reduceTransparency: true,
             users: [
-                { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+                {
+                    name: "ada",
+                    realName: "Ada Lovelace",
+                    avatar: "",
+                    systemAccount: false
+                },
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "",
+                    systemAccount: false
+                }
             ]
         });
         compare(Theme.reduceTransparency, true);
@@ -117,7 +176,9 @@ TestCase {
     }
 
     function test_light_theme_turns_the_text_dark() {
-        const greeter = createGreeter({ theme: "light" });
+        const greeter = createGreeter({
+            theme: "light"
+        });
         // textPrimary in light: rgba(0, 0, 0, 0.86).
         verify(Qt.colorEqual(findChild(greeter, "clockTime").color, "#db000000"));
         verify(Qt.colorEqual(findChild(greeter, "userName").color, "#db000000"));

@@ -35,7 +35,9 @@ TestCase {
     }
 
     function test_small_avatar_takes_its_size() {
-        const avatar = createAvatar({ size: 64 });
+        const avatar = createAvatar({
+            size: 64
+        });
         compare(avatar.width, 64);
         compare(avatar.radius, 32);
     }
@@ -46,7 +48,9 @@ TestCase {
     }
 
     function test_avatar_default_has_floating_shadow() {
-        const avatar = createAvatar({ size: 64 });
+        const avatar = createAvatar({
+            size: 64
+        });
         compare(avatar.shadow, Theme.shadowFloating);
         compare(avatar.visualScale, 1);
         compare(avatar.visualOpacity, 1);
@@ -54,14 +58,19 @@ TestCase {
     }
 
     function test_avatar_resting_shadow_can_be_raised_instead() {
-        const avatar = createAvatar({ size: 64, restingShadow: Theme.shadowRaised });
+        const avatar = createAvatar({
+            size: 64,
+            restingShadow: Theme.shadowRaised
+        });
         compare(avatar.shadow, Theme.shadowRaised);
         avatar.hoverActive = true;
         compare(avatar.shadow, Theme.shadowModal);
     }
 
     function test_avatar_hover_lifts_to_modal_shadow_and_grows() {
-        const avatar = createAvatar({ size: 64 });
+        const avatar = createAvatar({
+            size: 64
+        });
         mouseMove(avatar, 32, 32);
         tryVerify(() => avatar.hovered);
         compare(avatar.shadow, Theme.shadowModal);
@@ -69,7 +78,9 @@ TestCase {
     }
 
     function test_avatar_pressed_drops_to_raised_shadow_and_shrinks() {
-        const avatar = createAvatar({ size: 64 });
+        const avatar = createAvatar({
+            size: 64
+        });
         mousePress(avatar, 32, 32);
         verify(avatar.pressed);
         compare(avatar.shadow, Theme.shadowRaised);
@@ -83,14 +94,20 @@ TestCase {
     }
 
     function test_focused_avatar_shows_the_ring_with_floating_shadow() {
-        const avatar = createAvatar({ size: 64, focusPolicy: Qt.StrongFocus });
+        const avatar = createAvatar({
+            size: 64,
+            focusPolicy: Qt.StrongFocus
+        });
         avatar.forceActiveFocus();
         verify(avatar.ringShown);
         compare(avatar.shadow, Theme.shadowFloating);
     }
 
     function test_disabled_avatar_fades_without_shadow() {
-        const avatar = createAvatar({ size: 64, enabled: false });
+        const avatar = createAvatar({
+            size: 64,
+            enabled: false
+        });
         compare(avatar.visualOpacity, 0.4);
         compare(avatar.shadow, null);
     }
@@ -101,7 +118,10 @@ TestCase {
     }
 
     function test_avatar_states_can_be_set_through_properties() {
-        const avatar = createAvatar({ size: 64, hoverActive: true });
+        const avatar = createAvatar({
+            size: 64,
+            hoverActive: true
+        });
         compare(avatar.shadow, Theme.shadowModal);
         avatar.down = true;
         compare(avatar.shadow, Theme.shadowRaised);

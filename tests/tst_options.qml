@@ -54,7 +54,9 @@ TestCase {
     }
 
     function twoSessions(extra) {
-        return Object.assign({ sessions: [testCase.kwin, testCase.hyprland] }, extra ?? {});
+        return Object.assign({
+            sessions: [testCase.kwin, testCase.hyprland]
+        }, extra ?? {});
     }
 
     function cleanup() {
@@ -69,8 +71,16 @@ TestCase {
 
     function test_two_sessions_show_the_options_button_bottom_right_data() {
         return [
-            { tag: "1280 x 1080", height: 1080, bottom: 40 },
-            { tag: "1366 x 768", height: 768, bottom: 28 }
+            {
+                tag: "1280 x 1080",
+                height: 1080,
+                bottom: 40
+            },
+            {
+                tag: "1366 x 768",
+                height: 768,
+                bottom: 28
+            }
         ];
     }
 
@@ -95,8 +105,16 @@ TestCase {
 
     function test_options_opens_the_session_menu_with_the_default_session_checked_data() {
         return [
-            { tag: "1280 x 1080", height: 1080, bottom: 112 },
-            { tag: "1366 x 768", height: 768, bottom: 100 }
+            {
+                tag: "1280 x 1080",
+                height: 1080,
+                bottom: 112
+            },
+            {
+                tag: "1366 x 768",
+                height: 768,
+                bottom: 100
+            }
         ];
     }
 
@@ -146,15 +164,27 @@ TestCase {
     }
 
     readonly property var twoUsers: [
-        { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-        { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+        {
+            name: "ada",
+            realName: "Ada Lovelace",
+            avatar: "",
+            systemAccount: false
+        },
+        {
+            name: "katherine",
+            realName: "Katherine Johnson",
+            avatar: "",
+            systemAccount: false
+        }
     ]
 
     function rememberedHyprlandForKatherine() {
         return twoSessions({
             users: testCase.twoUsers,
             lastUser: "katherine",
-            rememberedSessions: { katherine: "hyprland" }
+            rememberedSessions: {
+                katherine: "hyprland"
+            }
         });
     }
 
@@ -174,14 +204,19 @@ TestCase {
         const greeter = createGreeter(twoSessions({
             users: testCase.twoUsers,
             lastUser: "ada",
-            rememberedSessions: { katherine: "hyprland" }
+            rememberedSessions: {
+                katherine: "hyprland"
+            }
         }));
         logIn(greeter);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
 
     function test_a_session_picked_for_one_user_does_not_carry_to_the_next_user_picked() {
-        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "katherine" }));
+        const greeter = createGreeter(twoSessions({
+            users: testCase.twoUsers,
+            lastUser: "katherine"
+        }));
         mouseClick(openOptions(greeter).itemAt(1));
         mouseClick(findChild(greeter, "otherUsersPill"));
         const panel = findChild(greeter, "userPanel");
@@ -251,7 +286,10 @@ TestCase {
     }
 
     function test_options_comes_after_other_users_and_before_sleep_in_tab_order() {
-        const greeter = createGreeter(twoSessions({ users: testCase.twoUsers, lastUser: "katherine" }));
+        const greeter = createGreeter(twoSessions({
+            users: testCase.twoUsers,
+            lastUser: "katherine"
+        }));
         const field = findChild(greeter, "passwordField");
         tryVerify(() => field.activeFocus);
         keyClick(Qt.Key_Tab);
@@ -265,7 +303,10 @@ TestCase {
     }
 
     function test_one_session_leaves_options_out_of_tab_order() {
-        const greeter = createGreeter({ users: testCase.twoUsers, lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: testCase.twoUsers,
+            lastUser: "katherine"
+        });
         tryVerify(() => findChild(greeter, "passwordField").activeFocus);
         keyClick(Qt.Key_Tab);
         keyClick(Qt.Key_Tab);
@@ -273,7 +314,11 @@ TestCase {
     }
 
     function test_remembered_session_that_is_gone_gives_the_default_session() {
-        const greeter = createGreeter(twoSessions({ rememberedSessions: { katherine: "sway" } }));
+        const greeter = createGreeter(twoSessions({
+            rememberedSessions: {
+                katherine: "sway"
+            }
+        }));
         logIn(greeter);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }

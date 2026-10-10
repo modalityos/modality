@@ -25,17 +25,35 @@ lint:
         $(git ls-files --cached --others --exclude-standard '*.qml')
     @echo "qmllint OK"
 
+# Format every QML file in place with qmlformat (settings in .qmlformat.ini)
+format:
+    {{qt_bin}}/qmlformat --inplace $(git ls-files --cached --others --exclude-standard '*.qml')
+
+# Fail if any QML file isn't formatted, naming each one; `just format` fixes them
+format-check:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    unformatted=0
+    for file in $(git ls-files --cached --others --exclude-standard '*.qml'); do
+        if ! {{qt_bin}}/qmlformat "$file" | cmp --silent - "$file"; then
+            echo "not formatted: $file"
+            unformatted=1
+        fi
+    done
+    ((unformatted)) || echo "qmlformat OK"
+    exit "$unformatted"
+
 # List Greeter and shared-module files that no test loads, failing if any
 coverage:
     python3 -I tests/check-coverage.py --self-test
     python3 -I tests/check-coverage.py
 
-# Run lint, tests and coverage, all three even if one fails, then summarise; run before pushing
+# Run lint, format-check, tests and coverage, all of them even if one fails, then summarise; run before pushing
 check:
     #!/usr/bin/env bash
     set -uo pipefail
     summary=() failed=0
-    for recipe in lint test coverage; do
+    for recipe in lint format-check test coverage; do
         echo "== just $recipe"
         if {{just_executable()}} "$recipe"; then summary+=("$recipe ✓"); else summary+=("$recipe ✗"); failed=1; fi
     done

@@ -6,6 +6,8 @@ import Modality.Theme
 TestCase {
     name: "Theme"
 
+    // One row per Token and type style, like the spec's tables, so the formatter leaves them be.
+    // qmlformat off
     // Expected values copied from the Tokens table of design/foundations/spec.md.
     readonly property var tokens: [
         {"name": "bg", "light": {"color": "#efeeec"}, "dark": {"color": "#1f1e1d"}},
@@ -106,6 +108,7 @@ TestCase {
         { name: "display", family: "Inter", size: 96, lineHeight: 100, weight: 600, letterSpacingEm: -0.03 },
         { name: "mono", family: "JetBrains Mono", size: 12, lineHeight: 16, weight: 400, letterSpacingEm: 0 }
     ]
+    // qmlformat on
 
     function cssColor(css) {
         if (css.startsWith("#"))
@@ -118,11 +121,7 @@ TestCase {
         const expected = cssColor(css);
         const tolerance = 1 / 255;
         verify(actual !== undefined, `${label} is missing`);
-        verify(Math.abs(actual.r - expected.r) <= tolerance
-               && Math.abs(actual.g - expected.g) <= tolerance
-               && Math.abs(actual.b - expected.b) <= tolerance
-               && Math.abs(actual.a - expected.a) <= tolerance,
-               `${label}: expected ${css}, got ${actual}`);
+        verify(Math.abs(actual.r - expected.r) <= tolerance && Math.abs(actual.g - expected.g) <= tolerance && Math.abs(actual.b - expected.b) <= tolerance && Math.abs(actual.a - expected.a) <= tolerance, `${label}: expected ${css}, got ${actual}`);
     }
 
     function compareValue(actual, expected, label) {

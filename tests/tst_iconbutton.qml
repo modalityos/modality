@@ -34,7 +34,10 @@ TestCase {
     }
 
     function circleCentre(button) {
-        return { x: button.width / 2, y: Theme.space10 / 2 };
+        return {
+            x: button.width / 2,
+            y: Theme.space10 / 2
+        };
     }
 
     function cleanup() {
@@ -81,7 +84,9 @@ TestCase {
     }
 
     function test_icon_button_disabled_dims_the_glyph_and_drops_the_shadow() {
-        const button = createIconButton({ enabled: false });
+        const button = createIconButton({
+            enabled: false
+        });
         compare(button.fillColor, Theme.materialPopoverTint);
         compare(button.glyphColor, Theme.textDisabled);
         compare(button.circleOpacity, 0.5);
@@ -95,7 +100,10 @@ TestCase {
     }
 
     function test_icon_button_options_open_is_opaque_overlay() {
-        const button = createIconButton({ checkable: true, checked: true });
+        const button = createIconButton({
+            checkable: true,
+            checked: true
+        });
         compare(button.fillColor, Theme.surfaceOverlay);
     }
 
@@ -121,7 +129,9 @@ TestCase {
     }
 
     function test_icon_button_states_can_be_set_through_properties() {
-        const button = createIconButton({ hoverActive: true });
+        const button = createIconButton({
+            hoverActive: true
+        });
         compare(button.fillColor, Theme.surfaceOverlay);
         button.down = true;
         compare(button.fillColor, Theme.surfaceSunken);

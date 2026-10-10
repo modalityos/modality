@@ -24,9 +24,18 @@ Window {
         height: width
         rotation: Theme.wallpaperAngle - 90
         gradient: Gradient {
-            GradientStop { position: 0; color: Theme.wallpaper1 }
-            GradientStop { position: Theme.wallpaperMidStop; color: Theme.wallpaper2 }
-            GradientStop { position: 1; color: Theme.wallpaper3 }
+            GradientStop {
+                position: 0
+                color: Theme.wallpaper1
+            }
+            GradientStop {
+                position: Theme.wallpaperMidStop
+                color: Theme.wallpaper2
+            }
+            GradientStop {
+                position: 1
+                color: Theme.wallpaper3
+            }
         }
     }
 
@@ -68,7 +77,9 @@ Window {
             }
         }
 
-        SheetLabel { text: "" }
+        SheetLabel {
+            text: ""
+        }
         Repeater {
             model: window.states
 
@@ -80,7 +91,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("Avatar") }
+        SheetLabel {
+            text: qsTr("Avatar")
+        }
         Repeater {
             model: window.states
 
@@ -97,7 +110,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("PasswordField") }
+        SheetLabel {
+            text: qsTr("PasswordField")
+        }
         Repeater {
             model: window.states
 
@@ -111,7 +126,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("Button primary") }
+        SheetLabel {
+            text: qsTr("Button primary")
+        }
         Repeater {
             model: window.states
 
@@ -126,7 +143,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("Button secondary") }
+        SheetLabel {
+            text: qsTr("Button secondary")
+        }
         Repeater {
             model: window.states
 
@@ -142,7 +161,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("IconButton") }
+        SheetLabel {
+            text: qsTr("IconButton")
+        }
         Repeater {
             model: window.states
 
@@ -158,7 +179,9 @@ Window {
             }
         }
 
-        SheetLabel { text: qsTr("Menu item") }
+        SheetLabel {
+            text: qsTr("Menu item")
+        }
         Repeater {
             model: window.states
 
@@ -208,7 +231,15 @@ Window {
 
             Layout.alignment: Qt.AlignTop
             title: qsTr("Session")
-            model: [{ text: "KWin", checked: true }, { text: "Hyprland" }]
+            model: [
+                {
+                    text: "KWin",
+                    checked: true
+                },
+                {
+                    text: "Hyprland"
+                }
+            ]
             Component.onCompleted: {
                 open();
                 itemAt(0).ringShown = false;

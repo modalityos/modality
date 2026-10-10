@@ -17,12 +17,32 @@ TestCase {
     when: windowShown
 
     readonly property var twoUsers: [
-        { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-        { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+        {
+            name: "ada",
+            realName: "Ada Lovelace",
+            avatar: "",
+            systemAccount: false
+        },
+        {
+            name: "katherine",
+            realName: "Katherine Johnson",
+            avatar: "",
+            systemAccount: false
+        }
     ]
     readonly property var twoSessions: [
-        { id: "org.modalityos.kwin", name: "ModalityOS (KWin)", command: ["kwin"], desktopNames: ["ModalityOS"] },
-        { id: "org.modalityos.hyprland", name: "ModalityOS (Hyprland)", command: ["hyprland"], desktopNames: ["ModalityOS"] }
+        {
+            id: "org.modalityos.kwin",
+            name: "ModalityOS (KWin)",
+            command: ["kwin"],
+            desktopNames: ["ModalityOS"]
+        },
+        {
+            id: "org.modalityos.hyprland",
+            name: "ModalityOS (Hyprland)",
+            command: ["hyprland"],
+            desktopNames: ["ModalityOS"]
+        }
     ]
 
     Component {
@@ -42,7 +62,9 @@ TestCase {
 
     function createGreeter(backendProperties) {
         const backend = createTemporaryObject(backendComponent, testCase, backendProperties ?? {});
-        const greeter = createTemporaryObject(greeterComponent, testCase, { backend: backend });
+        const greeter = createTemporaryObject(greeterComponent, testCase, {
+            backend: backend
+        });
         verify(greeter);
         tryVerify(() => findChild(greeter, "passwordField").activeFocus);
         return greeter;
@@ -113,9 +135,11 @@ TestCase {
     }
 
     function test_shift_tab_walks_the_order_backwards() {
-        const greeter = createGreeter({ users: testCase.twoUsers, sessions: testCase.twoSessions });
-        walk(greeter, Qt.Key_Backtab,
-             ["shutDownButton", "restartButton", "sleepButton", "optionsButton", "otherUsersPill", "passwordField"]);
+        const greeter = createGreeter({
+            users: testCase.twoUsers,
+            sessions: testCase.twoSessions
+        });
+        walk(greeter, Qt.Key_Backtab, ["shutDownButton", "restartButton", "sleepButton", "optionsButton", "otherUsersPill", "passwordField"]);
     }
 
     function test_password_field_shows_the_focus_ring_at_start() {
@@ -124,7 +148,9 @@ TestCase {
     }
 
     function test_session_failed_puts_try_again_after_the_password_field() {
-        const greeter = createGreeter({ users: testCase.twoUsers });
+        const greeter = createGreeter({
+            users: testCase.twoUsers
+        });
         keyClick("x");
         keyClick(Qt.Key_Return);
         greeter.backend.authPrompt("Password:", true);
@@ -143,7 +169,9 @@ TestCase {
     }
 
     function test_typing_goes_into_the_password_field_from_anywhere() {
-        const greeter = createGreeter({ users: testCase.twoUsers });
+        const greeter = createGreeter({
+            users: testCase.twoUsers
+        });
         findChild(greeter, "restartButton").forceActiveFocus();
         keyClick("s");
         keyClick("e");
@@ -154,7 +182,9 @@ TestCase {
     }
 
     function test_typing_in_the_choose_a_user_panel_stays_out_of_the_password_field() {
-        const greeter = createGreeter({ users: testCase.twoUsers });
+        const greeter = createGreeter({
+            users: testCase.twoUsers
+        });
         findChild(greeter, "otherUsersPill").forceActiveFocus();
         keyClick(Qt.Key_Return);
         compare(greeter.overlay, "otherUsers");

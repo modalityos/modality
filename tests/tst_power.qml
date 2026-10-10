@@ -46,9 +46,24 @@ TestCase {
 
     function test_power_button_calls_its_backend_operation_data() {
         return [
-            { tag: "Sleep", button: "sleepButton", label: "Sleep", call: ["suspend"] },
-            { tag: "Restart", button: "restartButton", label: "Restart", call: ["reboot"] },
-            { tag: "Shut Down", button: "shutDownButton", label: "Shut Down", call: ["powerOff"] }
+            {
+                tag: "Sleep",
+                button: "sleepButton",
+                label: "Sleep",
+                call: ["suspend"]
+            },
+            {
+                tag: "Restart",
+                button: "restartButton",
+                label: "Restart",
+                call: ["reboot"]
+            },
+            {
+                tag: "Shut Down",
+                button: "shutDownButton",
+                label: "Shut Down",
+                call: ["powerOff"]
+            }
         ];
     }
 
@@ -71,8 +86,16 @@ TestCase {
 
     function test_power_row_sits_bottom_centre_data() {
         return [
-            { tag: "tall screen", height: 800 + 200, bottom: 40 },
-            { tag: "short screen", height: 768, bottom: 28 }
+            {
+                tag: "tall screen",
+                height: 800 + 200,
+                bottom: 40
+            },
+            {
+                tag: "short screen",
+                height: 768,
+                bottom: 28
+            }
         ];
     }
 

@@ -132,7 +132,12 @@ QtObject {
 
     function typeStyle(family, size, lineHeight, weight, letterSpacingEm) {
         return {
-            font: Qt.font({ family: family, pixelSize: size, weight: weight, letterSpacing: letterSpacingEm * size }),
+            font: Qt.font({
+                family: family,
+                pixelSize: size,
+                weight: weight,
+                letterSpacing: letterSpacingEm * size
+            }),
             lineHeight: lineHeight
         };
     }
@@ -142,7 +147,14 @@ QtObject {
     }
 
     function shadow(hairlineColor, offsetY, blur, color) {
-        return { hairlineWidth: 0.5, hairlineColor: hairlineColor, offsetX: 0, offsetY: offsetY, blur: blur, color: color };
+        return {
+            hairlineWidth: 0.5,
+            hairlineColor: hairlineColor,
+            offsetX: 0,
+            offsetY: offsetY,
+            blur: blur,
+            color: color
+        };
     }
 
     Component.onCompleted: onAccent = "#ffffff"

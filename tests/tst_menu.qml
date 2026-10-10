@@ -18,9 +18,17 @@ TestCase {
             y: 20
             title: "Session"
             model: [
-                { text: "KWin", checked: true },
-                { text: "Hyprland" },
-                { text: "Sway", enabled: false }
+                {
+                    text: "KWin",
+                    checked: true
+                },
+                {
+                    text: "Hyprland"
+                },
+                {
+                    text: "Sway",
+                    enabled: false
+                }
             ]
         }
     }
@@ -101,14 +109,19 @@ TestCase {
     }
 
     function test_menu_item_disabled_has_disabled_text() {
-        const item = createMenuItem({ enabled: false });
+        const item = createMenuItem({
+            enabled: false
+        });
         compare(item.fillColor, Qt.color("transparent"));
         compare(item.labelColor, Theme.textDisabled);
     }
 
     function test_unchecked_menu_item_label_lines_up_with_checked_ones() {
         const plain = createMenuItem();
-        const checked = createMenuItem({ checked: true, y: 60 });
+        const checked = createMenuItem({
+            checked: true,
+            y: 60
+        });
         compare(plain.leftPadding, 30);
         compare(checked.leftPadding, 10);
         compare(checked.indicatorWidth + checked.spacing + checked.leftPadding, 30);
@@ -183,7 +196,9 @@ TestCase {
     }
 
     function test_menu_item_states_can_be_set_through_properties() {
-        const item = createMenuItem({ hoverActive: true });
+        const item = createMenuItem({
+            hoverActive: true
+        });
         compare(item.fillColor, Theme.accent);
         item.down = true;
         compare(item.fillColor, Theme.accentPressed);

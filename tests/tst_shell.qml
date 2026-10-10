@@ -23,7 +23,9 @@ TestCase {
     }
 
     function test_greeter_finds_its_files_through_modalityos_prefix() {
-        Quickshell.environment = { MODALITYOS_PREFIX: "/opt/modalityos-dev" };
+        Quickshell.environment = {
+            MODALITYOS_PREFIX: "/opt/modalityos-dev"
+        };
         compare(loadShell().backend.prefix, "/opt/modalityos-dev");
     }
 

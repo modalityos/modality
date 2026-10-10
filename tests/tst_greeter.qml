@@ -32,7 +32,9 @@ TestCase {
 
     function createGreeter(backendProperties) {
         const backend = createTemporaryObject(backendComponent, testCase, backendProperties ?? {});
-        const greeter = createTemporaryObject(greeterComponent, testCase, { backend: backend });
+        const greeter = createTemporaryObject(greeterComponent, testCase, {
+            backend: backend
+        });
         verify(greeter);
         return greeter;
     }
@@ -56,8 +58,18 @@ TestCase {
     function test_greeter_shows_the_last_user_name() {
         const greeter = createGreeter({
             users: [
-                { name: "ada", realName: "Ada Lovelace", avatar: "", systemAccount: false },
-                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+                {
+                    name: "ada",
+                    realName: "Ada Lovelace",
+                    avatar: "",
+                    systemAccount: false
+                },
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "",
+                    systemAccount: false
+                }
             ],
             lastUser: "katherine"
         });
@@ -66,18 +78,21 @@ TestCase {
 
     function test_user_without_a_real_name_shows_the_user_name() {
         const greeter = createGreeter({
-            users: [{ name: "katherine", realName: "", avatar: "", systemAccount: false }]
+            users: [
+                {
+                    name: "katherine",
+                    realName: "",
+                    avatar: "",
+                    systemAccount: false
+                }
+            ]
         });
         compare(findChild(greeter, "userName").text, "katherine");
     }
 
     // count human users, in AccountsService order; katherine is the third.
     function someUsers(count) {
-        const names = [
-            ["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["katherine", "Katherine Johnson"],
-            ["alan", "Alan Turing"], ["edsger", "Edsger Dijkstra"], ["barbara", "Barbara Liskov"],
-            ["ken", "Ken Thompson"], ["margaret", "Margaret Hamilton"]
-        ];
+        const names = [["ada", "Ada Lovelace"], ["grace", "Grace Hopper"], ["katherine", "Katherine Johnson"], ["alan", "Alan Turing"], ["edsger", "Edsger Dijkstra"], ["barbara", "Barbara Liskov"], ["ken", "Ken Thompson"], ["margaret", "Margaret Hamilton"]];
         return names.slice(0, count).map(([name, realName]) => ({
                     name: name,
                     realName: realName,
@@ -87,12 +102,18 @@ TestCase {
     }
 
     function test_without_a_last_user_the_first_user_shows() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: ""
+        });
         compare(findChild(greeter, "userName").text, "Ada Lovelace");
     }
 
     function test_last_user_who_is_gone_gives_the_first_user() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "removed" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "removed"
+        });
         compare(findChild(greeter, "userName").text, "Ada Lovelace");
     }
 
@@ -104,13 +125,22 @@ TestCase {
 
     function test_several_accounts_show_the_other_users_pill_data() {
         return [
-            { tag: "three users", count: 3 },
-            { tag: "eight users", count: 8 }
+            {
+                tag: "three users",
+                count: 3
+            },
+            {
+                tag: "eight users",
+                count: 8
+            }
         ];
     }
 
     function test_several_accounts_show_the_other_users_pill(data) {
-        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(data.count),
+            lastUser: "katherine"
+        });
         const pill = findChild(greeter, "otherUsersPill");
         verify(pill);
         verify(pill.visible);
@@ -138,13 +168,24 @@ TestCase {
 
     function test_other_users_pill_opens_the_choose_a_user_panel_data() {
         return [
-            { tag: "three users in one row of three", count: 3, columns: 3 },
-            { tag: "eight users in two rows of four", count: 8, columns: 4 }
+            {
+                tag: "three users in one row of three",
+                count: 3,
+                columns: 3
+            },
+            {
+                tag: "eight users in two rows of four",
+                count: 8,
+                columns: 4
+            }
         ];
     }
 
     function test_other_users_pill_opens_the_choose_a_user_panel(data) {
-        const greeter = createGreeter({ users: someUsers(data.count), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(data.count),
+            lastUser: "katherine"
+        });
         verify(!findChild(greeter, "userPanel").visible);
         const panel = openOtherUsers(greeter);
         compare(greeter.overlay, "otherUsers");
@@ -158,7 +199,10 @@ TestCase {
     }
 
     function test_avatars_in_the_choose_a_user_panel_rest_on_the_raised_shadow() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         const avatar = findChild(userCells(greeter)[0], "userCellAvatar");
         verify(avatar);
@@ -167,7 +211,10 @@ TestCase {
     }
 
     function test_arrows_move_between_users_in_the_choose_a_user_panel() {
-        const greeter = createGreeter({ users: someUsers(8), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(8),
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         const cells = userCells(greeter);
         tryVerify(() => cells[2].activeFocus);
@@ -188,7 +235,10 @@ TestCase {
     }
 
     function test_enter_picks_the_highlighted_user_and_closes_the_panel() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         typeText("half");
         const panel = openOtherUsers(greeter);
         tryVerify(() => userCells(greeter)[2].activeFocus);
@@ -207,7 +257,10 @@ TestCase {
     }
 
     function test_clicking_a_user_picks_them() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         mouseClick(userCells(greeter)[0]);
         compare(greeter.overlay, "");
@@ -215,7 +268,10 @@ TestCase {
     }
 
     function test_esc_closes_the_choose_a_user_panel_with_no_change() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         const panel = openOtherUsers(greeter);
         tryVerify(() => userCells(greeter)[2].activeFocus);
         keyClick(Qt.Key_Left);
@@ -227,7 +283,10 @@ TestCase {
     }
 
     function test_cancel_closes_the_choose_a_user_panel_with_no_change() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         mouseClick(findChild(greeter, "userPanelCancel"));
         compare(greeter.overlay, "");
@@ -235,21 +294,30 @@ TestCase {
     }
 
     function test_clicking_outside_the_panel_closes_it() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         mouseClick(greeter, 10, 10);
         compare(greeter.overlay, "");
     }
 
     function test_enter_on_the_other_users_pill_opens_the_panel() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         findChild(greeter, "otherUsersPill").forceActiveFocus();
         keyClick(Qt.Key_Return);
         compare(greeter.overlay, "otherUsers");
     }
 
     function test_choose_a_user_panel_stays_shut_while_checking() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         typeText("secret");
         keyClick(Qt.Key_Return);
         mouseClick(findChild(greeter, "otherUsersPill"));
@@ -259,7 +327,10 @@ TestCase {
     function test_long_name_wraps_within_the_user_column_on_a_short_screen() {
         const users = someUsers(3);
         users[2].realName = "Alexandria Montgomery-Fitzwilliam";
-        const greeter = createGreeter({ users: users, lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: users,
+            lastUser: "katherine"
+        });
         greeter.width = 1366;
         greeter.height = 768;
         const name = findChild(greeter, "userName");
@@ -281,7 +352,10 @@ TestCase {
     function test_long_name_wraps_within_its_cell_in_the_choose_a_user_panel() {
         const users = someUsers(8);
         users[2].realName = "Alexandria Montgomery-Fitzwilliam";
-        const greeter = createGreeter({ users: users, lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: users,
+            lastUser: "katherine"
+        });
         openOtherUsers(greeter);
         const cell = userCells(greeter)[2];
         const label = cell.contentItem.children[1];
@@ -296,7 +370,14 @@ TestCase {
 
     function test_user_with_a_picture_shows_it() {
         const greeter = createGreeter({
-            users: [{ name: "katherine", realName: "Katherine Johnson", avatar: testCase.ballAvatar, systemAccount: false }]
+            users: [
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: testCase.ballAvatar,
+                    systemAccount: false
+                }
+            ]
         });
         const avatar = findChild(greeter, "userAvatar");
         compare(avatar.source, testCase.ballAvatar);
@@ -312,7 +393,14 @@ TestCase {
 
     function test_user_whose_picture_cannot_be_read_shows_the_default_avatar() {
         const greeter = createGreeter({
-            users: [{ name: "katherine", realName: "Katherine Johnson", avatar: "file:///nonexistent/katherine", systemAccount: false }]
+            users: [
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "file:///nonexistent/katherine",
+                    systemAccount: false
+                }
+            ]
         });
         const avatar = findChild(greeter, "userAvatar");
         tryCompare(avatar, "source", testCase.catAvatar);
@@ -338,8 +426,7 @@ TestCase {
         for (let turn = 1; turn <= 2; turn++) {
             const nearBoundary = new Date(2026, 9, 9, 9, 41, 59, 800);
             clock.now = nearBoundary;
-            tryVerify(() => clock.now.getTime() !== nearBoundary.getTime(), 2000,
-                      `turn ${turn}: the clock turned over`);
+            tryVerify(() => clock.now.getTime() !== nearBoundary.getTime(), 2000, `turn ${turn}: the clock turned over`);
         }
     }
 
@@ -358,25 +445,24 @@ TestCase {
         greeter.width = 1920;
         greeter.height = 1080;
         compare(Theme.theme, "dark");
-        compare(findChild(greeter, "wallpaper").source,
-                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2160.png"));
+        compare(findChild(greeter, "wallpaper").source, Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2160.png"));
     }
 
     function test_greeter_shows_silk_light_in_the_light_theme() {
-        const greeter = createGreeter({ theme: "light" });
+        const greeter = createGreeter({
+            theme: "light"
+        });
         greeter.width = 1920;
         greeter.height = 1080;
         compare(Theme.theme, "light");
-        compare(findChild(greeter, "wallpaper").source,
-                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-light-3840x2160.png"));
+        compare(findChild(greeter, "wallpaper").source, Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-light-3840x2160.png"));
     }
 
     function test_sixteen_by_ten_screen_shows_the_3840x2400_render() {
         const greeter = createGreeter();
         greeter.width = 1680;
         greeter.height = 1050;
-        compare(findChild(greeter, "wallpaper").source,
-                Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2400.png"));
+        compare(findChild(greeter, "wallpaper").source, Qt.resolvedUrl("fixtures/wallpapers/wallpaper-silk-dark-3840x2400.png"));
     }
 
     function test_password_field_is_frosted_with_the_wallpaper_behind_it() {
@@ -391,8 +477,7 @@ TestCase {
         fuzzyCompare(frost.saturation, 0.6, 0.001);
         tryVerify(() => {
             const behind = field.mapToItem(greeter, 0, 0, field.width, field.height);
-            return frost.region.x === behind.x && frost.region.y === behind.y
-                && frost.region.width === 240 && frost.region.height === Theme.controlHeightLarge;
+            return frost.region.x === behind.x && frost.region.y === behind.y && frost.region.width === 240 && frost.region.height === Theme.controlHeightLarge;
         });
     }
 
@@ -664,13 +749,19 @@ TestCase {
     }
 
     function test_login_unavailable_removes_the_other_users_pill() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         greeter.backend.loginUnavailable();
         verify(!findChild(greeter, "otherUsersPill").visible);
     }
 
     function test_picking_a_user_after_a_failed_session_starts_a_fresh_login() {
-        const greeter = createGreeter({ users: someUsers(3), lastUser: "katherine" });
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
         failSession(greeter);
         openOtherUsers(greeter);
         mouseClick(userCells(greeter)[0]);
@@ -679,8 +770,7 @@ TestCase {
         tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", false);
         verify(findChild(greeter, "passwordField").activeFocus);
         logIn(greeter, "secret");
-        compare(greeter.backend.calls.find(call => call[0] === "startAuthentication" && call[1] === "ada"),
-                ["startAuthentication", "ada"]);
+        compare(greeter.backend.calls.find(call => call[0] === "startAuthentication" && call[1] === "ada"), ["startAuthentication", "ada"]);
     }
 
     function test_login_unavailable_while_checking_ends_the_attempt() {

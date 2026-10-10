@@ -51,24 +51,58 @@ TestCase {
 
     function test_admin_overrides_beat_defaults_data() {
         return [
-            { tag: "theme", key: "theme", defaults: "dark", adminOverride: "light" },
-            { tag: "clock", key: "clock24Hour", defaults: true, adminOverride: false },
-            { tag: "default Session", key: "defaultSession", defaults: "org.modalityos.kwin", adminOverride: "org.modalityos.hyprland" },
-            { tag: "wallpaper", key: "wallpaper", defaults: "silk", adminOverride: "aurora" },
-            { tag: "Reduce transparency", key: "reduceTransparency", defaults: false, adminOverride: true }
+            {
+                tag: "theme",
+                key: "theme",
+                defaults: "dark",
+                adminOverride: "light"
+            },
+            {
+                tag: "clock",
+                key: "clock24Hour",
+                defaults: true,
+                adminOverride: false
+            },
+            {
+                tag: "default Session",
+                key: "defaultSession",
+                defaults: "org.modalityos.kwin",
+                adminOverride: "org.modalityos.hyprland"
+            },
+            {
+                tag: "wallpaper",
+                key: "wallpaper",
+                defaults: "silk",
+                adminOverride: "aurora"
+            },
+            {
+                tag: "Reduce transparency",
+                key: "reduceTransparency",
+                defaults: false,
+                adminOverride: true
+            }
         ];
     }
 
     function test_admin_overrides_beat_defaults(data) {
-        Files.write(testCase.defaultsPath, JSON.stringify({ [data.key]: data.defaults }));
-        Files.write(testCase.adminOverridesPath, JSON.stringify({ [data.key]: data.adminOverride }));
+        Files.write(testCase.defaultsPath, JSON.stringify({
+            [data.key]: data.defaults
+        }));
+        Files.write(testCase.adminOverridesPath, JSON.stringify({
+            [data.key]: data.adminOverride
+        }));
         const backend = createBackend();
         compare(backend[data.key], data.adminOverride);
     }
 
     function test_admin_overrides_leave_the_other_defaults_in_place() {
-        Files.write(testCase.defaultsPath, JSON.stringify({ theme: "light", wallpaper: "dunes" }));
-        Files.write(testCase.adminOverridesPath, JSON.stringify({ wallpaper: "aurora" }));
+        Files.write(testCase.defaultsPath, JSON.stringify({
+            theme: "light",
+            wallpaper: "dunes"
+        }));
+        Files.write(testCase.adminOverridesPath, JSON.stringify({
+            wallpaper: "aurora"
+        }));
         const backend = createBackend();
         compare(backend.theme, "light");
         compare(backend.wallpaper, "aurora");
@@ -84,7 +118,9 @@ TestCase {
     }
 
     function test_corrupt_admin_overrides_leave_the_defaults() {
-        Files.write(testCase.defaultsPath, JSON.stringify({ theme: "light" }));
+        Files.write(testCase.defaultsPath, JSON.stringify({
+            theme: "light"
+        }));
         Files.write(testCase.adminOverridesPath, "{ theme: light");
         const backend = createBackend();
         compare(backend.theme, "light");
@@ -92,16 +128,43 @@ TestCase {
 
     function test_unknown_or_wrongly_typed_settings_are_ignored_data() {
         return [
-            { tag: "unknown theme", key: "theme", value: "sepia", expected: "dark" },
-            { tag: "clock as text", key: "clock24Hour", value: "false", expected: true },
-            { tag: "empty default Session", key: "defaultSession", value: "", expected: "org.modalityos.kwin" },
-            { tag: "empty wallpaper", key: "wallpaper", value: "", expected: "silk" },
-            { tag: "Reduce transparency as a number", key: "reduceTransparency", value: 1, expected: false }
+            {
+                tag: "unknown theme",
+                key: "theme",
+                value: "sepia",
+                expected: "dark"
+            },
+            {
+                tag: "clock as text",
+                key: "clock24Hour",
+                value: "false",
+                expected: true
+            },
+            {
+                tag: "empty default Session",
+                key: "defaultSession",
+                value: "",
+                expected: "org.modalityos.kwin"
+            },
+            {
+                tag: "empty wallpaper",
+                key: "wallpaper",
+                value: "",
+                expected: "silk"
+            },
+            {
+                tag: "Reduce transparency as a number",
+                key: "reduceTransparency",
+                value: 1,
+                expected: false
+            }
         ];
     }
 
     function test_unknown_or_wrongly_typed_settings_are_ignored(data) {
-        Files.write(testCase.adminOverridesPath, JSON.stringify({ [data.key]: data.value }));
+        Files.write(testCase.adminOverridesPath, JSON.stringify({
+            [data.key]: data.value
+        }));
         const backend = createBackend();
         compare(backend[data.key], data.expected);
     }
@@ -109,7 +172,9 @@ TestCase {
     function test_admin_overrides_loaded_after_start_still_apply() {
         const backend = createBackend();
         compare(backend.theme, "dark");
-        Files.write(testCase.adminOverridesPath, JSON.stringify({ theme: "light" }));
+        Files.write(testCase.adminOverridesPath, JSON.stringify({
+            theme: "light"
+        }));
         compare(backend.theme, "light");
     }
 }
