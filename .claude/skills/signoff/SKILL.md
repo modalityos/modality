@@ -40,7 +40,7 @@ Done for a finding when the user confirms it fixed, or it has moved to an issue.
 When the user calls it ready:
 
 - Re-read the record and check every finding, by number: fixed and confirmed, or moved to an issue.
-- Check every box in every ticket the PR closes is ticked. Name any open one to the user: tick it on their word, or move it to an issue.
+- Run `tools/check-boxes.sh <pr>` until it passes: every box in every issue the PR closes is ticked. Name any open one to the user: tick it on their word, or move it to an issue. The **Sign-off gate** check on the PR re-runs by itself when an issue is edited; confirm it is green (`gh pr checks <pr>`).
 - Update the PR body (the `pr` skill format): a **Sign-off** list under Evidence, one line per finding with its fix commit or issue; bring the rest of the body up to date with what changed.
 - Tell the user the User checks and the merge are theirs.
 - Move the record to `.scratch/archive/`.
