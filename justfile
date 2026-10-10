@@ -63,14 +63,15 @@ install prefix:
 vm-create *args:
     tools/vm/create.sh "$@"
 
-# Add a login user to the test VM, e.g. just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
+# Add a login user to the test VM (then snapshots it, unless --no-snapshot), e.g. just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
 [positional-arguments]
 vm-user-add name *args:
     tools/vm/user.sh add "$@"
 
-# Remove a login user from the test VM
-vm-user-remove name:
-    tools/vm/user.sh remove {{name}}
+# Remove a login user from the test VM (then snapshots it, unless --no-snapshot)
+[positional-arguments]
+vm-user-remove name *args:
+    tools/vm/user.sh remove "$@"
 
 # Snapshot the test VM (shut down, snapshot, start again), e.g. just vm-snapshot deployed "after just deploy"
 vm-snapshot name description:

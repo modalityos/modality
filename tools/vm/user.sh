@@ -2,16 +2,18 @@
 # Add or remove a login user in the test VM ($MODALITYOS_VM), to try the Greeter with one
 # user or several (Other users shows only with more than one).
 #
-#   tools/vm/user.sh add NAME [--real-name "Full Name"] [--password PASSWORD] [--avatar FILE]
-#   tools/vm/user.sh remove NAME
+#   tools/vm/user.sh add NAME [--real-name "Full Name"] [--password PASSWORD] [--avatar FILE] [--no-snapshot]
+#   tools/vm/user.sh remove NAME [--no-snapshot]
 #
 # The password defaults to "modality". --avatar sets the user's AccountsService picture (a
 # PNG or JPEG; the four samples in data/avatars/ work); without it the Greeter shows its
-# built-in avatar. greetd restarts afterwards so the Greeter reads the new user list.
+# built-in avatar. greetd restarts afterwards so the Greeter reads the new user list. Each
+# change ends with a snapshot (user-NAME-added or user-NAME-removed), a restore point for
+# just vm-revert, unless --no-snapshot.
 set -euo pipefail
 
 usage() {
-    sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
     exit "${1:-0}"
 }
 die() {
@@ -25,12 +27,13 @@ shift 2
 [[ $name =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "not a valid user name: $name"
 target=${MODALITYOS_VM:?set MODALITYOS_VM, e.g. export MODALITYOS_VM=dev@192.168.122.50}
 
-real_name="" password=modality avatar=""
+real_name="" password=modality avatar="" snapshot=yes
 while [[ $# -gt 0 ]]; do
     case $1 in
         --real-name) [[ $# -ge 2 ]] || usage 2; real_name=$2; shift 2 ;;
         --password) [[ $# -ge 2 ]] || usage 2; password=$2; shift 2 ;;
         --avatar) [[ $# -ge 2 ]] || usage 2; avatar=$2; shift 2 ;;
+        --no-snapshot) snapshot=""; shift ;;
         -h | --help) usage ;;
         *) echo "user.sh: unknown argument: $1" >&2; usage 2 ;;
     esac
@@ -61,6 +64,10 @@ systemctl try-restart accounts-daemon
 systemctl restart greetd
 REMOTE
         echo "Added $name (password: $password); the Greeter has restarted."
+        if [[ -n $snapshot ]]; then
+            "$(dirname "$0")/snapshot.sh" take "user-$name-added" \
+                "Added user $name${real_name:+ ($real_name)}${avatar:+, avatar $(basename "$avatar")}"
+        fi
         ;;
     remove)
         # shellcheck disable=SC2029 # the name is quoted here for the VM
@@ -75,6 +82,9 @@ systemctl try-restart accounts-daemon
 systemctl restart greetd
 REMOTE
         echo "Removed $name; the Greeter has restarted."
+        if [[ -n $snapshot ]]; then
+            "$(dirname "$0")/snapshot.sh" take "user-$name-removed" "Removed user $name"
+        fi
         ;;
     *) usage 2 ;;
 esac

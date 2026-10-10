@@ -11,7 +11,7 @@ Some things only show in a real boot: the Greeter under greetd and Cage, the KWi
 | `just deploy --reboot` | Install the build, make greetd the display manager, reboot into the Greeter |
 | `just deploy-watch` | Leave running: sends each saved change to the VM |
 | `just sync` | Send changed files once |
-| `just vm-user-add <name>` | Add a login user (to try Other users) |
+| `just vm-user-add <name>` | Add a login user (to try Other users), then snapshot |
 | `just vm-user-remove <name>` | Remove one |
 | `just rollback` | Back to the VM's previous login |
 | `just vm-snapshot <name> "<description>"` | Save the VM as it is now (it shuts down and starts again) |
@@ -102,7 +102,7 @@ just vm-user-add alan --password other                # a different password
 just vm-user-remove grace
 ```
 
-Each user gets a home folder and the password `modality` unless `--password` says otherwise. `--avatar` takes a PNG or JPEG and sets it as the user's AccountsService picture; the four samples in `data/avatars/` work. Adding or removing a user restarts greetd, so the Greeter reads the new list. `dev` can't be removed: the scripts and `just deploy` sign in as it.
+Each user gets a home folder and the password `modality` unless `--password` says otherwise. `--avatar` takes a PNG or JPEG and sets it as the user's AccountsService picture; the four samples in `data/avatars/` work. Adding or removing a user restarts greetd, so the Greeter reads the new list, then takes a snapshot (`user-ada-added`, `user-grace-removed`) so you can go back to any step with `just vm-revert`; add `--no-snapshot` to skip it. The snapshot shuts the VM down for a few seconds. `dev` can't be removed: the scripts and `just deploy` sign in as it.
 
 ## Edit and see it live
 

@@ -209,10 +209,19 @@ for ((i = 0; ; i++)); do
 done
 
 echo "Waiting for cloud-init to finish (a full system upgrade)"
-# Exit status 2 means done with recoverable errors; the status line says which.
-status=0
-ssh "${ssh_opts[@]}" "$user@$ip" cloud-init status --wait --long || status=$?
-((status == 0 || status == 2)) || die "cloud-init failed in $domain; see docs/vm.md, Troubleshooting"
+# cloud-init writes boot-finished as its last step. Its own `status --wait` can report
+# "disabled" and return while the upgrade is still running, so the file is the signal.
+for ((i = 0; i < 180; i++)); do
+    ssh "${ssh_opts[@]}" -o BatchMode=yes "$user@$ip" test -f /var/lib/cloud/instance/boot-finished 2>/dev/null && break
+    sleep 5
+done
+ssh "${ssh_opts[@]}" "$user@$ip" test -f /var/lib/cloud/instance/boot-finished ||
+    die "cloud-init did not finish in $domain after 15 minutes; see docs/vm.md, Troubleshooting"
+# Check the outcome: the deploy needs rsync, and cloud-init records any module that failed.
+ssh "${ssh_opts[@]}" "$user@$ip" command -v rsync >/dev/null ||
+    die "cloud-init finished but rsync is missing in $domain; see docs/vm.md, Troubleshooting"
+ssh "${ssh_opts[@]}" "$user@$ip" 'sudo grep -q "\"errors\": \[\]" /var/lib/cloud/data/result.json' ||
+    die "cloud-init reported errors in $domain: ssh in and run sudo cloud-init status --long"
 
 # virt-install runs the first boot as an install, where a reboot powers the VM off. One clean
 # power cycle moves it onto its saved config, so later reboots (such as deploy --reboot) restart.
