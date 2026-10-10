@@ -41,9 +41,9 @@ Mood: calm, spacious, quietly luminous. No text, logos, figures or recognisable 
 - Photographic wallpapers, more extras beyond Aurora and Dunes, per-user wallpaper at login.
 
 ## Hand back
-- [ ] Silk: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
-- [ ] Aurora: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
-- [ ] Dunes: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
+- [x] Silk: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
+- [x] Aurora: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
+- [x] Dunes: light and dark SVG masters, PNGs at 3840 × 2160 and 3840 × 2400
 - [x] Silk shown under the Greeter's glass, both themes
 - [x] Silk's three key colours per theme, for `wallpaper-1` to `wallpaper-3`
 - [x] Contrast of `text-primary` over the centre band passing for every wallpaper and theme

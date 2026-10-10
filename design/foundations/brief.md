@@ -75,7 +75,7 @@ None. This is the first design, so there are no earlier Tokens or Controls to ma
 - [x] Scrim colour
 - [x] Wallpaper gradient stops, light and dark
 - [x] At least three materials, each with tint, blur and solid fallback
-- [ ] Font family Tokens: sans, mono, fallback, alternative pair
+- [x] Font family Tokens: sans, mono, fallback, alternative pair
 - [x] Type scale, every role with size, line height, weight and letter spacing
 - [x] Control and row heights
 - [x] Spacing scale on the 4 px grid
@@ -85,4 +85,4 @@ None. This is the first design, so there are no earlier Tokens or Controls to ma
 - [x] Motion Tokens: three durations, standard, ease-in and ease-out curves, one spring
 - [x] Palette in use, light and dark side by side
 - [x] Settings scene and Login scene, following the Light/Dark switch
-- [ ] Font pairing specimen, and the user's pick recorded in the README
+- [x] Font pairing specimen, and the user's pick recorded in the README
