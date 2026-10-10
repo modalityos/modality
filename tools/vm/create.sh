@@ -5,8 +5,8 @@
 #
 # The VM gets user "dev" (Greeter password "modality", or the one given) with passwordless sudo, the given SSH public key (default: the
 # first key in ssh-add -L), rsync, the host's timezone (or the one given), and the fixed
-# address 192.168.122.50 on libvirt's "default" network. It prints the MODALITYOS_VM line
-# for just deploy when SSH is ready.
+# address 192.168.122.50 on libvirt's "default" network. Once set up it takes the
+# snapshot "initial" (see tools/vm/snapshot.sh); it prints the MODALITYOS_VM line for just deploy.
 # The image is pinned to one release and checked against its SHA256; packages installed
 # on top are current Arch. Remove the VM with tools/vm/destroy.sh.
 set -euo pipefail
@@ -223,6 +223,9 @@ for ((i = 0; i < 60; i++)); do
     sleep 2
 done
 [[ $(virsh --connect "$uri" domstate "$domain") == "shut off" ]] || die "$domain did not shut down; see docs/vm.md, Troubleshooting"
+# Snapshots are taken shut off (see tools/vm/snapshot.sh), so this is the moment for the
+# clean point to come back to with just vm-revert initial.
+"$(dirname "$0")/snapshot.sh" take initial "Fresh VM: Arch cloud image, user dev only, nothing deployed"
 virsh --connect "$uri" start "$domain" >/dev/null
 # Check the outcome rather than trust the quirk: the running VM must restart on reboot.
 virsh --connect "$uri" dumpxml "$domain" | grep -q '<on_reboot>restart</on_reboot>' ||

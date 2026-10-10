@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Remove the test VM made by tools/vm/create.sh: the libvirt domain "modality-dev" with
-# its UEFI variables, its disk and its address reservation. Nothing else is touched.
+# its snapshots and UEFI variables, its disk and its address reservation. Nothing else is
+# touched.
 #
 #   tools/vm/destroy.sh
 set -euo pipefail
@@ -16,7 +17,7 @@ ip=192.168.122.50
 
 case ${1:-} in
     "") ;;
-    -h | --help) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h | --help) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "destroy.sh: unknown argument: $1" >&2; exit 2 ;;
 esac
 
@@ -26,6 +27,12 @@ if virsh dominfo "$domain" >/dev/null 2>&1; then
     if [[ $(virsh domstate "$domain") != "shut off" ]]; then
         virsh destroy "$domain" >/dev/null
     fi
+    # libvirt refuses to undefine a domain that still has snapshots.
+    while read -r snapshot; do
+        [[ -n $snapshot ]] || continue
+        virsh snapshot-delete "$domain" "$snapshot" >/dev/null
+        echo "Deleted snapshot $snapshot"
+    done < <(virsh snapshot-list "$domain" --name)
     virsh undefine "$domain" --nvram >/dev/null
     echo "Removed domain $domain"
 else
