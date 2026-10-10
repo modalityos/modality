@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=ModalityOS (KWin)
+Comment=ModalityOS on the KWin Session compositor
+Exec=@PREFIX@/bin/modalityos-session-kwin
+DesktopNames=ModalityOS

@@ -1,0 +1,77 @@
+<!-- @dsCard group="Scenes" height=600 width=840 subtitle="A Settings window over the wallpaper, built only from Tokens" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font:400 13px/16px var(--font-sans);color:var(--text-primary);-webkit-font-smoothing:antialiased}
+  .wall{width:840px;height:580px;display:grid;place-items:center;background:linear-gradient(var(--wallpaper-angle),var(--wallpaper-1),var(--wallpaper-2) var(--wallpaper-mid-stop),var(--wallpaper-3))}
+  .win{width:760px;height:500px;display:grid;grid-template-columns:216px 1fr;border-radius:var(--radius-panel);overflow:hidden;box-shadow:var(--shadow-modal);background:var(--bg)}
+  .side{background:var(--material-sidebar-tint);backdrop-filter:blur(var(--material-sidebar-blur)) saturate(var(--material-saturation));padding:var(--space-3) var(--space-2);display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--separator)}
+  .search{height:var(--control-height);border-radius:var(--radius-control);background:var(--fill);display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-2);color:var(--text-tertiary);margin:var(--space-6) var(--space-1) var(--space-3)}
+  .row{height:var(--row-height);display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-2);border-radius:var(--radius-control)}
+  .row.sel{background:var(--accent);color:var(--on-accent)}
+  .ic{width:20px;height:20px;border-radius:var(--radius-small);display:grid;place-items:center;color:var(--on-accent)}
+  .ic svg{width:12px;height:12px}
+  .gap{height:var(--space-3)}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .bar{height:var(--toolbar-height);display:flex;align-items:center;gap:var(--space-3);padding:0 var(--space-4);border-bottom:1px solid var(--separator)}
+  .nav{display:flex;gap:2px;color:var(--text-secondary)} .nav span{width:24px;height:24px;border-radius:var(--radius-small);display:grid;place-items:center}
+  .title{font-size:17px;line-height:22px;font-weight:600;flex:1}
+  .wc{display:flex;gap:var(--space-1)} .wc span{width:24px;height:24px;border-radius:var(--radius-pill);display:grid;place-items:center;color:var(--text-secondary);background:var(--fill)}
+  .wc svg{width:10px;height:10px}
+  .body{padding:var(--space-5) var(--space-6);display:flex;flex-direction:column;gap:var(--space-5);overflow:hidden}
+  .glabel{font-weight:600;margin:0 0 var(--space-2) var(--space-1)}
+  .group{background:var(--surface-raised);border-radius:var(--radius-card);box-shadow:var(--shadow-resting)}
+  .item{min-height:var(--row-height-large);display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4)}
+  .item+.item{border-top:1px solid var(--separator)}
+  .item .l{flex:1} .item .help{display:block;color:var(--text-secondary);font-size:11px;line-height:14px;margin-top:2px;max-width:340px}
+  .seg{display:flex;background:var(--fill);border-radius:var(--radius-control);padding:2px;gap:2px}
+  .seg span{height:20px;padding:0 var(--space-3);display:grid;place-items:center;border-radius:var(--radius-small);color:var(--text-secondary)}
+  .seg .on{background:var(--surface-raised);color:var(--text-primary);box-shadow:var(--shadow-raised)}
+  .dots{display:flex;gap:var(--space-2)} .dots span{width:16px;height:16px;border-radius:var(--radius-pill)}
+  .dots .cur{box-shadow:0 0 0 2px var(--surface-raised),0 0 0 4px var(--accent)}
+  .pop{height:var(--control-height-small);display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-2) 0 var(--space-3);border-radius:var(--radius-small);background:var(--fill);box-shadow:var(--shadow-resting)}
+  .tog{width:32px;height:18px;border-radius:var(--radius-pill);background:var(--fill-strong);position:relative}
+  .tog::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--on-accent);box-shadow:var(--shadow-raised)}
+  .tog.on{background:var(--accent)} .tog.on::after{left:16px}
+  .slider{display:flex;align-items:center;gap:var(--space-2);color:var(--text-secondary);font-size:11px}
+  .track{width:140px;height:4px;border-radius:var(--radius-pill);background:var(--fill-strong);position:relative}
+  .track i{position:absolute;left:0;top:0;bottom:0;width:45%;border-radius:inherit;background:var(--accent)}
+  .track b{position:absolute;left:calc(45% - 9px);top:-7px;width:18px;height:18px;border-radius:50%;background:var(--on-accent);box-shadow:var(--shadow-raised)}
+  .foot{display:flex;justify-content:flex-end;gap:var(--space-2);margin-top:auto}
+  .btn{height:var(--control-height);padding:0 var(--space-4);border-radius:var(--radius-control);display:grid;place-items:center;font-weight:500}
+  .btn.sec{background:var(--fill);box-shadow:var(--shadow-resting);outline:var(--focus-ring-width) solid var(--focus-ring);outline-offset:var(--focus-ring-offset)}
+  .btn.pri{background:var(--accent);color:var(--on-accent);box-shadow:var(--shadow-raised)}
+</style>
+<div class="wall"><div class="win">
+  <div class="side">
+    <div class="search"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3.6"/><path d="M8 8l3 3"/></svg>Search</div>
+    <div class="row"><span class="ic" style="background:var(--accent)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 5a6.5 6.5 0 0 1 9 0M3.3 7a4 4 0 0 1 5.4 0"/><circle cx="6" cy="9" r=".9" fill="currentColor"/></svg></span>Wi-Fi</div>
+    <div class="row"><span class="ic" style="background:var(--info)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3.5l6 5-3 2.5V1L9 3.5l-6 5"/></svg></span>Bluetooth</div>
+    <div class="row"><span class="ic" style="background:var(--wallpaper-2)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M1.5 6h9M6 1.5c2 2.5 2 6.5 0 9M6 1.5c-2 2.5-2 6.5 0 9"/></svg></span>Network</div>
+    <div class="gap"></div>
+    <div class="row sel"><span class="ic" style="background:rgba(255,255,255,.25)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 1.5v9" /><path d="M6 1.5a4.5 4.5 0 0 1 0 9z" fill="currentColor"/></svg></span>Appearance</div>
+    <div class="row"><span class="ic" style="background:var(--info)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2" width="9" height="6.5" rx="1"/><path d="M4 10.5h4"/></svg></span>Displays</div>
+    <div class="row"><span class="ic" style="background:var(--danger)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h2l2.5-2v7L4 7.5H2zM8.5 4a3 3 0 0 1 0 4"/></svg></span>Sound</div>
+    <div class="row"><span class="ic" style="background:var(--danger)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8.5V5.5a3 3 0 0 1 6 0v3l1 1H2zM5 10.5h2"/></svg></span>Notifications</div>
+    <div class="gap"></div>
+    <div class="row"><span class="ic" style="background:var(--text-secondary)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="4" r="2"/><path d="M2 10.5a4 4 0 0 1 8 0"/></svg></span>Users</div>
+    <div class="row"><span class="ic" style="background:var(--accent)"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 1.5l4 1.5v3c0 2.5-2 4-4 4.5-2-.5-4-2-4-4.5V3z"/></svg></span>Privacy</div>
+  </div>
+  <div class="main">
+    <div class="bar"><div class="nav"><span>‹</span><span>›</span></div><div class="title">Appearance</div>
+      <div class="wc"><span><svg viewBox="0 0 10 10" stroke="currentColor" stroke-width="1.4"><path d="M2 5h6"/></svg></span><span><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="6" height="6" rx="1"/></svg></span><span><svg viewBox="0 0 10 10" stroke="currentColor" stroke-width="1.4"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"/></svg></span></div></div>
+    <div class="body">
+      <div><div class="glabel">Look</div><div class="group">
+        <div class="item"><span class="l">Theme</span><div class="seg"><span>Light</span><span class="on">Dark</span><span>Auto</span></div></div>
+        <div class="item"><span class="l">Accent colour</span><div class="pop"><span class="dot" style="width:10px;height:10px;border-radius:var(--radius-pill);background:var(--accent)"></span>Blue <svg width="8" height="10" viewBox="0 0 8 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 3.5L4 1l2.5 2.5M1.5 6.5L4 9l2.5-2.5"/></svg></div></div>
+        <div class="item"><span class="l">Show scroll bars</span><div class="pop">When scrolling <svg width="8" height="10" viewBox="0 0 8 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 3.5L4 1l2.5 2.5M1.5 6.5L4 9l2.5-2.5"/></svg></div></div>
+      </div></div>
+      <div><div class="glabel">Accessibility</div><div class="group">
+        <div class="item"><span class="l">Reduce transparency<span class="help">Uses solid colours instead of frosted glass behind panels, sidebars and menus, which can make text easier to read on busy wallpapers.</span></span><div class="tog"></div></div>
+        <div class="item"><span class="l">Tint windows with the wallpaper</span><div class="tog on"></div></div>
+        <div class="item"><span class="l">Text size</span><div class="slider">A<div class="track"><i></i><b></b></div><span style="font-size:15px">A</span></div></div>
+      </div></div>
+      <div class="foot"><div class="btn sec">Restore defaults</div><div class="btn pri">Apply</div></div>
+    </div>
+  </div>
+</div></div>

@@ -32,6 +32,20 @@ _Avoid_: Desktop, bar, theme
 A standalone program with its own windows, such as Settings or Files, that is not part of the Shell.
 _Avoid_: Application window, client, program
 
+### Look
+
+**Token**:
+A named visual value, such as a colour, corner radius, spacing step, font, shadow or motion curve, that every piece of the UI takes its look from.
+_Avoid_: Variable, style constant, theme value
+
+**Foundations**:
+The base set of Tokens that the Shell, the Greeter and every App share.
+_Avoid_: Theme, style guide, design language
+
+**Control**:
+A reusable piece of UI, such as a button, password field or avatar, shared by the Shell, the Greeter and Apps.
+_Avoid_: Widget, component, element
+
 ### Settings
 
 **Defaults**:

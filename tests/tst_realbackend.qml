@@ -1,0 +1,379 @@
+import QtQuick
+import QtTest
+import Quickshell.Services.Greetd
+import QuickshellStubs
+import "../greeter"
+
+// Seam 2: the real Greeter backend against stubbed Quickshell.
+TestCase {
+    id: testCase
+
+    name: "RealBackend"
+
+    readonly property var kwinSession: ({
+            id: "org.modalityos.kwin",
+            name: "ModalityOS (KWin)",
+            command: ["/opt/modalityos-dev/bin/modalityos-session-kwin"],
+            desktopNames: ["ModalityOS"]
+        })
+
+    Component {
+        id: backendComponent
+
+        RealBackend {
+            prefix: "/opt/modalityos-dev"
+        }
+    }
+
+    Component {
+        id: spyComponent
+
+        SignalSpy {}
+    }
+
+    SignalSpy {
+        id: authPromptSpy
+
+        signalName: "authPrompt"
+    }
+
+    SignalSpy {
+        id: authFailureSpy
+
+        signalName: "authFailure"
+    }
+
+    SignalSpy {
+        id: readyToLaunchSpy
+
+        signalName: "readyToLaunch"
+    }
+
+    SignalSpy {
+        id: launchedSpy
+
+        signalName: "launched"
+    }
+
+    function init() {
+        Greetd.reset();
+        Files.reset();
+    }
+
+    function createBackend() {
+        const backend = createTemporaryObject(backendComponent, testCase);
+        verify(backend);
+        for (const spy of [authPromptSpy, authFailureSpy, readyToLaunchSpy, launchedSpy]) {
+            spy.clear();
+            spy.target = backend;
+        }
+        return backend;
+    }
+
+    function test_starting_authentication_creates_a_greetd_session_for_the_user() {
+        const backend = createBackend();
+        backend.startAuthentication("katherine");
+        compare(Greetd.lastCall(), ["createSession", "katherine"]);
+    }
+
+    function test_greetd_password_prompt_is_a_secret_auth_prompt() {
+        createBackend();
+        Greetd.authMessage("Password: ", false, true, false);
+        compare(authPromptSpy.count, 1);
+        compare(authPromptSpy.signalArguments[0][0], "Password: ");
+        compare(authPromptSpy.signalArguments[0][1], true);
+    }
+
+    function test_greetd_info_message_is_not_an_auth_prompt() {
+        createBackend();
+        Greetd.authMessage("Welcome", false, false, false);
+        compare(authPromptSpy.count, 0);
+    }
+
+    function test_greetd_error_message_needing_no_answer_is_an_auth_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "authError"
+        });
+        Greetd.authMessage("Your account has expired", true, false, false);
+        compare(spy.count, 1);
+        compare(spy.signalArguments[0][0], "Your account has expired");
+        compare(authPromptSpy.count, 0);
+    }
+
+    function test_greetd_info_message_is_not_an_auth_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "authError"
+        });
+        Greetd.authMessage("Welcome", false, false, false);
+        compare(spy.count, 0);
+    }
+
+    function test_answer_responds_to_greetd() {
+        const backend = createBackend();
+        backend.answer("secret");
+        compare(Greetd.lastCall(), ["respond", "secret"]);
+    }
+
+    function test_cancel_cancels_the_greetd_session() {
+        const backend = createBackend();
+        backend.cancel();
+        compare(Greetd.lastCall(), ["cancelSession"]);
+    }
+
+    function test_greetd_auth_failure_is_an_auth_failure() {
+        createBackend();
+        Greetd.authFailure("Authentication failed");
+        compare(authFailureSpy.count, 1);
+        compare(authFailureSpy.signalArguments[0][0], "Authentication failed");
+    }
+
+    function test_greetd_success_is_ready_to_launch() {
+        createBackend();
+        Greetd.readyToLaunch();
+        compare(readyToLaunchSpy.count, 1);
+    }
+
+    function test_launch_starts_the_session_command_as_a_wayland_session() {
+        const backend = createBackend();
+        backend.launch(testCase.kwinSession);
+        compare(Greetd.lastCall(), ["launch", ["/opt/modalityos-dev/bin/modalityos-session-kwin"], ["XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=ModalityOS", "XDG_SESSION_DESKTOP=ModalityOS"], true]);
+    }
+
+    function test_launching_without_a_session_is_an_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "error"
+        });
+        backend.launch(null);
+        compare(spy.count, 1);
+        verify(spy.signalArguments[0][0].length > 0);
+        compare(Greetd.lastCall(), []);
+    }
+
+    function test_greetd_error_is_an_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "error"
+        });
+        Greetd.error("Session failed to start");
+        compare(spy.count, 1);
+        compare(spy.signalArguments[0][0], "Session failed to start");
+    }
+
+    function test_unreachable_greetd_at_start_is_login_unavailable() {
+        Greetd.available = false;
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "loginUnavailable"
+        });
+        tryCompare(spy, "count", 1);
+    }
+
+    function test_reachable_greetd_is_not_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "loginUnavailable"
+        });
+        wait(50);
+        compare(spy.count, 0);
+    }
+
+    function test_losing_greetd_is_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "loginUnavailable"
+        });
+        wait(50);
+        Greetd.available = false;
+        tryCompare(spy, "count", 1, 2000);
+    }
+
+    function test_starting_authentication_without_greetd_is_login_unavailable() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "loginUnavailable"
+        });
+        Greetd.available = false;
+        backend.startAuthentication("katherine");
+        compare(spy.count, 1);
+        compare(Greetd.calls, []);
+    }
+
+    function test_greetd_launched_is_launched() {
+        createBackend();
+        Greetd.launched();
+        compare(launchedSpy.count, 1);
+    }
+
+    // busctl GetAll output for org.freedesktop.Accounts.User, one line per user.
+    readonly property string accountsOutput: ['{"type":"a{sv}","data":[{"Uid":{"type":"t","data":1000},"UserName":{"type":"s","data":"katherine"},"RealName":{"type":"s","data":"Katherine Johnson"},"IconFile":{"type":"s","data":"/var/lib/AccountsService/icons/katherine"},"SystemAccount":{"type":"b","data":false}}]}', '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":1001},"UserName":{"type":"s","data":"ada"},"RealName":{"type":"s","data":""},"IconFile":{"type":"s","data":""},"SystemAccount":{"type":"b","data":false}}]}', ''].join("\n")
+
+    // Desktop entries as the sessions process prints them: a record separator and the
+    // path, then the file. The first folder wins for an id found twice.
+    readonly property string sessionsOutput: ["\u001e/opt/modalityos-dev/share/wayland-sessions/org.modalityos.kwin.desktop", "[Desktop Entry]", "Name=ModalityOS (KWin)", "Name[de]=ModalityOS (KWin) DE", "Comment=KWin standalone", "Exec=/opt/modalityos-dev/bin/modalityos-session-kwin --flag \"two words\" %U", "DesktopNames=ModalityOS;", "", "[Desktop Action other]", "Exec=/bin/false", "\u001e/usr/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Exec=/usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland", "DesktopNames=KDE", "Name=Plasma (Wayland)", "\u001e/usr/share/wayland-sessions/org.modalityos.kwin.desktop", "[Desktop Entry]", "Name=Shadowed", "Exec=/bin/false", ""].join("\n")
+
+    function test_users_come_from_accountsservice() {
+        const backend = createBackend();
+        const process = Processes.find("org.freedesktop.Accounts");
+        verify(process);
+        verify(process.running);
+        Processes.finish(process, testCase.accountsOutput);
+        compare(backend.users.length, 2);
+        compare(backend.users[0].name, "katherine");
+        compare(backend.users[0].realName, "Katherine Johnson");
+        compare(backend.users[0].avatar, "file:///var/lib/AccountsService/icons/katherine");
+        compare(backend.users[0].systemAccount, false);
+        compare(backend.users[1].name, "ada");
+        compare(backend.users[1].avatar, "");
+    }
+
+    function test_system_accounts_are_hidden() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("org.freedesktop.Accounts"), testCase.accountsOutput + '{"type":"a{sv}","data":[{"Uid":{"type":"t","data":964},"UserName":{"type":"s","data":"greeter"},"RealName":{"type":"s","data":""},"IconFile":{"type":"s","data":""},"SystemAccount":{"type":"b","data":true}}]}\n');
+        compare(backend.users.map(user => user.name), ["katherine", "ada"]);
+    }
+
+    function test_unreadable_accountsservice_output_gives_no_users() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("org.freedesktop.Accounts"), "Failed to connect\n", 1);
+        compare(backend.users.length, 0);
+    }
+
+    function test_sessions_come_from_wayland_sessions_in_the_prefix_and_the_system() {
+        const backend = createBackend();
+        const process = Processes.find("wayland-sessions");
+        verify(process);
+        verify(process.running);
+        verify(process.command.includes("/opt/modalityos-dev/share/wayland-sessions"));
+        verify(process.command.includes("/usr/share/wayland-sessions"));
+        Processes.finish(process, testCase.sessionsOutput);
+        compare(backend.sessions.length, 2);
+        compare(backend.sessions[0].id, "org.modalityos.kwin");
+        compare(backend.sessions[0].name, "ModalityOS (KWin)");
+        compare(backend.sessions[0].command, ["/opt/modalityos-dev/bin/modalityos-session-kwin", "--flag", "two words"]);
+        compare(backend.sessions[0].desktopNames, ["ModalityOS"]);
+        compare(backend.sessions[1].id, "plasma");
+        compare(backend.sessions[1].command, ["/usr/lib/plasma-dbus-run-session-if-needed", "/usr/bin/startplasma-wayland"]);
+    }
+
+    // A hidden entry counts as deleted, so it also hides the same id in a later folder.
+    function test_hidden_sessions_are_skipped() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("wayland-sessions"), ["\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/bin/false", "Hidden=true", "\u001e/usr/share/wayland-sessions/org.modalityos.kwin.desktop", "[Desktop Entry]", "Name=ModalityOS (KWin)", "Exec=/usr/bin/modalityos-session-kwin", "Hidden=false", "\u001e/usr/share/wayland-sessions/gnome-debug.desktop", "[Desktop Entry]", "Name=GNOME (debug)", "Exec=/usr/bin/gnome-session --debug", "NoDisplay=true", "\u001e/usr/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/usr/bin/startplasma-wayland", ""].join("\n"));
+        compare(backend.sessions.map(session => session.id), ["org.modalityos.kwin"]);
+    }
+
+    function test_session_hidden_by_no_display_or_missing_exec_hides_the_same_id_in_a_later_folder() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("wayland-sessions"), ["\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/bin/false", "NoDisplay=true", "\u001e/opt/modalityos-dev/share/wayland-sessions/noexec.desktop", "[Desktop Entry]", "Name=No Exec", "\u001e/usr/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/usr/bin/startplasma-wayland", "\u001e/usr/share/wayland-sessions/noexec.desktop", "[Desktop Entry]", "Name=No Exec", "Exec=/usr/bin/noexec", "\u001e/usr/share/wayland-sessions/other.desktop", "[Desktop Entry]", "Name=Other", "Exec=/usr/bin/other", ""].join("\n"));
+        compare(backend.sessions.map(session => session.id), ["other"]);
+    }
+
+    readonly property string statePath: "/var/lib/modalityos/greeter/state.json"
+
+    function test_last_user_comes_from_the_state_file() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        compare(backend.lastUser, "ada");
+        compare(backend.rememberedSessions, {
+            ada: "plasma"
+        });
+    }
+
+    function test_missing_state_file_gives_no_last_user() {
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_corrupt_state_file_gives_no_last_user() {
+        Files.write(testCase.statePath, '{"lastUser": ');
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_state_file_of_the_wrong_shape_gives_no_last_user() {
+        Files.write(testCase.statePath, '{"lastUser":42,"sessions":["plasma"]}');
+        const backend = createBackend();
+        compare(backend.lastUser, "");
+        compare(backend.rememberedSessions, {});
+    }
+
+    function test_remember_writes_the_last_user_and_their_session_to_the_state_file() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        backend.remember("katherine", "org.modalityos.kwin");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "katherine",
+            sessions: {
+                ada: "plasma",
+                katherine: "org.modalityos.kwin"
+            }
+        });
+        compare(backend.lastUser, "katherine");
+    }
+
+    function test_remembered_session_is_for_that_user_only() {
+        const backend = createBackend();
+        backend.remember("katherine", "plasma");
+        compare(backend.rememberedSessions, {
+            katherine: "plasma"
+        });
+        backend.remember("ada", "org.modalityos.kwin");
+        compare(backend.rememberedSessions, {
+            katherine: "plasma",
+            ada: "org.modalityos.kwin"
+        });
+    }
+
+    function test_remember_without_a_session_saves_the_last_user_and_keeps_remembered_sessions() {
+        Files.write(testCase.statePath, '{"lastUser":"ada","sessions":{"ada":"plasma"}}');
+        const backend = createBackend();
+        backend.remember("katherine", "");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "katherine",
+            sessions: {
+                ada: "plasma"
+            }
+        });
+        compare(backend.lastUser, "katherine");
+    }
+
+    function test_remember_replaces_a_corrupt_state_file() {
+        Files.write(testCase.statePath, "not json");
+        const backend = createBackend();
+        backend.remember("katherine", "org.modalityos.kwin");
+        compare(JSON.parse(Files.read(testCase.statePath)), {
+            lastUser: "katherine",
+            sessions: {
+                katherine: "org.modalityos.kwin"
+            }
+        });
+    }
+
+    function test_default_session_is_modalityos_kwin() {
+        const backend = createBackend();
+        compare(backend.defaultSession, "org.modalityos.kwin");
+    }
+
+    function test_default_avatar_is_the_built_in_cat_in_the_prefix() {
+        const backend = createBackend();
+        compare(backend.defaultAvatar, "file:///opt/modalityos-dev/share/modalityos/avatars/avatar-cat.png");
+    }
+
+    function test_wallpapers_come_from_the_prefix() {
+        const backend = createBackend();
+        compare(backend.wallpaperFolder, "file:///opt/modalityos-dev/share/modalityos/wallpapers");
+    }
+}

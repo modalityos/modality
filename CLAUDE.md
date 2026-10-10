@@ -43,8 +43,9 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 - **Red must fail for the expected reason** — a compile error or setup crash isn't red. **Never weaken a failing test** to make it pass; report the gap and stop.
 - **Test-after** only for existing untested QML (coverage gaps) or pure visual layout: use `qt-qml-test`.
 - **Rust:** `cargo test`; lint with the clippy command in `CODING_STANDARDS.md`.
-- **QML:** Qt Quick Test, `tst_*.qml` in `tests/`, run with `QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -import tests/stubs -input tests`.
+- **QML:** Qt Quick Test, `tst_*.qml` in `tests/`, run with `just test`, or `just test-one <file>` for one file. Run `just check` (lint, format, tests, coverage) before pushing.
 - **Quickshell** types can't load under `qmltestrunner`: stub the ones you use in `tests/stubs/Quickshell/`, and keep logic in plain QML/JS outside the thin Quickshell layer.
+- **Shared test kit:** reuse and extend `tests/stubs/` and `tests/helpers/` instead of one-off stubs; `.claude/rules/tests.md` says how, and loads by itself under `tests/`.
 
 ## Workflow — IMPORTANT
 
@@ -107,6 +108,7 @@ Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are wri
 - **Conflicting instructions:** when a skill conflicts with this file, this file wins; otherwise follow the stricter rule, note it, and carry on.
 - **Coding standards:** see `CODING_STANDARDS.md` (enforced by `/mattpocock-skills:code-review`).
 - **Prove it:** don't claim a UI fix works until it is seen in running Quickshell or covered by a passing test. Agent environments can't run Quickshell, so for unattended runs a passing test is the proof.
+- **Docs:** `docs/` is for humans, apart from `docs/agents/` and `docs/adr/`; read a human doc only when the task names it or needs a fact no rule, skill or CLAUDE.md gives.
 
 ## Agent skills
 

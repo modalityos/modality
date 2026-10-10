@@ -1,0 +1,12 @@
+# Arch packages the test VM needs for the Greeter and the ModalityOS (KWin) Session.
+greetd
+cage
+quickshell
+accountsservice
+polkit
+kwin
+konsole
+# Fonts, from the Foundations spec's Type table.
+inter-font
+ttf-jetbrains-mono
+noto-fonts

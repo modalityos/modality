@@ -1,0 +1,20 @@
+#!/bin/sh
+# The Greeter: Quickshell running the Greeter config inside Cage, as greetd's default
+# session. -s keeps VT switching on (Ctrl+Alt+F2 reaches a text console); -m last puts the
+# Greeter on one output only (ADR 0001).
+set -eu
+
+prefix=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+export MODALITYOS_PREFIX="$prefix"
+export QML_IMPORT_PATH="$prefix/lib/qt6/qml${QML_IMPORT_PATH:+:$QML_IMPORT_PATH}"
+# The greeter user may have no writable home; Quickshell's cache goes to the runtime dir.
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${XDG_RUNTIME_DIR:-/tmp}/modalityos-greeter-cache}"
+# Cage draws no window decorations, so Qt would draw its own title bar on the full-screen Greeter.
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+# In a VM, virtio-gpu hardware cursors can show upside down with their hotspot off, so clicks
+# miss; a cursor drawn into the frame is right everywhere.
+if command -v systemd-detect-virt >/dev/null && systemd-detect-virt --quiet --vm; then
+    export WLR_NO_HARDWARE_CURSORS=1
+fi
+
+exec cage -s -m last -- quickshell -p "$prefix/share/modalityos/greeter"

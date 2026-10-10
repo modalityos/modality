@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Greeter login</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/modalityos/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="{{rootStyle}}">
+  <img src="{{wallSrc}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+  <div style="{{contentStyle}}">
+
+    <div style="position: absolute; left: 0; right: 0; top: {{topPad}}px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-primary);">
+      <div class="title-1">Friday 9 October</div>
+      <div class="display" style="font-variant-numeric: tabular-nums;">09:41</div>
+    </div>
+
+    <sc-if value="{{rowLayout}}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; left: 0; right: 0; bottom: {{usersBottom}}px; display: flex; justify-content: center; align-items: flex-start; gap: 24px;">
+      <sc-for list="{{rowUsers}}" as="u" hint-placeholder-count="1">
+        <sc-if value="{{u.selected}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 280px; min-height: 236px;">
+            <img src="{{u.avatar}}" alt="" style="width: var(--avatar-size-large); height: var(--avatar-size-large); border-radius: var(--radius-pill); box-shadow: var(--shadow-floating);">
+            <div class="headline" style="color: var(--text-primary); text-align: center;">{{u.name}}</div>
+
+            <sc-if value="{{showField}}" hint-placeholder-val="{{ true }}">
+              <div style="{{fieldStyle}}">
+                <input type="password" aria-label="Password" placeholder="Enter password" value="{{fieldValue}}" disabled="{{fieldDisabled}}" class="body" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--text-primary); letter-spacing: 0.08em;">
+                <sc-if value="{{checking}}" hint-placeholder-val="{{ false }}">
+                  <div aria-label="Checking" style="width: 24px; height: 24px; display: grid; place-items: center;">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="9" r="7" stroke="var(--fill-strong)"/><path d="M9 2a7 7 0 0 1 7 7" stroke="var(--text-secondary)"/></svg>
+                  </div>
+                </sc-if>
+                <sc-if value="{{notChecking}}" hint-placeholder-val="{{ true }}">
+                  <button aria-label="Log in" style="width: 24px; height: 24px; border-radius: var(--radius-pill); border: 0; padding: 0; background: var(--accent); color: var(--on-accent); display: grid; place-items: center;">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5"/></svg>
+                  </button>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{capsOn}}" hint-placeholder-val="{{ false }}">
+              <div class="footnote-medium" role="status" style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-pill); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--warning);">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 1L1.5 5H3.5v2.5h3V5h2zM3.5 9h3"/></svg>Caps Lock is on
+              </div>
+            </sc-if>
+            <sc-if value="{{wrong}}" hint-placeholder-val="{{ false }}">
+              <div class="footnote-medium" role="alert" style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-pill); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--danger);">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"/></svg>Wrong password
+              </div>
+            </sc-if>
+            <sc-if value="{{failed}}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="display: flex; align-items: center; gap: 12px; padding: 6px 6px 6px 14px; border-radius: var(--radius-pill); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-floating);">
+                <span class="footnote-medium" style="color: var(--danger);">Couldn't start the session.</span>
+                <button class="body-medium" style="height: var(--control-height-small); padding: 0 12px; border: 0; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); box-shadow: 0 0 0 var(--focus-ring-offset) var(--material-popover-fallback), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring);">Try again</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{unavailable}}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="max-width: 320px; padding: 12px 16px; border-radius: var(--radius-card); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-floating); display: flex; gap: 10px; align-items: flex-start;">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--danger)" stroke-width="1.5" style="flex: none; margin-top: 1px;"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4.2M8 11v.5"/></svg>
+                <span class="footnote" style="color: var(--text-primary);">Login is unavailable. Restart the computer or switch to a text console.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{showSwitch}}" hint-placeholder-val="{{ false }}">
+              <button class="footnote-medium" style="display: flex; align-items: center; gap: 6px; height: var(--control-height-small); padding: 0 12px; border: 0; border-radius: var(--radius-pill); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="4.5" cy="4" r="1.8"/><path d="M1.5 10a3 3 0 0 1 6 0"/><circle cx="8.5" cy="4.5" r="1.5"/><path d="M8 7.3a2.6 2.6 0 0 1 3 2.7"/></svg>{{switchLabel}}
+              </button>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{u.unselected}}" hint-placeholder-val="{{ false }}">
+          <button aria-label="{{u.name}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 120px; padding: 0; margin-top: 16px; border: 0; background: transparent; color: var(--text-primary);">
+            <img src="{{u.avatar}}" alt="" style="width: 64px; height: 64px; border-radius: var(--radius-pill); box-shadow: var(--shadow-floating);">
+            <span class="footnote-medium" style="text-align: center;">{{u.name}}</span>
+          </button>
+        </sc-if>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{listLayout}}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 0; right: 0; bottom: {{listBottom}}px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <sc-for list="{{listUsers}}" as="l" hint-placeholder-count="3">
+          <sc-if value="{{l.selected}}" hint-placeholder-val="{{ true }}">
+            <div style="width: 320px; box-sizing: border-box; padding: 16px; border-radius: var(--radius-panel); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-floating); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px; align-self: stretch;">
+                <img src="{{l.avatar}}" alt="" style="width: 56px; height: 56px; border-radius: var(--radius-pill); box-shadow: var(--shadow-raised);">
+                <span class="headline" style="color: var(--text-primary);">{{l.name}}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; align-self: stretch; height: var(--control-height-large); box-sizing: border-box; padding: 0 4px 0 16px; border-radius: var(--radius-pill); background: var(--fill); box-shadow: 0 0 0 var(--focus-ring-offset) var(--material-popover-fallback), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring);">
+                <input type="password" aria-label="Password" placeholder="Enter password" class="body" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--text-primary);">
+                <button aria-label="Log in" style="width: 24px; height: 24px; border-radius: var(--radius-pill); border: 0; padding: 0; background: var(--accent); color: var(--on-accent); display: grid; place-items: center;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5"/></svg></button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{l.unselected}}" hint-placeholder-val="{{ false }}">
+            <button aria-label="{{l.name}}" style="width: 320px; height: 56px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; gap: 12px; border: 0; border-radius: var(--radius-card); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-raised); color: var(--text-primary);">
+              <img src="{{l.avatar}}" alt="" style="width: 36px; height: 36px; border-radius: var(--radius-pill);">
+              <span class="body-medium" style="text-align: left;">{{l.name}}</span>
+            </button>
+          </sc-if>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{optionsOpen}}" hint-placeholder-val="{{ false }}">
+      <div role="menu" aria-label="Session" style="position: absolute; right: 40px; bottom: {{menuBottom}}px; width: 220px; padding: 4px; border-radius: var(--radius-card); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-floating); display: flex; flex-direction: column; gap: 2px;">
+        <div class="footnote-strong" style="padding: 6px 10px 4px; color: var(--text-secondary);">Session</div>
+        <button role="menuitemradio" aria-checked="true" class="body" style="height: var(--row-height); display: flex; align-items: center; gap: 8px; padding: 0 10px; border: 0; border-radius: var(--radius-small); background: transparent; color: var(--text-primary); text-align: left;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6.5l2.5 2.5L10 3"/></svg>KWin
+        </button>
+        <button role="menuitemradio" aria-checked="false" class="body" style="height: var(--row-height); display: flex; align-items: center; gap: 8px; padding: 0 10px 0 30px; border: 0; border-radius: var(--radius-small); background: var(--accent); color: var(--on-accent); text-align: left;">Hyprland</button>
+      </div>
+    </sc-if>
+
+    <div style="position: absolute; right: 40px; bottom: {{powerBottom}}px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+      <button aria-label="Options" style="{{optionsButtonStyle}}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg>
+      </button>
+      <span class="footnote-medium" style="color: var(--text-primary);">Options</span>
+    </div>
+
+    <div style="position: absolute; left: 0; right: 0; bottom: {{powerBottom}}px; display: flex; justify-content: center; gap: 32px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+        <button aria-label="Sleep" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.5 10A5.5 5.5 0 0 1 6 3.5a5.5 5.5 0 1 0 6.5 6.5z"/></svg>
+        </button>
+        <span class="footnote-medium" style="color: var(--text-primary);">Sleep</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+        <button aria-label="Restart" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3"/></svg>
+        </button>
+        <span class="footnote-medium" style="color: var(--text-primary);">Restart</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+        <button aria-label="Shut Down" style="width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); color: var(--text-primary); box-shadow: var(--shadow-raised);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5v6M4.5 3.8a5 5 0 1 0 7 0"/></svg>
+        </button>
+        <span class="footnote-medium" style="color: var(--text-primary);">Shut Down</span>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{switchOpen}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; display: grid; place-items: center; background: var(--scrim);">
+      <div role="dialog" aria-label="Choose a user" style="width: 640px; box-sizing: border-box; padding: 24px; border-radius: var(--radius-panel); background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation)); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; gap: 20px; color: var(--text-primary);">
+        <div class="title-2" style="text-align: center;">Choose a user</div>
+        <div style="{{gridStyle}}">
+          <sc-for list="{{allUsers}}" as="g" hint-placeholder-count="8">
+            <button aria-label="{{g.name}}" style="{{g.cellStyle}}">
+              <img src="{{g.avatar}}" alt="" style="width: 64px; height: 64px; border-radius: var(--radius-pill); box-shadow: var(--shadow-raised);">
+              <span class="footnote-medium" style="text-align: center;">{{g.name}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display: flex; justify-content: center;">
+          <button class="body-medium" style="height: var(--control-height); padding: 0 16px; border: 0; border-radius: var(--radius-control); background: var(--fill); color: var(--text-primary);">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["ready","typing","caps","checking","wrong","failed","unavailable","options","switch","starting"],"default":"ready"},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"users":{"editor":"enum","options":["1","3","5","8"],"default":"1"},"layout":{"editor":"enum","options":["single","row","list"],"default":"single"},"width":{"editor":null,"default":1920},"height":{"editor":null,"default":1080},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const state = this.props.state ?? 'ready';
+    const theme = this.props.theme ?? 'dark';
+    const count = parseInt(this.props.users ?? '1', 10) || 1;
+    const w = parseInt(this.props.width ?? 1920, 10);
+    const h = parseInt(this.props.height ?? 1080, 10);
+    const small = h < 900;
+    const layout = this.props.layout ?? 'single';
+
+    const cat = '/_blob/6d3bf6eb5d6868579d5cb43edab49653';
+    const flower = '/_blob/c410a089bb339fe9e3d14083f0198d59';
+    const ball = '/_blob/8706a690e4ceac7c34a81c508a751fd2';
+    const land = '/_blob/290457bc223cfbb25e20b04650d9d301';
+    const people = [
+      ['John Doe', cat], ['Alexandria Montgomery-Fitzwilliam', flower], ['Sam Lee', ball], ['Priya Shah', land],
+      ['Tom Okafor', flower], ['Mia Chen', ball], ['Leo Rossi', cat], ['Ana Silva', land]
+    ];
+
+    let row;
+    if (count === 1 || count >= 5 || layout === 'single') row = [people[0]];
+    else row = [people[1], people[0], people[2], people[3]].slice(0, count);
+    const selName = 'John Doe';
+    const rowUsers = row.map((p) => ({ name: p[0], avatar: p[1], selected: p[0] === selName, unselected: p[0] !== selName }));
+
+    const ring = 'box-shadow: 0 0 0 var(--focus-ring-offset) var(--material-popover-fallback), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring), var(--shadow-floating);';
+    const panelUsers = layout === 'single' ? people.slice(0, count) : people.slice(0, Math.max(count, 8));
+    const allUsers = panelUsers.map((p, i) => ({
+      name: p[0], avatar: p[1],
+      cellStyle: 'display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 4px; border: 0; border-radius: var(--radius-card); color: var(--text-primary); background: ' + (i === 2 ? 'var(--fill-strong);' : 'transparent;') + (i === 2 ? ' box-shadow: 0 0 0 var(--focus-ring-offset) var(--material-popover-fallback), 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring);' : '')
+    }));
+
+    const focused = ['ready', 'typing', 'caps', 'wrong'].indexOf(state) >= 0;
+    const typed = ['typing', 'caps', 'checking'].indexOf(state) >= 0;
+    const glass = 'background: var(--material-popover-tint); backdrop-filter: blur(var(--material-popover-blur)) saturate(var(--material-saturation));';
+    const fieldStyle = 'display: flex; align-items: center; gap: 8px; width: 240px; height: var(--control-height-large); box-sizing: border-box; padding: 0 4px 0 16px; border-radius: var(--radius-pill); ' + glass + ' '
+      + (focused ? ring : 'box-shadow: var(--shadow-floating);')
+      + (state === 'checking' ? ' opacity: 0.7;' : '')
+      + (state === 'wrong' ? ' transform: translateX(-8px);' : '');
+
+    const powerBottom = small ? 28 : 40;
+    const optionsOpen = state === 'options';
+    const switchOpen = state === 'switch';
+    return {
+      theme,
+      wallSrc: theme === 'light' ? '/_blob/e392433e9ece98311539bfe41778ce4e' : '/_blob/df68a6f2ff43948d8a0adf6a432f1c13',
+      rootStyle: 'position: relative; overflow: hidden; width: ' + w + 'px; height: ' + h + 'px; font-family: var(--font-sans); color: var(--text-primary); background: var(--bg);',
+      contentStyle: 'position: absolute; inset: 0;' + (state === 'starting' ? ' opacity: 0.35;' : '') ,
+      topPad: small ? 56 : 112,
+      usersBottom: small ? 96 : 176,
+      powerBottom,
+      menuBottom: powerBottom + 72,
+      rowUsers,
+      allUsers,
+      showField: state !== 'unavailable',
+      showSwitch: (layout === 'single' ? count > 1 : count >= 5) && state !== 'unavailable',
+      switchLabel: layout === 'single' ? 'Other users' : 'Switch user',
+      gridStyle: 'display: grid; grid-template-columns: repeat(' + Math.min(allUsers.length, 4) + ', minmax(0, 1fr)); gap: 20px 12px;',
+      rowLayout: layout !== 'list',
+      listLayout: layout === 'list',
+      listUsers: [people[1], people[0], people[2]].slice(0, count).map((p) => ({ name: p[0], avatar: p[1], selected: p[0] === selName, unselected: p[0] !== selName })),
+      listBottom: small ? 96 : 150,
+      fieldStyle,
+      fieldValue: typed ? 'correcthorse' : '',
+      fieldDisabled: state === 'checking',
+      checking: state === 'checking',
+      notChecking: state !== 'checking',
+      capsOn: state === 'caps',
+      wrong: state === 'wrong',
+      failed: state === 'failed',
+      unavailable: state === 'unavailable',
+      optionsOpen,
+      switchOpen,
+      optionsButtonStyle: 'width: 40px; height: 40px; border-radius: var(--radius-pill); border: 0; padding: 0; display: grid; place-items: center; color: var(--text-primary); box-shadow: var(--shadow-raised); ' + (optionsOpen ? 'background: var(--surface-overlay);' : glass)
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "CapsLock.dc.html": {
+      "h": 1080,
+      "title": "Caps Lock on",
+      "w": 1920,
+      "x": 4000,
+      "y": 1200
+    },
+    "Checking.dc.html": {
+      "h": 1080,
+      "title": "Checking",
+      "w": 1920,
+      "x": 0,
+      "y": 2400
+    },
+    "ControlStates.dc.html": {
+      "h": 900,
+      "title": "Control states",
+      "w": 1600,
+      "x": 3446,
+      "y": 4800
+    },
+    "Main.dc.html": {
+      "h": 1080,
+      "is_interactive": true,
+      "title": "Ready \u00b7 dark",
+      "w": 1920,
+      "x": 0,
+      "y": 0
+    },
+    "OptionsOpen.dc.html": {
+      "h": 1080,
+      "title": "Options open \u00b7 dark",
+      "w": 1920,
+      "x": 2000,
+      "y": 3600
+    },
+    "OptionsOpenLight.dc.html": {
+      "h": 1080,
+      "title": "Options open \u00b7 light",
+      "w": 1920,
+      "x": 4000,
+      "y": 3600
+    },
+    "OtherUsersOpen.dc.html": {
+      "h": 1080,
+      "title": "Other users open \u00b7 three",
+      "w": 1920,
+      "x": 6000,
+      "y": 0
+    },
+    "Overflow.dc.html": {
+      "h": 1080,
+      "title": "Five users \u00b7 Other users",
+      "w": 1920,
+      "x": 0,
+      "y": 1200
+    },
+    "ReadyLight.dc.html": {
+      "h": 1080,
+      "title": "Ready \u00b7 light",
+      "w": 1920,
+      "x": 2000,
+      "y": 0
+    },
+    "SessionFailed.dc.html": {
+      "h": 1080,
+      "title": "Session failed",
+      "w": 1920,
+      "x": 4000,
+      "y": 2400
+    },
+    "SeveralUsers.dc.html": {
+      "h": 1080,
+      "title": "Three users \u00b7 Other users",
+      "w": 1920,
+      "x": 4000,
+      "y": 0
+    },
+    "Small.dc.html": {
+      "h": 768,
+      "title": "Ready \u00b7 1366 \u00d7 768",
+      "w": 1366,
+      "x": 2000,
+      "y": 4800
+    },
+    "Starting.dc.html": {
+      "h": 1080,
+      "title": "Starting",
+      "w": 1920,
+      "x": 0,
+      "y": 4800
+    },
+    "SwitchUser.dc.html": {
+      "h": 1080,
+      "title": "Other users open \u00b7 eight",
+      "w": 1920,
+      "x": 6000,
+      "y": 1200
+    },
+    "Typing.dc.html": {
+      "h": 1080,
+      "title": "Typing",
+      "w": 1920,
+      "x": 2000,
+      "y": 1200
+    },
+    "Unavailable.dc.html": {
+      "h": 1080,
+      "title": "Login unavailable",
+      "w": 1920,
+      "x": 0,
+      "y": 3600
+    },
+    "WrongPassword.dc.html": {
+      "h": 1080,
+      "title": "Wrong password",
+      "w": 1920,
+      "x": 2000,
+      "y": 2400
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-09T12:30:00Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/EhfWd8k9vnN7nGN7jH6BU2",
+      "copiedAt": "2026-10-09T15:40:00Z",
+      "namespace": "modalityos",
+      "title": "ModalityOS Foundations",
+      "version": "1791542467-b02b"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "title": {
+      "kind": "title1",
+      "maxW": 7920,
+      "text": "ModalityOS Greeter Login",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "ReadyLight.dc.html",
+    "SeveralUsers.dc.html",
+    "Overflow.dc.html",
+    "SwitchUser.dc.html",
+    "Typing.dc.html",
+    "CapsLock.dc.html",
+    "Checking.dc.html",
+    "WrongPassword.dc.html",
+    "SessionFailed.dc.html",
+    "Unavailable.dc.html",
+    "OptionsOpen.dc.html",
+    "OptionsOpenLight.dc.html",
+    "Starting.dc.html",
+    "Small.dc.html",
+    "ControlStates.dc.html",
+    "OtherUsersOpen.dc.html"
+  ],
+  "pages": [],
+  "title": "ModalityOS Greeter Login"
+}

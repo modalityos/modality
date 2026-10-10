@@ -1,0 +1,87 @@
+pragma ComponentBehavior: Bound
+import QtQuick
+import Modality.Theme
+import Modality.Controls
+
+// Options at the bottom-right and the Session Menu above it, shown only when there is a
+// choice of Session.
+Item {
+    id: options
+
+    property var sessions: []
+    // The id of the Session a login would start: checked in the Menu.
+    property string currentSession
+    property bool open: false
+    // The overlay open on the screen, "" for none: Options takes no focus under one, and
+    // under the Choose a user panel it does not act.
+    property string overlay: ""
+    // The wallpaper the Glass blurs.
+    property Item backdrop
+    // The power row's bottom margin: Options lines up with it.
+    property int powerRowBottom: Theme.space10
+    readonly property alias button: button
+
+    signal toggled
+    signal picked(string id)
+    signal dismissed
+
+    onOpenChanged: {
+        if (open)
+            menu.open();
+        else
+            menu.close();
+    }
+
+    // A click outside the open Menu only closes it; Options, above, still toggles it.
+    MouseArea {
+        anchors.fill: parent
+        enabled: options.open
+        onClicked: options.dismissed()
+    }
+
+    FrostedIconButton {
+        id: button
+
+        objectName: "optionsButton"
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: Theme.space10
+        anchors.bottomMargin: options.powerRowBottom
+        backdrop: options.backdrop
+        visible: options.sessions.length > 1
+        checked: options.open
+        focusPolicy: options.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
+        text: qsTr("Options")
+        glyph: Glyphs.options
+        // A click on Options while its Menu is open closes the Menu.
+        onClicked: {
+            if (options.overlay === "" || options.overlay === "options")
+                options.toggled();
+        }
+    }
+
+    Menu {
+        id: menu
+
+        objectName: "sessionMenu"
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: Theme.space10
+        // Above the Options button and its label: the power row's bottom plus 72px.
+        anchors.bottomMargin: options.powerRowBottom + 72
+        title: qsTr("Session")
+        model: options.sessions.map(session => ({
+                    text: session.name,
+                    checked: session.id === options.currentSession
+                }))
+        onTriggered: index => options.picked(options.sessions[index].id)
+        onDismissed: options.dismissed()
+
+        Frost {
+            z: -1
+            anchors.fill: parent
+            source: options.backdrop
+            radius: menu.radius
+        }
+    }
+}
