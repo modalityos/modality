@@ -15,11 +15,19 @@ Read the PR (`gh pr view <pr>`), the spec and tickets its `Closes` lines name, a
 
 Open the **sign-off record**, `.scratch/signoff-<short-description>.md` (the short description from the branch name), or create it: the PR number, then one line per open User check.
 
+Done when the record names every open User check.
+
+## 2. Review before testing
+
+The built-in `/code-review` (`/code-review high <pr>`) is a correctness pass on the whole PR; `/mattpocock-skills:code-review`, the spec and standards review, already ran in `/implement-spec`. It comes before the user tests, so the user's checks cover its fixes. The user often runs it before `/signoff`, so check first: a `.scratch/review-<pr>-plan.md` (or its copy in `.scratch/archive/`) newer than the PR's last commit means it ran. Say so, note it in the record, and go on to step 3. Otherwise remind the user, in one line with the command, and let them run it or carry on.
+
+Each review finding the user wants fixed is a finding, worked as in step 3 (the user verifies it later, while testing). Record each one.
+
+Done when the review already ran, is declined, or every finding it raised is fixed with a passing test or moved to an issue.
+
+## 3. Test and work each finding
+
 Give the user the **test plan**, from the PR body and the repo's docs (`README.md` and the testing doc it links, `just --list`): how to see the result (deploy and rollback commands, preview command, how to start the app), and where to check each open User check (the VM, a preview scene, the app). Put it in the record.
-
-Done when the record names every open User check and where to check it, and the user has the test plan.
-
-## 2. Work each finding
 
 For each thing the user reports:
 
@@ -37,9 +45,7 @@ Update the record after every step: it is what survives a `/clear` or a compacti
 
 Done for a finding when the user confirms it fixed, or it has moved to an issue.
 
-## 3. Close the sign-off
-
-When the user's testing is done, offer the built-in `/code-review` for a last pass on correctness bugs (`/mattpocock-skills:code-review`, the spec and standards review, already ran in `/implement-spec`). The user runs it or declines. Each finding the user wants fixed becomes a finding in step 2.
+## 4. Close the sign-off
 
 When the user calls it ready:
 
