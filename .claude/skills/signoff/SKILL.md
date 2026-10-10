@@ -15,7 +15,7 @@ Read the PR (`gh pr view <pr>`), the spec and tickets its `Closes` lines name, a
 
 Open the **sign-off record**, `.scratch/signoff-<short-description>.md` (the short description from the branch name), or create it: the PR number, then one line per open User check.
 
-Give the user the **test plan**, from the PR body and the repo's docs (`README.md`, `docs/testing.md`, `just --list`): how to see the result (deploy and rollback commands, preview command, how to start the app), and where to check each open User check (the VM, a preview scene, the app). Put it in the record.
+Give the user the **test plan**, from the PR body and the repo's docs (`README.md` and the testing doc it links, `just --list`): how to see the result (deploy and rollback commands, preview command, how to start the app), and where to check each open User check (the VM, a preview scene, the app). Put it in the record.
 
 Done when the record names every open User check and where to check it, and the user has the test plan.
 
