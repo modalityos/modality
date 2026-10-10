@@ -18,8 +18,8 @@
 #
 # sync is the quick path after one full deploy: it rebuilds the dev root and sends only the
 # files that changed, with no packages and no greetd, PAM or polkit config. Quickshell
-# reloads changed QML by itself; a changed launcher, Session entry or tmpfiles rule (the
-# files from session/) restarts greetd so the Greeter relaunches.
+# reloads a change to the Greeter's own files (greeter/) by itself; any other change (the
+# shared modules, data, the files from session/) restarts greetd so the Greeter relaunches.
 set -euo pipefail
 
 usage() {

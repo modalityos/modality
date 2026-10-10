@@ -49,8 +49,10 @@ keep_escape_hatches() {
 
 # Copy the staged tree into the dev root, printing each path whose content changed or that
 # went away. Execute bits come from the stage (X), so an unchanged launcher stays unchanged.
+# Files are rewritten in place: Quickshell watches the Greeter's files by inode, and a file
+# replaced by a new one would drop out of its watch.
 install_root() {
-    rsync -a --checksum --delete --omit-dir-times --chown=root:root \
+    rsync -a --checksum --inplace --delete --omit-dir-times --chown=root:root \
         --chmod=Du=rwx,Dgo=rx,Fu=rwX,Fgo=rX --out-format='%i %n' "$from/root/" "$prefix/" |
         awk '$1 ~ /^([<>ch]|\*deleting)/ && $2 !~ /\/$/ {print $2}'
 }
@@ -103,8 +105,10 @@ deploy() {
     echo "Text console: Ctrl+Alt+F2. Roll back: tools/deploy-vm.sh rollback"
 }
 
-# The quick path: the dev root only. QML reloads itself in the running Quickshell; the files
-# from session/ (launchers, Session entries, tmpfiles rules) need greetd restarted to apply.
+# The quick path: the dev root only. The running Quickshell watches the Greeter's own files
+# (share/modalityos/greeter) and reloads them by itself. It does not watch the shared modules
+# or the data, and the files from session/ (launchers, Session entries, tmpfiles rules) apply
+# only at launch, so any other change restarts greetd to relaunch the Greeter.
 quick_sync() {
     [[ -n $from && -d $from/root ]] || { echo "remote.sh: nothing staged; run tools/deploy-vm.sh sync" >&2; exit 1; }
     if [[ ! -f $state/previous-display-manager || $(cat "$state/prefix" 2>/dev/null) != "$prefix" ]]; then
@@ -118,10 +122,12 @@ quick_sync() {
         echo "Nothing changed in $prefix."
     else
         while read -r path; do echo "updated $path"; done <<<"$changed"
-        if grep -qE '^(bin|lib/tmpfiles\.d|share/wayland-sessions)/' <<<"$changed"; then
+        if grep -qv '^share/modalityos/greeter/' <<<"$changed"; then
             apply_tmpfiles
             systemctl restart greetd.service
-            echo "Session files changed: restarted greetd."
+            echo "Restarted greetd: the Greeter relaunches with the change."
+        else
+            echo "Quickshell reloads the Greeter by itself."
         fi
     fi
 
