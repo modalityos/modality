@@ -839,4 +839,17 @@ TestCase {
         logIn(greeter, "secret");
         compare(backend.lastCall(), ["answer", "secret"]);
     }
+
+    function test_logging_in_again_after_a_failed_session_cancels_it_first() {
+        const greeter = createGreeter();
+        const backend = greeter.backend;
+        failSession(greeter);
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", true);
+        const before = backend.calls.length;
+        mouseClick(findChild(greeter, "passwordField"));
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(backend.calls.slice(before), [["cancel"], ["startAuthentication", "katherine"]]);
+        compare(greeter.loginState, "checking");
+    }
 }

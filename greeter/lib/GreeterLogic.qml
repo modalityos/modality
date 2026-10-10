@@ -60,10 +60,13 @@ QtObject {
     // greetd ended the login before checking the password: the screen clears the field.
     signal attemptEnded
 
-    // Nothing behind an overlay logs in, even a field that kept its focus.
+    // Nothing behind an overlay logs in, even a field that kept its focus. After a failed
+    // Session, greetd drops what is left of it first.
     function submit(password) {
         if (!acceptsInput || overlay !== "" || password.length === 0 || !selectedUser)
             return;
+        if (phase === "sessionFailed")
+            backend.cancel();
         pendingPassword = password;
         authError = "";
         phase = "checking";
