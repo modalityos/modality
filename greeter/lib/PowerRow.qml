@@ -17,26 +17,15 @@ RowLayout {
 
     spacing: Theme.space8
 
-    component PowerButton: IconButton {
-        id: button
-
+    component PowerButton: FrostedIconButton {
         // The backend operation the button runs.
         required property var operation
 
+        backdrop: row.backdrop
         focusPolicy: row.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
         onClicked: {
             if (row.overlay === "")
                 operation();
-        }
-
-        // Beneath the circle's own Glass tint.
-        Frost {
-            z: -1
-            width: button.circleSize
-            height: button.circleSize
-            anchors.horizontalCenter: parent.horizontalCenter
-            source: row.backdrop
-            radius: width / 2
         }
     }
 

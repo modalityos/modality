@@ -17,7 +17,8 @@ Item {
     property string overlay: ""
     // The wallpaper the Glass blurs.
     property Item backdrop
-    property bool shortScreen: false
+    // The power row's bottom margin: Options lines up with it.
+    property int powerRowBottom: Theme.space10
     readonly property alias button: button
 
     signal toggled
@@ -38,14 +39,15 @@ Item {
         onClicked: options.dismissed()
     }
 
-    IconButton {
+    FrostedIconButton {
         id: button
 
         objectName: "optionsButton"
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.rightMargin: Theme.space10
-        anchors.bottomMargin: options.shortScreen ? 28 : Theme.space10
+        anchors.bottomMargin: options.powerRowBottom
+        backdrop: options.backdrop
         visible: options.sessions.length > 1
         checked: options.open
         focusPolicy: options.overlay === "" ? Qt.StrongFocus : Qt.NoFocus
@@ -55,16 +57,6 @@ Item {
         onClicked: {
             if (options.overlay === "" || options.overlay === "options")
                 options.toggled();
-        }
-
-        // Beneath the circle's own Glass tint.
-        Frost {
-            z: -1
-            width: button.circleSize
-            height: button.circleSize
-            anchors.horizontalCenter: parent.horizontalCenter
-            source: options.backdrop
-            radius: width / 2
         }
     }
 
@@ -76,7 +68,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.rightMargin: Theme.space10
         // Above the Options button and its label: the power row's bottom plus 72px.
-        anchors.bottomMargin: (options.shortScreen ? 28 : Theme.space10) + 72
+        anchors.bottomMargin: options.powerRowBottom + 72
         title: qsTr("Session")
         model: options.sessions.map(session => ({
                     text: session.name,

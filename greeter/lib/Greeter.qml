@@ -120,7 +120,7 @@ FocusScope {
             open: logic.overlay === "options"
             overlay: logic.overlay
             backdrop: wallpaper
-            shortScreen: greeter.shortScreen
+            powerRowBottom: greeter.powerRowBottom
             onToggled: logic.toggleOptions()
             // A picked Session is followed by the password.
             onPicked: id => {
