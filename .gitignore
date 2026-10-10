@@ -138,3 +138,6 @@ rust-project.json
 
 # Local build output: rendered wallpapers, install staging
 /build/
+
+# Local settings, such as MODALITYOS_VM from just vm-create; .env.example shows them
+/.env

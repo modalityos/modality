@@ -6,8 +6,7 @@ Some things only show in a real boot: the Greeter under greetd and Cage, the KWi
 
 | Command | What it does |
 |---|---|
-| `just vm-create` | Build the VM `modality-dev` at `192.168.122.50`; prints the `export MODALITYOS_VM=…` line |
-| `export MODALITYOS_VM=dev@192.168.122.50` | Tell the other commands which VM to use (once per terminal) |
+| `just vm-create` | Build the VM `modality-dev` at `192.168.122.50`, and write `MODALITYOS_VM` to `.env` |
 | `just deploy --reboot` | Install the build, make greetd the display manager, reboot into the Greeter |
 | `just deploy-watch` | Leave running: sends each saved change to the VM |
 | `just sync` | Send changed files once |
@@ -45,11 +44,13 @@ just vm-create --timezone Europe/London   # instead of the host's timezone
 just vm-create --password secret          # instead of the Greeter password "modality"
 ```
 
-It builds a libvirt domain called `modality-dev` and, when it is ready, prints the line to paste:
+It builds a libvirt domain called `modality-dev` and, when it is ready, writes its SSH target to `.env` in the repo:
 
 ```sh
-export MODALITYOS_VM=dev@192.168.122.50
+MODALITYOS_VM=dev@192.168.122.50
 ```
+
+**No export needed.** `just` loads `.env` for every recipe (`set dotenv-load` in the justfile), so `just deploy`, `just sync`, `just deploy-watch` and the `vm-user` recipes find the VM by themselves. For commands outside `just`, such as `ssh "$MODALITYOS_VM"`, `mise.toml` loads the same `.env` into your shell; run `mise trust` once in the repo to allow it. `.env` is git-ignored; `.env.example` shows what goes in it. To point at a different machine, edit `.env`, or `export MODALITYOS_VM=…` in a terminal, which wins over `.env`.
 
 What it builds:
 

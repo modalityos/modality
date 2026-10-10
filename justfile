@@ -2,6 +2,9 @@
 
 qt_bin := "/usr/lib/qt6/bin"
 
+# Recipes read .env, so MODALITYOS_VM (written there by vm-create) needs no export.
+set dotenv-load
+
 # List the recipes
 [private]
 default:

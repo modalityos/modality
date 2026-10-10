@@ -52,7 +52,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z $vm ]]; then
-    echo "deploy-vm.sh: no VM given: pass --vm TARGET or set MODALITYOS_VM" >&2
+    echo "deploy-vm.sh: no VM given: run just vm-create (it writes .env), pass --vm TARGET or set MODALITYOS_VM" >&2
     exit 2
 fi
 # The dev root is synced with --delete, so it must be a folder of its own.

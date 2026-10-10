@@ -1,0 +1,4 @@
+# Loads the repo's .env (written by `just vm-create`) into your shell, for commands run outside
+# just, such as ssh "$MODALITYOS_VM". Run `mise trust` once to allow it.
+[env]
+_.file = ".env"

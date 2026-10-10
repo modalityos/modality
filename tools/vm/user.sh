@@ -25,7 +25,7 @@ die() {
 action=$1 name=$2
 shift 2
 [[ $name =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "not a valid user name: $name"
-target=${MODALITYOS_VM:?set MODALITYOS_VM, e.g. export MODALITYOS_VM=dev@192.168.122.50}
+target=${MODALITYOS_VM:?MODALITYOS_VM is not set; run just vm-create, or copy .env.example to .env}
 
 real_name="" password=modality avatar="" snapshot=yes
 while [[ $# -gt 0 ]]; do

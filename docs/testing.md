@@ -104,7 +104,7 @@ QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -import qml -import tes
 
 Some things only show in a real boot: the Greeter starting under greetd and Cage, frosted glass over the real wallpaper, the shake on a wrong password, a correct password starting the KWin Session, power actions, more than one monitor.
 
-- `just vm-create` builds the test VM, `modality-dev`, from a pinned Arch cloud image at a fixed address, and prints the `MODALITYOS_VM` line to set; `just vm-destroy` removes it. [The test VM](vm.md) covers the tools to install, what it builds, opening its screen and troubleshooting.
+- `just vm-create` builds the test VM, `modality-dev`, from a pinned Arch cloud image at a fixed address, and writes `MODALITYOS_VM` to `.env`, which `just` loads; `just vm-destroy` removes it. [The test VM](vm.md) covers the tools to install, what it builds, opening its screen and troubleshooting.
 - `just deploy` installs a development build into the test VM and makes greetd its display manager. The VM is an ssh destination, read from `MODALITYOS_VM` or given with `--vm`. Options pass through to `tools/deploy-vm.sh`: `--prefix DIR`, `--reboot`.
 - `just sync` sends only the changed files to a VM that has had one `just deploy`, and restarts greetd unless only the Greeter's own files changed; `just deploy-watch` runs it on every save. [The test VM](vm.md#edit-and-see-it-live) says what reloads by itself.
 - `just rollback` restores the VM's previous display manager and greetd config; `--purge` also removes the development root. From a text console in the VM, `sudo /var/lib/modalityos-dev-deploy/remote.sh rollback` does the same.

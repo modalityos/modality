@@ -244,8 +244,15 @@ for ((i = 0; i < 60; i++)); do
     sleep 5
 done
 
+# Record the target in the repo's .env, which just loads (and mise, through mise.toml), so
+# deploy, sync and the user recipes find the VM with no export.
+env_file="$(cd "$(dirname "$0")/../.." && pwd)/.env"
+touch "$env_file"
+grep -v '^MODALITYOS_VM=' "$env_file" >"$env_file.new" || true
+echo "MODALITYOS_VM=$user@$ip" >>"$env_file.new"
+mv "$env_file.new" "$env_file"
+
 echo
-echo "$domain is ready. To deploy into it:"
-echo "  export MODALITYOS_VM=$user@$ip"
+echo "$domain is ready at $ip. MODALITYOS_VM=$user@$ip is in .env, so just deploy finds it."
 echo "Log in at the Greeter as $user with password: $password"
 echo "Add more users to try Other users: just vm-user-add <name>"

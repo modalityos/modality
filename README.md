@@ -72,7 +72,7 @@ In the preview, T switches light and dark, and R switches Reduce transparency.
 
 Tests cannot prove how things look, or how the Greeter behaves in a real boot. For that, use a test VM.
 
-- `just vm-create` builds a reproducible VM named `modality-dev` at a fixed IP address. It prints the `MODALITYOS_VM` value to set in your shell.
+- `just vm-create` builds a reproducible VM named `modality-dev` at a fixed IP address. It writes the VM's SSH target to `.env`, which `just` loads, so no export is needed ([docs/vm.md](docs/vm.md)).
 - `just deploy` installs a development build into the VM and makes greetd its login manager.
 - `just rollback` restores the VM's previous login.
 - `just vm-destroy` removes the VM.
