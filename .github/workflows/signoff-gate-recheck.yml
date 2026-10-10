@@ -1,0 +1,46 @@
+name: Sign-off gate recheck
+
+# Ticking or unticking a box edits an issue, not the PR, so re-run the gate on every open PR
+# that closes the edited issue.
+on:
+  issues:
+    types: [edited]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Re-run the gate on PRs that close this issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          shas=$(gh api graphql -F owner="${GH_REPO%/*}" -F name="${GH_REPO#*/}" -F issue="$ISSUE" -f query='
+            query($owner: String!, $name: String!, $issue: Int!) {
+              repository(owner: $owner, name: $name) {
+                issue(number: $issue) {
+                  closedByPullRequestsReferences(first: 20, includeClosedPrs: false) {
+                    nodes { number headRefOid }
+                  }
+                }
+              }
+            }' --jq '.data.repository.issue.closedByPullRequestsReferences.nodes[] | "\(.number) \(.headRefOid)"')
+          while read -r pr sha; do
+            [[ -z "$pr" ]] && continue
+            run=$(gh run list --workflow signoff-gate.yml --commit "$sha" --limit 1 \
+              --json databaseId,status --jq '.[0] | select(.status == "completed") | .databaseId')
+            if [[ -n "$run" ]]; then
+              echo "Re-running the gate for PR #$pr (run $run)."
+              gh run rerun "$run"
+            else
+              echo "PR #$pr has no finished gate run on its head commit; skipping."
+            fi
+          done <<< "$shas"
