@@ -33,6 +33,15 @@ design/          Design briefs, design snapshots and design specs
 docs/            Architecture decision records and agent docs
 ```
 
+## Development
+
+Install [`just`](https://just.systems) (`sudo pacman -S just`), then from the repo root:
+
+- `just --list` shows every recipe.
+- `just check` runs the tests, lint and coverage; run it before pushing.
+
+[`docs/testing.md`](docs/testing.md) covers the tests, the preview scene, the test VM and CI.
+
 ## More
 
 - [`GLOSSARY.md`](GLOSSARY.md): the project's language.
