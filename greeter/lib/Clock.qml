@@ -12,15 +12,18 @@ ColumnLayout {
 
     spacing: Theme.space1
 
-    // Wakes on each minute boundary, so the time turns over with the system clock. A one-shot
-    // timer stops after it fires, so it restarts itself, aimed at the next boundary.
+    // Checks the wall clock every second and moves `now` only when the minute has changed, so
+    // bindings don't churn. An aimed one-shot timer runs on monotonic time and stays wrong
+    // after a suspend or a wall-clock step; this one corrects itself within a second.
     Timer {
-        id: tick
+        interval: 1000
+        repeat: true
         running: true
-        interval: 60000 - (clock.now.getSeconds() * 1000 + clock.now.getMilliseconds())
         onTriggered: {
-            clock.now = new Date();
-            tick.restart();
+            const current = new Date();
+            const minute = t => Math.floor(t.getTime() / 60000);
+            if (minute(current) !== minute(clock.now))
+                clock.now = current;
         }
     }
 

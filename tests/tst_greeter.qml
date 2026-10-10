@@ -430,6 +430,17 @@ TestCase {
         }
     }
 
+    function test_clock_corrects_a_stale_time_within_one_tick() {
+        const greeter = createGreeter();
+        const clock = findChild(greeter, "clock");
+        // A resume from sleep or a wall-clock step leaves the shown time far from the real
+        // one, exactly as setting `now` to the past does; the old aimed timer sat on a
+        // 60 s interval here.
+        const stale = new Date(2020, 0, 1, 0, 0, 0, 0);
+        clock.now = stale;
+        tryVerify(() => Math.abs(clock.now.getTime() - Date.now()) < 60000, 2000, "the clock caught up with the wall clock");
+    }
+
     function test_clock_shows_the_date_in_title1() {
         const greeter = createGreeter();
         const clock = findChild(greeter, "clock");
