@@ -57,8 +57,9 @@ Every change moves through these stages, in order. Each stage writes only its ow
 | `/design-intake` | `design/<slug>/handoff/`, `assets/` and `spec.md` | `/design-brief` for pieces that waited on the Foundations, `/design-intake` for the next piece, then `/to-spec` | `/clear` |
 | `/to-spec` | the spec issue | `/to-tickets #<spec>` | `/clear`: the spec holds everything |
 | `/to-tickets` | ticket issues | `/implement #<ticket>` per ticket, or `/implement-spec #<spec>` | `/clear`: the issues hold everything |
-| `/implement` | code, tests; the PR after the last ticket | the next ticket's `/implement`; after the last, the user merges | `/clear` |
-| `/implement-spec` | code, tests, the PR | the user merges | None |
+| `/implement` | code, tests; the PR after the last ticket | the next ticket's `/implement`; after the last, `/signoff #<pr>` | `/clear` |
+| `/implement-spec` | code, tests, the PR | `/signoff #<pr>` | `/clear`: the PR and its issues hold everything |
+| `/signoff` | fix commits on the PR; the sign-off record | the user merges | None |
 
 **Why:** a long session gets slow and careless well before the window fills. So every stage leaves a written record and the next stage starts from a clear context that reads it, never from old chat.
 
@@ -77,7 +78,7 @@ The **grill record**, `.scratch/grill-<short-description>.md` in the change's wo
 - **`/compact` is the fallback,** for a stage that has to run long; before compacting, write anything decided to the grill record or the stage's own files.
 </important>
 
-Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are written in `/implement` or `/implement-spec`. Create the branch or worktree before `/grill-with-docs`, since it writes `GLOSSARY.md` and ADRs, and the design stages write `design/`.
+Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are written in `/implement`, `/implement-spec` or `/signoff`. Create the branch or worktree before `/grill-with-docs`, since it writes `GLOSSARY.md` and ADRs, and the design stages write `design/`.
 
 - Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
@@ -93,7 +94,7 @@ Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are wri
 - **`/to-spec`:** the change's design specs are those of the pieces the grill record names, plus any existing `design/<slug>/spec.md` the change builds from. Read each first, and cite each by path in the spec issue's Implementation Decisions. An implementer uses the design spec its ticket names.
 - **`/to-tickets`:** each ticket that builds visual work names its `design/<slug>/spec.md` and the sections it builds. Its acceptance criteria cover what a test can prove (states, inputs, token and component names; for assets, the files present at their names and sizes), plus one marked **User check:** the result matches the design (its artifact, linked in `design/<slug>/spec.md`; the snapshot in `design/<slug>/handoff/` if the artifact has moved on). Tokens and Controls new or changed by the change get their own ticket, which blocks every ticket that uses them: the one deliberate horizontal slice, since they are shared by every screen and testable on their own.
 - **Paths:** `design/<slug>/` paths are the one exception to the no-file-paths rule in `/to-spec` and `/to-tickets`.
-- **Implementing:** the design spec, `design/<slug>/spec.md`, is the build target; use its token and component names. Tokens live in `Modality.Theme` under the spec's code names, Controls in `Modality.Controls`; both sit in `qml/Modality/` and import only Qt and other pure-QML `Modality.*` modules, so the Shell, the Greeter and Apps can all load them and nothing they import depends on a screen. Files in `design/<slug>/assets/` are copied to where they ship (`data/`, a QML module's resources), and code loads them from there. Passing tests close the ticket's criteria; each **User check** stays open for the user, who ticks it where the piece is shown, before merging.
+- **Implementing:** the design spec, `design/<slug>/spec.md`, is the build target; use its token and component names. Tokens live in `Modality.Theme` under the spec's code names, Controls in `Modality.Controls`; both sit in `qml/Modality/` and import only Qt and other pure-QML `Modality.*` modules, so the Shell, the Greeter and Apps can all load them and nothing they import depends on a screen. Files in `design/<slug>/assets/` are copied to where they ship (`data/`, a QML module's resources), and code loads them from there. Passing tests close the ticket's criteria; each **User check** stays open for the user, who ticks it where the piece is shown, during `/signoff`.
 - **The PR**, whoever opens or readies it, on either path: its body says the User checks are the user's, before merging; and before it is marked ready for review, each built design spec's **Built by** line is set to the spec issue, `#<number>`.
 - **Built designs:** `design/` stays on `main`. A design spec whose **Built by** names an issue is history, and the code is the source of truth, until `/design-brief` replaces it in a redesign.
 </important>
