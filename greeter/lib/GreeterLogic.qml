@@ -151,9 +151,18 @@ QtObject {
     property Connections backendConnections: Connections {
         target: logic.backend
 
+        // The Greeter answers one prompt per login, with the password. A second prompt, such as
+        // a new password after an expired one, ends the attempt and shows what greetd asked.
         function onAuthPrompt(message, secret) {
             if (logic.phase !== "checking")
                 return;
+            if (logic.pendingPassword === "") {
+                logic.backend.cancel();
+                logic.authError = message;
+                logic.phase = "ready";
+                logic.attemptEnded();
+                return;
+            }
             logic.backend.answer(logic.pendingPassword);
             logic.pendingPassword = "";
         }

@@ -820,4 +820,23 @@ TestCase {
         verify(notice.actionItem.activeFocus);
         tryCompare(findChild(greeter, "content"), "opacity", 1);
     }
+
+    function test_second_greetd_prompt_cancels_and_shows_its_message() {
+        const greeter = createGreeter();
+        const backend = greeter.backend;
+        logIn(greeter, "secret");
+        backend.authPrompt("New password:", true);
+        compare(backend.lastCall(), ["cancel"]);
+        compare(backend.calls.filter(call => call[0] === "answer"), [["answer", "secret"]]);
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "New password:");
+        verify(!findChild(greeter, "wrongPasswordNotice").visible);
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(field.activeFocus);
+
+        logIn(greeter, "secret");
+        compare(backend.lastCall(), ["answer", "secret"]);
+    }
 }
