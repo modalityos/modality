@@ -793,4 +793,15 @@ TestCase {
         verify(findChild(greeter, "wallpaper").visible);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
+
+    function test_password_submitted_behind_the_choose_a_user_panel_starts_no_login() {
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
+        openOtherUsers(greeter);
+        findChild(greeter, "passwordField").submitted("secret");
+        compare(greeter.loginState, "ready");
+        compare(greeter.backend.calls.filter(call => call[0] === "startAuthentication"), []);
+    }
 }

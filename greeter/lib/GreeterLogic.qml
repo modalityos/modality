@@ -60,8 +60,9 @@ QtObject {
     // greetd ended the login before checking the password: the screen clears the field.
     signal attemptEnded
 
+    // Nothing behind an overlay logs in, even a field that kept its focus.
     function submit(password) {
-        if (!acceptsInput || password.length === 0 || !selectedUser)
+        if (!acceptsInput || overlay !== "" || password.length === 0 || !selectedUser)
             return;
         pendingPassword = password;
         authError = "";
