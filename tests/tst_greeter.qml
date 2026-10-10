@@ -804,4 +804,20 @@ TestCase {
         compare(greeter.loginState, "ready");
         compare(greeter.backend.calls.filter(call => call[0] === "startAuthentication"), []);
     }
+
+    function test_no_session_to_launch_is_a_failed_session() {
+        const greeter = createGreeter({
+            sessions: [],
+            defaultSession: ""
+        });
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryCompare(greeter, "loginState", "sessionFailed");
+        compare(greeter.backend.calls.filter(call => call[0] === "launch"), []);
+        const notice = findChild(greeter, "sessionFailedNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Couldn't start the session.");
+        verify(notice.actionItem.activeFocus);
+        tryCompare(findChild(greeter, "content"), "opacity", 1);
+    }
 }
