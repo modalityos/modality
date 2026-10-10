@@ -1,0 +1,88 @@
+name: Tests
+
+# Each job calls one just recipe, so CI runs exactly what `just check` runs locally.
+# Arch matches the dev machine's Qt; Ubuntu's Qt is too old for MultiEffect.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  PACKAGES: qt6-declarative diffutils just python inter-font
+
+jobs:
+  test:
+    name: QML tests
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      # Git before checkout, so the workspace is a repository that git ls-files can read.
+      - run: pacman -Syu --noconfirm --needed git
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: tests
+        run: |
+          if [ -d tests ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "no tests"; fi
+      - if: steps.tests.outputs.present
+        run: |
+          pacman -S --noconfirm --needed $PACKAGES
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - if: steps.tests.outputs.present
+        run: just test
+
+  lint:
+    name: Imports and lint
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      # Git before checkout, so the workspace is a repository that git ls-files can read.
+      - run: pacman -Syu --noconfirm --needed git
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: tests
+        run: |
+          if [ -d tests ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "no tests"; fi
+      - if: steps.tests.outputs.present
+        run: |
+          pacman -S --noconfirm --needed $PACKAGES
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - if: steps.tests.outputs.present
+        run: just lint
+
+  format:
+    name: QML format
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      # Git before checkout, so the workspace is a repository that git ls-files can read.
+      - run: pacman -Syu --noconfirm --needed git
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: tests
+        run: |
+          if [ -d tests ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "no tests"; fi
+      - if: steps.tests.outputs.present
+        run: |
+          pacman -S --noconfirm --needed $PACKAGES
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - if: steps.tests.outputs.present
+        run: just format-check
+
+  coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      # Git before checkout, so the workspace is a repository that git ls-files can read.
+      - run: pacman -Syu --noconfirm --needed git
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: tests
+        run: |
+          if [ -d tests ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "no tests"; fi
+      - if: steps.tests.outputs.present
+        run: |
+          pacman -S --noconfirm --needed $PACKAGES
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - if: steps.tests.outputs.present
+        run: just coverage

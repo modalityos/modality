@@ -62,6 +62,6 @@ Done when:
 
 ## 5. Commit and hand off
 
-Commit `handoff/`, `assets/` and `spec.md`: `docs(design): record <slug> design`.
+Tick every **Hand back** item in `design/<slug>/brief.md`: step 3 found each present, or changed with the user's acceptance. Commit `handoff/`, `assets/`, `spec.md` and the brief: `docs(design): record <slug> design`.
 
 Then list the pieces the grill record names that still have no `spec.md`. If the Foundations just finished and other pieces wait on them, name `/design-brief` for those and stop. If any remain in their artifacts, name them and stop. Otherwise ask whether the user has anything to add before the spec, and write each addition to the grill record (`/to-spec` writes from the files, not this conversation). Then name `/to-spec` as the next stage, to run after `/clear`, and stop.
