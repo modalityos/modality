@@ -14,6 +14,10 @@ Some things only show in a real boot: the Greeter under greetd and Cage, the KWi
 | `just vm-user-add <name>` | Add a login user (to try Other users) |
 | `just vm-user-remove <name>` | Remove one |
 | `just rollback` | Back to the VM's previous login |
+| `just vm-snapshot <name> "<description>"` | Save the VM as it is now (it shuts down and starts again) |
+| `just vm-snapshots` | List the snapshots, with date and description |
+| `just vm-revert <name>` | Put the VM back to a snapshot and boot it; `initial` is the fresh VM |
+| `just vm-snapshot-delete <name>` | Delete a snapshot |
 | `just vm-destroy` | Throw the VM away |
 
 **Logging in at the Greeter:** user `dev`, password `modality`. Users added with `just vm-user-add` get the same password unless you pass `--password`.
@@ -117,6 +121,34 @@ just deploy-watch       # then: sync on every save
 
 For a one-off, run `just sync`. It refuses until the VM has had a full `just deploy`.
 
+## Snapshots
+
+A snapshot saves the VM's disk under a name, so you can come back to that exact state in under a minute instead of rebuilding. Use them to jump between set-ups: a fresh VM, a deployed one, one with several users.
+
+`just vm-create` takes the first one, `initial`: the fresh VM from the Arch cloud image, with only user `dev` and nothing deployed.
+
+A suggested flow:
+
+```sh
+just deploy --reboot
+just vm-snapshot deployed "Deployed, one user"
+just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
+just vm-user-add grace --real-name "Grace Hopper"
+just vm-snapshot users-added "Deployed, three users"
+
+just vm-revert deployed       # back to one user
+just vm-revert users-added    # and to three again
+just vm-revert initial        # the fresh VM, to test a first deploy
+just vm-snapshots             # what there is
+just vm-snapshot-delete deployed
+```
+
+- **Taking one shuts the VM down.** The VM's 3D graphics can't be saved while it runs, so `just vm-snapshot` shuts the VM down cleanly, takes the snapshot and starts it again (about a minute). Anything only in memory, such as an open Session, is not kept; the VM comes back booted fresh at the Greeter, or at a text login before a deploy.
+- **Reverting throws away everything since.** `just vm-revert` switches the VM off without asking, puts the disk back and boots it, then waits for SSH. Take a snapshot first if you want to keep where you are.
+- **After reverting, deploy again** if your working tree has moved on: the VM holds the build it had when the snapshot was taken. `just sync` works after reverting to any snapshot taken after a full `just deploy`.
+- **Names** are letters, digits, `.`, `_` and `-`. Taking a name that exists fails; delete the old one first. `just vm-snapshots` marks the one last taken or reverted to.
+- **Where they live:** inside the VM's disk file (libvirt internal snapshots), so they cost disk space for what changed since and go away with `just vm-destroy`.
+
 ## Rebuild
 
 To start again from a clean VM:
@@ -126,7 +158,7 @@ just vm-destroy
 just vm-create
 ```
 
-`just vm-destroy` stops and removes the `modality-dev` domain with its UEFI variables, deletes its disk and removes its address reservation. It matches only `modality-dev`; other VMs, their disks and their reservations are not touched. The cached image stays, so the rebuild skips the download.
+`just vm-destroy` stops and removes the `modality-dev` domain with its snapshots and UEFI variables, deletes its disk and removes its address reservation. It matches only `modality-dev`; other VMs, their disks and their reservations are not touched. The cached image stays, so the rebuild skips the download.
 
 ## Troubleshooting
 
@@ -138,3 +170,5 @@ just vm-create
 - **cloud-init failed:** SSH in and run `sudo cloud-init status --long` and `sudo journalctl -u cloud-final`. A failed `pacman -Syu` (a mirror down) is the usual cause; rebuild.
 - **The VM already exists:** `just vm-destroy`, then `just vm-create`.
 - **The VM powers off instead of rebooting:** virt-install runs a VM's first boot as an install, where a reboot means power off. `just vm-create` power-cycles the VM once at the end to leave that mode, and checks it worked. A VM built before that step will power off on its first reboot only: start it again in virt-manager (or `virsh -c qemu:///system start modality-dev`) and it reboots normally from then on.
+- **No `initial` snapshot:** the VM was built before `just vm-create` took one. The other snapshot commands work on it as it is; to get `initial`, rebuild with `just vm-destroy && just vm-create`.
+- **`just vm-snapshot` says the VM did not shut down:** something in it is holding up shutdown. Open the console in virt-manager to see what, or shut it down there, then take the snapshot again; it is taken from a shut-off VM without starting it.
