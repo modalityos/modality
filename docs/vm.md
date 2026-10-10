@@ -1,6 +1,22 @@
 # The test VM
 
-Some things only show in a real boot: the Greeter under greetd and Cage, the KWin Session, power actions. You check those in a test VM. `just vm-create` builds one, `just deploy` puts a development build in it, and `just vm-destroy` throws it away. This page covers all three.
+Some things only show in a real boot: the Greeter under greetd and Cage, the KWin Session, power actions. You check those in a test VM. `just vm-create` builds one, `just deploy` puts a development build in it, and `just vm-destroy` throws it away. This page covers all of it. These commands are yours to run, usually in a second terminal while you work.
+
+## Quick reference
+
+| Command | What it does |
+|---|---|
+| `just vm-create` | Build the VM `modality-dev` at `192.168.122.50`; prints the `export MODALITYOS_VM=…` line |
+| `export MODALITYOS_VM=dev@192.168.122.50` | Tell the other commands which VM to use (once per terminal) |
+| `just deploy --reboot` | Install the build, make greetd the display manager, reboot into the Greeter |
+| `just deploy-watch` | Leave running: sends each saved change to the VM |
+| `just sync` | Send changed files once |
+| `just vm-user-add <name>` | Add a login user (to try Other users) |
+| `just vm-user-remove <name>` | Remove one |
+| `just rollback` | Back to the VM's previous login |
+| `just vm-destroy` | Throw the VM away |
+
+**Logging in at the Greeter:** user `dev`, password `modality`. Users added with `just vm-user-add` get the same password unless you pass `--password`.
 
 ## Install the tools once
 
@@ -22,6 +38,7 @@ You also need an SSH key. By default the VM trusts the first key `ssh-add -L` li
 just vm-create                        # trusts the first key in ssh-add -L
 just vm-create --ssh-key ~/.ssh/id_ed25519.pub
 just vm-create --timezone Europe/London   # instead of the host's timezone
+just vm-create --password secret          # instead of the Greeter password "modality"
 ```
 
 It builds a libvirt domain called `modality-dev` and, when it is ready, prints the line to paste:
@@ -34,7 +51,7 @@ What it builds:
 
 - **The disk:** Arch Linux's official cloud image (from the arch-boxes project), copied and grown to 40 GB, stored as `modality-dev.qcow2` in libvirt's `default` storage pool (usually `/var/lib/libvirt/images`). The first download is cached in `~/.cache/modalityos/vm/` (or `$XDG_CACHE_HOME/modalityos/vm/`), so later builds skip it.
 - **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU.
-- **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; the host's timezone, so the Greeter's clock matches yours (from `timedatectl`, else where `/etc/localtime` points, else UTC; `--timezone Area/City` picks another); user `dev`, with your SSH key, passwordless `sudo` and no password login; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
+- **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; the host's timezone, so the Greeter's clock matches yours (from `timedatectl`, else where `/etc/localtime` points, else UTC; `--timezone Area/City` picks another); user `dev` with password `modality` for the Greeter (`--password` picks another; SSH stays key-only), your SSH key and passwordless `sudo`; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
 
 The script refuses to run if `modality-dev` already exists; run `just vm-destroy` first.
 
@@ -69,6 +86,19 @@ just rollback           # back to the previous login
 ```
 
 [Testing](testing.md#manual-testing-in-the-vm) explains both, and how to roll back from a text console in the VM; a deploy keeps SSH and a console on tty2 enabled for that.
+
+## Users
+
+The VM starts with one user, `dev`, so the Greeter shows no **Other users** pill. Add users to see it and the **Choose a user** panel, and remove them to go back:
+
+```sh
+just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
+just vm-user-add grace --real-name "Grace Hopper"     # no --avatar: the built-in avatar
+just vm-user-add alan --password other                # a different password
+just vm-user-remove grace
+```
+
+Each user gets a home folder and the password `modality` unless `--password` says otherwise. `--avatar` takes a PNG or JPEG and sets it as the user's AccountsService picture; the four samples in `data/avatars/` work. Adding or removing a user restarts greetd, so the Greeter reads the new list. `dev` can't be removed: the scripts and `just deploy` sign in as it.
 
 ## Edit and see it live
 

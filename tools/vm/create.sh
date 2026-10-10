@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Create the test VM, libvirt domain "modality-dev", from Arch's official cloud image.
 #
-#   tools/vm/create.sh [--ssh-key FILE.pub] [--timezone Area/City]
+#   tools/vm/create.sh [--ssh-key FILE.pub] [--timezone Area/City] [--password PASSWORD]
 #
-# The VM gets user "dev" with passwordless sudo, the given SSH public key (default: the
+# The VM gets user "dev" (Greeter password "modality", or the one given) with passwordless sudo, the given SSH public key (default: the
 # first key in ssh-add -L), rsync, the host's timezone (or the one given), and the fixed
 # address 192.168.122.50 on libvirt's "default" network. It prints the MODALITYOS_VM line
 # for just deploy when SSH is ready.
@@ -29,6 +29,8 @@ ip=192.168.122.50
 memory_mib=16384
 vcpus=8
 user=dev
+# A throwaway test VM on a private network: a known password, so the Greeter can be tried.
+password=modality
 
 usage() {
     sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
@@ -46,6 +48,7 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --ssh-key) [[ $# -ge 2 ]] || usage 2; ssh_key=$2; shift 2 ;;
         --timezone) [[ $# -ge 2 ]] || usage 2; timezone=$2; shift 2 ;;
+        --password) [[ $# -ge 2 ]] || usage 2; password=$2; shift 2 ;;
         -h | --help) usage ;;
         *) echo "create.sh: unknown argument: $1" >&2; usage 2 ;;
     esac
@@ -148,12 +151,15 @@ users:
     groups: [wheel]
     sudo: "ALL=(ALL) NOPASSWD:ALL"
     shell: /bin/bash
-    lock_passwd: true
+    lock_passwd: false
+    plain_text_passwd: "$password"
     ssh_authorized_keys:
       - $pubkey
 # A full upgrade before installing anything, so no package is a partial upgrade.
 package_upgrade: true
 packages: [rsync]
+# The password is for the Greeter; SSH stays key-only.
+ssh_pwauth: false
 EOF
 cat >"$work/meta-data" <<EOF
 instance-id: $domain
@@ -229,3 +235,5 @@ done
 echo
 echo "$domain is ready. To deploy into it:"
 echo "  export MODALITYOS_VM=$user@$ip"
+echo "Log in at the Greeter as $user with password: $password"
+echo "Add more users to try Other users: just vm-user-add <name>"

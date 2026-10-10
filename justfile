@@ -63,6 +63,15 @@ install prefix:
 vm-create *args:
     tools/vm/create.sh "$@"
 
+# Add a login user to the test VM, e.g. just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
+[positional-arguments]
+vm-user-add name *args:
+    tools/vm/user.sh add "$@"
+
+# Remove a login user from the test VM
+vm-user-remove name:
+    tools/vm/user.sh remove {{name}}
+
 # Remove the test VM "modality-dev", its disk and its address reservation
 vm-destroy:
     tools/vm/destroy.sh
