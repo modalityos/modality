@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Install ModalityOS's files under a prefix laid out like /usr (ADR 0002). The one install
-# step for both a package build and the dev root: install.sh --prefix /usr --destdir "$pkgdir".
+# Install ModalityOS's files under a prefix laid out like /usr (ADR 0002), such as the dev root.
+# The polkit rule and greetd config are installed by tools/deploy-vm.sh; packaging is later work.
 #
 #   tools/install.sh [--prefix DIR] [--destdir DIR]
 #
