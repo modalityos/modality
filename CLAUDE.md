@@ -83,6 +83,7 @@ Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are wri
 - Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - **Ticking criteria:** after a ticket merges, tick each acceptance criterion a test or shipped file proves, in the ticket's issue body, and comment the covering test or file for each. A criterion with no proof stays open and goes in the report. **User check** boxes stay open for `/signoff`. Before marking the PR ready, run `tools/check-boxes.sh <pr>`: only User checks may be listed. The PR's **Sign-off gate** check runs the same script and stays red until `/signoff` ticks the rest.
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
+- **Coverage pass:** after the last ticket merges and before the code review, run `just coverage`. Each file it reports gets tests test-after (`qt-qml-test`) through the existing seams, so every file is exercised before review.
 - When a mattpocock skill (`/implement`, `/implement-spec`, `/tdd`) says `code-review`, it means `/mattpocock-skills:code-review`, with `main` as its default fixed point. Anywhere else, `/code-review` is the built-in review.
 
 ### Visual work
