@@ -19,7 +19,7 @@ Done when the record names every open User check.
 
 ## 2. Review before testing
 
-Offer the built-in `/code-review` (`/code-review high <pr>`), a correctness pass on the whole PR; `/mattpocock-skills:code-review`, the spec and standards review, already ran in `/implement-spec`. It comes before the user tests, so the user's checks cover its fixes. The user runs it or declines.
+The built-in `/code-review` (`/code-review high <pr>`) is a correctness pass on the whole PR; `/mattpocock-skills:code-review`, the spec and standards review, already ran in `/implement-spec`. It comes before the user tests, so the user's checks cover its fixes. The user often runs it before `/signoff`, so check first: a `.scratch/review-<pr>-plan.md` (or its copy in `.scratch/archive/`) newer than the PR's last commit means it ran. Say so, note it in the record, and go on to step 3. Otherwise remind the user, in one line with the command, and let them run it or carry on.
 
 Each review finding the user wants fixed is a finding, worked as in step 3 (the user verifies it later, while testing). Record each one.
 
