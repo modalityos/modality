@@ -15,10 +15,14 @@ test:
 test-one file:
     QT_QPA_PLATFORM=offscreen {{qt_bin}}/qmltestrunner -import qml -import tests/stubs -input {{file}}
 
+# qmllint reads only the qmldir in the working directory unless each one is named with -i.
+
 # Check the shared modules' import rule and lint every QML file, failing on any warning
 lint:
     tests/check-imports.sh
-    {{qt_bin}}/qmllint --max-warnings 0 -I qml -I tests/stubs $(git ls-files '*.qml')
+    {{qt_bin}}/qmllint --max-warnings 0 -I qml -I tests/stubs \
+        $(git ls-files --cached --others --exclude-standard '*qmldir' | sed 's/^/-i /') \
+        $(git ls-files --cached --others --exclude-standard '*.qml')
     @echo "qmllint OK"
 
 # List Greeter and shared-module files that no test loads, failing if any
