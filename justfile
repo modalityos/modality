@@ -72,7 +72,23 @@ vm-user-add name *args:
 vm-user-remove name:
     tools/vm/user.sh remove {{name}}
 
-# Remove the test VM "modality-dev", its disk and its address reservation
+# Snapshot the test VM (shut down, snapshot, start again), e.g. just vm-snapshot deployed "after just deploy"
+vm-snapshot name description:
+    tools/vm/snapshot.sh take {{quote(name)}} {{quote(description)}}
+
+# List the test VM's snapshots, with date and description
+vm-snapshots:
+    tools/vm/snapshot.sh list
+
+# Put the test VM back to a snapshot and boot it, e.g. just vm-revert initial
+vm-revert name:
+    tools/vm/snapshot.sh revert {{quote(name)}}
+
+# Delete one of the test VM's snapshots
+vm-snapshot-delete name:
+    tools/vm/snapshot.sh delete {{quote(name)}}
+
+# Remove the test VM "modality-dev", its snapshots, its disk and its address reservation
 vm-destroy:
     tools/vm/destroy.sh
 
