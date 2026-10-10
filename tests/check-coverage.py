@@ -80,13 +80,16 @@ def unexercised(root):
             continue
         seen.add(path)
         pending.extend(edges(path, root) - seen)
-    files = sorted(
+    return [p.relative_to(root) for p in target_files(root) if p not in seen]
+
+
+def target_files(root):
+    return sorted(
         p.resolve()
         for target in TARGETS
-        for p in (root / target).rglob("*")
+        for p in (root.resolve() / target).rglob("*")
         if p.suffix in (".qml", ".js")
     )
-    return [p.relative_to(root) for p in files if p not in seen]
 
 
 def self_test():
@@ -123,13 +126,17 @@ def self_test():
 def main():
     if sys.argv[1:] == ["--self-test"]:
         return self_test()
-    missing = unexercised(Path(__file__).resolve().parent.parent)
+    root = Path(__file__).resolve().parent.parent
+    missing = unexercised(root)
+    total = len(target_files(root))
+    loaded = total - len(missing)
+    # The bar is every file: a percentage only makes the result easier to read.
+    print(f"{loaded}/{total} Greeter and shared-module files loaded by a test ({loaded * 100 // total}%)")
     if missing:
         print("No test loads these files:")
         for path in missing:
             print(f"  {path}")
         return 1
-    print("Every Greeter and shared-module file is loaded by a test")
     return 0
 
 

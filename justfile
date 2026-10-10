@@ -30,8 +30,17 @@ coverage:
     python3 -I tests/check-coverage.py --self-test
     python3 -I tests/check-coverage.py
 
-# Run tests, lint and coverage: the set to pass before pushing, and what CI runs
-check: test lint coverage
+# Run lint, tests and coverage, all three even if one fails, then summarise; run before pushing
+check:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    summary=() failed=0
+    for recipe in lint test coverage; do
+        echo "== just $recipe"
+        if {{just_executable()}} "$recipe"; then summary+=("$recipe ✓"); else summary+=("$recipe ✗"); failed=1; fi
+    done
+    (IFS='·'; echo "== ${summary[*]}" | sed 's/·/ · /g')
+    exit "$failed"
 
 # Open the Control states sheet (T: light/dark, R: Reduce transparency)
 preview:

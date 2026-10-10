@@ -64,7 +64,7 @@ The kit grows as tests need it. Each addition is documented here and in `.claude
 - **Qt Quick Test** (`qmltestrunner`): runs every `tests/tst_*.qml`. Each file is a `TestCase`; each `test_*` function is a test. It runs offscreen, so no window opens.
 - **qmllint**: Qt's static checker for QML: unknown properties, wrong types, unqualified ids. `just lint` runs it over every QML file in the repo and fails on any warning.
 - **`tests/check-imports.sh`**: enforces the shared modules' import rule: `Modality.Theme` imports only Qt, `Modality.Controls` only Qt and `Modality.Theme`. Shared modules must not depend on a screen.
-- **The coverage check** (`tests/check-coverage.py`): lists every QML and JS file under `greeter/` and `qml/Modality/` that no test loads, and fails if there is one. It follows type names, imports and component URLs out from each test file. Its limit: it proves a file is *loaded* by some test, not that its lines or branches run. It is not line coverage. `qml/preview/` is skipped. `--self-test` checks the script itself on a tiny tree.
+- **The coverage check** (`tests/check-coverage.py`): lists every QML and JS file under `greeter/` and `qml/Modality/` that no test loads, and fails if there is one. It follows type names, imports and component URLs out from each test file. Its limit: it proves a file is *loaded* by some test, not that its lines or branches run. It is not line coverage. `qml/preview/` is skipped. `--self-test` checks the script itself on a tiny tree. It prints the result as a share, such as `35/35 … (100%)`, but the bar is every file: one unloaded file fails it.
 - **just**: the one place the commands live. People, agents and CI all call the same recipes.
 
 ## Running the checks
@@ -75,7 +75,7 @@ The kit grows as tests need it. Each addition is documented here and in `.claude
 | `just test-one tests/tst_button.qml` | One test file |
 | `just lint` | The import rule, then qmllint over every QML file |
 | `just coverage` | The coverage check's self-test, then the check |
-| `just check` | `test`, `lint` and `coverage`: run before pushing; CI runs the same three |
+| `just check` | `lint`, `test` and `coverage`, in that order, all three even if one fails, then a summary such as `lint ✓ · test ✗ · coverage ✓`; run before pushing |
 | `just preview` | The Control states sheet |
 
 What `just test` runs, from the repo root:
@@ -93,6 +93,7 @@ QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -import qml -import tes
 - **`QWARN` lines** are warnings the code under test printed. Some are expected, such as a test feeding a picture that cannot be read.
 - **The last line** gives the totals: `Totals: N passed, M failed, ...`. Any failure makes the recipe exit non-zero.
 - **lint** prints each warning as `Warning: <file>:<line>:<column>: <message> [<category>]`; the category names the rule.
+- **check** ends with one line per recipe, ✓ or ✗; scroll up to that recipe's `== just <recipe>` header for its output.
 - **coverage** prints each file no test loads. Add a test that loads it through one of the seams above; if the file is loaded and the script misses it, fix the script.
 
 ## The preview scene
@@ -121,8 +122,10 @@ The **Tests** workflow (`.github/workflows/tests.yml`) runs on every pull reques
 | Imports and lint | `just lint` |
 | Test coverage | `just coverage` |
 
-A branch with no `tests/` directory passes each job with "no tests".
+A branch with no `tests/` directory passes each job with "no tests". CI runs the three recipes as separate jobs, so a failure on a PR names its kind; `just check` is the local way to run all three.
+
+**Line coverage** has no free tool for QML, so the coverage check stays file-level. When Rust crates land, a Rust coverage job will add a line-coverage bar with `cargo llvm-cov --fail-under-lines <percent>`.
 
 The **Sign-off gate** workflow (`.github/workflows/signoff-gate.yml`) fails while an issue the PR closes still has an unticked box, such as an open User check. It runs when a PR is opened, edited, updated or marked ready (drafts are skipped), and again when a closed issue's boxes are edited.
 
-**Required on `main`:** the ruleset requires the **Tickets signed off** check (the Sign-off gate), a squash merge, linear history and an approving review. The Tests jobs run on every PR but are not yet required checks; making them required is a repository settings change.
+**Required on `main`:** the repository's `signoff-gate` ruleset requires four checks: **Tickets signed off**, **QML tests**, **Imports and lint** and **Test coverage**. The organisation's ruleset adds a squash merge, linear history and an approving review.
