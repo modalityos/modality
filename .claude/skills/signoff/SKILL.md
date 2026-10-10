@@ -23,7 +23,7 @@ Offer the built-in `/code-review` (`/code-review high <pr>`), a correctness pass
 
 Each review finding the user wants fixed is a finding, worked as in step 3 (the user verifies it later, while testing). Record each one.
 
-Done when the review is declined, or every finding it raised is fixed with a passing test or moved to an issue.
+Done when the review already ran, is declined, or every finding it raised is fixed with a passing test or moved to an issue.
 
 ## 3. Test and work each finding
 
