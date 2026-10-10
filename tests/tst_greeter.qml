@@ -330,6 +330,19 @@ TestCase {
         compare(time.font.features.tnum, 1);
     }
 
+    function test_clock_keeps_turning_over_minute_after_minute() {
+        const greeter = createGreeter();
+        const clock = findChild(greeter, "clock");
+        // 200 ms before a minute boundary, so the clock's next turn comes quickly; twice,
+        // because a clock that turns over only once looks right for its first minute.
+        for (let turn = 1; turn <= 2; turn++) {
+            const nearBoundary = new Date(2026, 9, 9, 9, 41, 59, 800);
+            clock.now = nearBoundary;
+            tryVerify(() => clock.now.getTime() !== nearBoundary.getTime(), 2000,
+                      `turn ${turn}: the clock turned over`);
+        }
+    }
+
     function test_clock_shows_the_date_in_title1() {
         const greeter = createGreeter();
         const clock = findChild(greeter, "clock");

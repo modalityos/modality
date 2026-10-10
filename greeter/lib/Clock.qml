@@ -12,11 +12,16 @@ ColumnLayout {
 
     spacing: Theme.space1
 
-    // Wakes on each minute boundary, so the time turns over with the system clock.
+    // Wakes on each minute boundary, so the time turns over with the system clock. A one-shot
+    // timer stops after it fires, so it restarts itself, aimed at the next boundary.
     Timer {
+        id: tick
         running: true
         interval: 60000 - (clock.now.getSeconds() * 1000 + clock.now.getMilliseconds())
-        onTriggered: clock.now = new Date()
+        onTriggered: {
+            clock.now = new Date();
+            tick.restart();
+        }
     }
 
     Text {
