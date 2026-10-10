@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Create the test VM, libvirt domain "modality-dev", from Arch's official cloud image.
 #
-#   tools/vm/create.sh [--ssh-key FILE.pub]
+#   tools/vm/create.sh [--ssh-key FILE.pub] [--timezone Area/City]
 #
 # The VM gets user "dev" with passwordless sudo, the given SSH public key (default: the
-# first key in ssh-add -L), rsync, and the fixed address 192.168.122.50 on libvirt's
-# "default" network. It prints the MODALITYOS_VM line for just deploy when SSH is ready.
+# first key in ssh-add -L), rsync, the host's timezone (or the one given), and the fixed
+# address 192.168.122.50 on libvirt's "default" network. It prints the MODALITYOS_VM line
+# for just deploy when SSH is ready.
 # The image is pinned to one release and checked against its SHA256; packages installed
 # on top are current Arch. Remove the VM with tools/vm/destroy.sh.
 set -euo pipefail
@@ -30,7 +31,7 @@ vcpus=8
 user=dev
 
 usage() {
-    sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
     exit "${1:-0}"
 }
 
@@ -40,9 +41,11 @@ die() {
 }
 
 ssh_key=""
+timezone=""
 while [[ $# -gt 0 ]]; do
     case $1 in
         --ssh-key) [[ $# -ge 2 ]] || usage 2; ssh_key=$2; shift 2 ;;
+        --timezone) [[ $# -ge 2 ]] || usage 2; timezone=$2; shift 2 ;;
         -h | --help) usage ;;
         *) echo "create.sh: unknown argument: $1" >&2; usage 2 ;;
     esac
@@ -76,6 +79,21 @@ else
     [[ -n $pubkey ]] || die "no key in ssh-add -L; pass --ssh-key FILE.pub"
 fi
 [[ $pubkey =~ ^(ssh-|ecdsa-|sk-) ]] || die "not an SSH public key: ${ssh_key:-the first key in ssh-add -L}"
+
+# The host's timezone, so the Greeter's clock reads the same in the VM: timedatectl, else
+# where /etc/localtime points, else UTC.
+host_timezone() {
+    local zone
+    zone=$(timedatectl show -p Timezone --value 2>/dev/null) || true
+    if [[ -z $zone && -L /etc/localtime ]]; then
+        zone=$(readlink -f /etc/localtime)
+        zone=${zone#*/zoneinfo/}
+    fi
+    echo "${zone:-UTC}"
+}
+[[ -n $timezone ]] || timezone=$(host_timezone)
+[[ $timezone =~ ^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)*$ ]] || die "not a timezone name: $timezone"
+[[ -f /usr/share/zoneinfo/$timezone ]] || die "unknown timezone $timezone; see timedatectl list-timezones"
 
 # Reserve the fixed address for the domain's MAC, once.
 net_xml=$(virsh net-dumpxml "$network")
@@ -124,6 +142,7 @@ virsh pool-refresh "$pool" >/dev/null
 cat >"$work/user-data" <<EOF
 #cloud-config
 hostname: $domain
+timezone: $timezone
 users:
   - name: $user
     groups: [wheel]

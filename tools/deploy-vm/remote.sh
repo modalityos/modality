@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The VM side of tools/deploy-vm.sh, run as root. Run it by hand from a text console to
 # roll back: sudo /var/lib/modalityos-dev-deploy/remote.sh rollback [--purge] [--reboot]
+# Actions: deploy, sync (the dev root only, after a deploy) and rollback.
 set -euo pipefail
 
 state=/var/lib/modalityos-dev-deploy
@@ -46,6 +47,21 @@ keep_escape_hatches() {
     systemctl enable getty@tty2.service
 }
 
+# Copy the staged tree into the dev root, printing each path whose content changed or that
+# went away. Execute bits come from the stage (X), so an unchanged launcher stays unchanged.
+# Files are rewritten in place: Quickshell watches the Greeter's files by inode, and a file
+# replaced by a new one would drop out of its watch.
+install_root() {
+    rsync -a --checksum --inplace --delete --omit-dir-times --chown=root:root \
+        --chmod=Du=rwx,Dgo=rx,Fu=rwX,Fgo=rX --out-format='%i %n' "$from/root/" "$prefix/" |
+        awk '$1 ~ /^([<>ch]|\*deleting)/ && $2 !~ /\/$/ {print $2}'
+}
+
+# A dev prefix is outside systemd's tmpfiles.d search path, so apply its rules by name.
+apply_tmpfiles() {
+    systemd-tmpfiles --create "$prefix/lib/tmpfiles.d/modalityos-greeter.conf"
+}
+
 deploy() {
     [[ -n $from && -d $from/root ]] || { echo "remote.sh: nothing staged; run tools/deploy-vm.sh deploy" >&2; exit 1; }
     keep_escape_hatches
@@ -64,10 +80,8 @@ deploy() {
     echo "$prefix" > "$state/prefix"
 
     install -d -m 0755 "$prefix"
-    rsync -a --delete --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r "$from/root/" "$prefix/"
-    chmod 0755 "$prefix"/bin/*
-    # A dev prefix is outside systemd's tmpfiles.d search path, so apply its rules by name.
-    systemd-tmpfiles --create "$prefix/lib/tmpfiles.d/modalityos-greeter.conf"
+    install_root >/dev/null
+    apply_tmpfiles
 
     install -d -m 0755 /etc/greetd
     sed "s|@PREFIX@|$prefix|g" "$from/config.toml.in" > /etc/greetd/config.toml
@@ -89,6 +103,39 @@ deploy() {
 
     echo "Deployed into $prefix; greetd is the display manager (was: $previous)."
     echo "Text console: Ctrl+Alt+F2. Roll back: tools/deploy-vm.sh rollback"
+}
+
+# The quick path: the dev root only. The running Quickshell watches the Greeter's own files
+# (share/modalityos/greeter) and reloads them by itself. It does not watch the shared modules
+# or the data, and the files from session/ (launchers, Session entries, tmpfiles rules) apply
+# only at launch, so any other change restarts greetd to relaunch the Greeter.
+quick_sync() {
+    [[ -n $from && -d $from/root ]] || { echo "remote.sh: nothing staged; run tools/deploy-vm.sh sync" >&2; exit 1; }
+    if [[ ! -f $state/previous-display-manager || $(cat "$state/prefix" 2>/dev/null) != "$prefix" ]]; then
+        echo "remote.sh: no full deploy into $prefix yet; run tools/deploy-vm.sh deploy first" >&2
+        exit 1
+    fi
+
+    local changed
+    changed=$(install_root)
+    if [[ -z $changed ]]; then
+        echo "Nothing changed in $prefix."
+    else
+        while read -r path; do echo "updated $path"; done <<<"$changed"
+        if grep -qv '^share/modalityos/greeter/' <<<"$changed"; then
+            apply_tmpfiles
+            systemctl restart greetd.service
+            echo "Restarted greetd: the Greeter relaunches with the change."
+        else
+            echo "Quickshell reloads the Greeter by itself."
+        fi
+    fi
+
+    # These live outside the dev root, so only a full deploy writes them.
+    if ! sed "s|@PREFIX@|$prefix|g" "$from/config.toml.in" | cmp -s - /etc/greetd/config.toml ||
+        ! cmp -s "$from/50-modalityos-greeter.rules" "$polkit_rule"; then
+        echo "The greetd config or polkit rule changed; run just deploy to apply it."
+    fi
 }
 
 rollback() {
@@ -128,8 +175,9 @@ rollback() {
 
 case $action in
     deploy) deploy ;;
+    sync) quick_sync; exit 0 ;;
     rollback) rollback ;;
-    *) echo "remote.sh: action must be deploy or rollback" >&2; exit 2 ;;
+    *) echo "remote.sh: action must be deploy, sync or rollback" >&2; exit 2 ;;
 esac
 
 if $reboot; then

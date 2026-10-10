@@ -21,6 +21,7 @@ You also need an SSH key. By default the VM trusts the first key `ssh-add -L` li
 ```sh
 just vm-create                        # trusts the first key in ssh-add -L
 just vm-create --ssh-key ~/.ssh/id_ed25519.pub
+just vm-create --timezone Europe/London   # instead of the host's timezone
 ```
 
 It builds a libvirt domain called `modality-dev` and, when it is ready, prints the line to paste:
@@ -33,7 +34,7 @@ What it builds:
 
 - **The disk:** Arch Linux's official cloud image (from the arch-boxes project), copied and grown to 40 GB, stored as `modality-dev.qcow2` in libvirt's `default` storage pool (usually `/var/lib/libvirt/images`). The first download is cached in `~/.cache/modalityos/vm/` (or `$XDG_CACHE_HOME/modalityos/vm/`), so later builds skip it.
 - **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU.
-- **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; user `dev`, with your SSH key, passwordless `sudo` and no password login; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
+- **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; the host's timezone, so the Greeter's clock matches yours (from `timedatectl`, else where `/etc/localtime` points, else UTC; `--timezone Area/City` picks another); user `dev`, with your SSH key, passwordless `sudo` and no password login; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
 
 The script refuses to run if `modality-dev` already exists; run `just vm-destroy` first.
 
@@ -68,6 +69,23 @@ just rollback           # back to the previous login
 ```
 
 [Testing](testing.md#manual-testing-in-the-vm) explains both, and how to roll back from a text console in the VM; a deploy keeps SSH and a console on tty2 enabled for that.
+
+## Edit and see it live
+
+Deploy once, then leave a watcher running while you edit:
+
+```sh
+just deploy --reboot    # once: packages, greetd, the Greeter
+just deploy-watch       # then: sync on every save
+```
+
+`just deploy-watch` watches `greeter/`, `qml/Modality/`, `data/` and `session/`, ignoring editor temp files. Half a second after a save it runs `just sync`, which rebuilds the development root, sends only the files that changed (it prints each one) and takes about a second. It needs `watchexec` (`sudo pacman -S watchexec`). Stop it with Ctrl+C.
+
+- **Reloads by itself:** the Greeter's own files (`greeter/`). Quickshell watches them and reloads the Greeter in place, with no restart.
+- **Restarts greetd:** everything else Quickshell does not watch: the shared modules (`qml/Modality/`), data (settings, avatars, wallpapers) and the files from `session/` (launchers, Session entries, the tmpfiles rule). The Greeter relaunches in a couple of seconds; a Session started from it can end too.
+- **Needs `just deploy`:** the greetd config and the polkit rule, which live outside the development root, and the package list. `just sync` says so when the greetd config or polkit rule differ.
+
+For a one-off, run `just sync`. It refuses until the VM has had a full `just deploy`.
 
 ## Rebuild
 

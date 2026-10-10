@@ -37,10 +37,12 @@ sudo pacman -S just qt6-declarative python librsvg imagemagick inter-font
 For visual testing in a VM, also:
 
 ```sh
-sudo pacman -S libvirt virt-manager qemu-full edk2-ovmf dnsmasq
+sudo pacman -S libvirt virt-manager qemu-full edk2-ovmf dnsmasq watchexec
 sudo systemctl enable --now libvirtd
 sudo usermod -aG libvirt "$USER"   # then log out and back in
 ```
+
+`watchexec` runs `just deploy-watch`, which syncs your edits into the VM as you save.
 
 [`docs/vm.md`](docs/vm.md) has the full VM setup.
 
