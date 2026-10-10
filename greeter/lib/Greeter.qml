@@ -101,6 +101,7 @@ FocusScope {
             capsLockShown: logic.capsLockShown
             sessionFailed: logic.state === "sessionFailed"
             unavailable: logic.state === "unavailable"
+            overlay: logic.overlay
             onRetryRequested: logic.retry()
             onSubmitted: password => logic.submit(password)
             onTyped: (text, modifiers) => logic.typed(text, modifiers)
@@ -117,6 +118,7 @@ FocusScope {
             sessions: greeter.backend?.sessions ?? []
             currentSession: logic.selectedSession?.id ?? ""
             open: logic.overlay === "options"
+            overlay: logic.overlay
             backdrop: wallpaper
             shortScreen: greeter.shortScreen
             onToggled: logic.toggleOptions()
@@ -138,6 +140,7 @@ FocusScope {
             anchors.bottomMargin: greeter.powerRowBottom
             backend: greeter.backend
             backdrop: wallpaper
+            overlay: logic.overlay
         }
 
         Connections {

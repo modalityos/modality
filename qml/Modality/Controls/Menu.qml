@@ -4,6 +4,7 @@ import Modality.Theme
 
 // A Glass menu of choices under a small heading. model is a list of { text, checked, enabled }.
 // Up and Down move the highlight, Enter or a click picks (triggered), Esc closes (dismissed).
+// Tab and Shift+Tab move like Down and Up, so focus stays inside the open Menu.
 FocusScope {
     id: menu
 
@@ -124,6 +125,9 @@ FocusScope {
                 text: menuItem.modelData.text
                 checked: menuItem.modelData.checked === true
                 enabled: menuItem.modelData.enabled !== false
+                // On the item: a focused item would take Tab itself before the Menu saw it.
+                Keys.onTabPressed: menu.move(1)
+                Keys.onBacktabPressed: menu.move(-1)
                 onClicked: {
                     menu.close();
                     menu.triggered(menuItem.index);

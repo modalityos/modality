@@ -549,6 +549,22 @@ TestCase {
         compare(greeter.loginState, "wrongPassword");
     }
 
+    function test_keys_typed_during_the_wrong_password_shake_are_dropped() {
+        const greeter = createGreeter();
+        logIn(greeter, "wrong");
+        greeter.backend.authFailure("Authentication failed");
+        const field = findChild(greeter, "passwordField");
+        verify(field.shaking);
+        const calls = greeter.backend.calls.length;
+        typeText("ab");
+        compare(field.text, "wrong");
+        keyClick(Qt.Key_Return);
+        compare(greeter.backend.calls.length, calls);
+        tryCompare(field, "shaking", false);
+        compare(field.text, "");
+        compare(greeter.loginState, "wrongPassword");
+    }
+
     function test_wrong_password_notice_shows_for_three_seconds() {
         const greeter = createGreeter();
         logIn(greeter, "wrong");
@@ -612,6 +628,30 @@ TestCase {
         greeter.backend.error("Account check failed");
         const notice = findChild(greeter, "authErrorNotice");
         tryCompare(notice, "visible", true);
+        compare(notice.text, "Account check failed");
+    }
+
+    function test_greetd_error_notice_shows_a_second_message_in_place_of_the_first() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.authError("Your account has expired");
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Your account has expired");
+        greeter.backend.authError("Contact your administrator");
+        compare(notice.text, "Contact your administrator");
+    }
+
+    function test_greetd_error_notice_keeps_its_message_while_it_fades_out() {
+        const greeter = createGreeter();
+        logIn(greeter, "secret");
+        greeter.backend.error("Account check failed");
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "opacity", 1);
+        typeText("s");
+        verify(notice.visible);
+        compare(notice.text, "Account check failed");
+        tryCompare(notice, "visible", false, 1000);
         compare(notice.text, "Account check failed");
     }
 

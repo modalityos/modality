@@ -168,6 +168,19 @@ TestCase {
         compare(menu.currentIndex, 0);
     }
 
+    function test_tab_moves_like_the_arrows_and_stays_inside_the_menu() {
+        const menu = createMenu();
+        menu.open();
+        keyClick(Qt.Key_Tab);
+        keyClick(Qt.Key_Tab);
+        compare(menu.currentIndex, 1);
+        verify(menu.itemAt(1).activeFocus);
+        keyClick(Qt.Key_Backtab);
+        keyClick(Qt.Key_Backtab);
+        compare(menu.currentIndex, 0);
+        verify(menu.itemAt(0).activeFocus);
+    }
+
     function test_clicking_an_item_reports_it() {
         const menu = createMenu();
         menu.open();

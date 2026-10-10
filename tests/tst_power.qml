@@ -84,6 +84,62 @@ TestCase {
         compare(greeter.backend.lastCall(), ["reboot"]);
     }
 
+    function test_power_buttons_do_nothing_under_an_open_overlay_data() {
+        const rows = [];
+        for (const overlay of ["otherUsers", "options"]) {
+            for (const button of ["sleepButton", "restartButton", "shutDownButton"])
+                rows.push({
+                    tag: `${button} under ${overlay}`,
+                    overlay: overlay,
+                    button: button
+                });
+        }
+        return rows;
+    }
+
+    function test_power_buttons_do_nothing_under_an_open_overlay(data) {
+        const backend = createTemporaryObject(backendComponent, testCase, {
+            users: [
+                {
+                    name: "ada",
+                    realName: "Ada Lovelace",
+                    avatar: "",
+                    systemAccount: false
+                },
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "",
+                    systemAccount: false
+                }
+            ],
+            sessions: [
+                {
+                    id: "org.modalityos.kwin",
+                    name: "ModalityOS (KWin)",
+                    command: ["kwin"],
+                    desktopNames: ["ModalityOS"]
+                },
+                {
+                    id: "hyprland",
+                    name: "Hyprland",
+                    command: ["Hyprland"],
+                    desktopNames: ["Hyprland"]
+                }
+            ]
+        });
+        const greeter = createTemporaryObject(greeterComponent, testCase, {
+            backend: backend
+        });
+        findChild(greeter, data.overlay === "otherUsers" ? "otherUsersPill" : "optionsButton").forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, data.overlay);
+        findChild(greeter, data.button).forceActiveFocus();
+        keyClick(Qt.Key_Space);
+        keyClick(Qt.Key_Return);
+        compare(backend.calls, []);
+    }
+
     function test_power_row_sits_bottom_centre_data() {
         return [
             {

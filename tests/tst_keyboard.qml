@@ -199,4 +199,96 @@ TestCase {
         keyClick("A");
         tryVerify(() => findChild(greeter, "capsLockNotice").visible);
     }
+
+    function openChooseAUser(greeter) {
+        findChild(greeter, "otherUsersPill").forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "otherUsers");
+        tryVerify(() => findChild(greeter, "userCell1").activeFocus);
+    }
+
+    function openSessionMenu(greeter) {
+        findChild(greeter, "optionsButton").forceActiveFocus();
+        keyClick(Qt.Key_Return);
+        compare(greeter.overlay, "options");
+        const menu = findChild(greeter, "sessionMenu");
+        tryVerify(() => menu.itemAt(0).activeFocus);
+        return menu;
+    }
+
+    function test_tab_cycles_inside_the_choose_a_user_panel_data() {
+        return [
+            {
+                tag: "Tab",
+                key: Qt.Key_Tab,
+                order: ["userPanelCancel", "userCell0", "userCell1", "userPanelCancel"]
+            },
+            {
+                tag: "Shift+Tab",
+                key: Qt.Key_Backtab,
+                order: ["userCell0", "userPanelCancel", "userCell1", "userCell0"]
+            }
+        ];
+    }
+
+    function test_tab_cycles_inside_the_choose_a_user_panel(data) {
+        const greeter = createGreeter({
+            users: testCase.twoUsers,
+            sessions: testCase.twoSessions
+        });
+        openChooseAUser(greeter);
+        for (const name of data.order) {
+            keyClick(data.key);
+            verify(findChild(greeter, name).activeFocus, `${data.tag} reaches ${name}`);
+            compare(greeter.overlay, "otherUsers");
+        }
+    }
+
+    function test_tab_stays_inside_the_session_menu() {
+        const greeter = createGreeter({
+            users: testCase.twoUsers,
+            sessions: testCase.twoSessions
+        });
+        const menu = openSessionMenu(greeter);
+        keyClick(Qt.Key_Tab);
+        verify(menu.itemAt(1).activeFocus, "Tab moves to the next item");
+        keyClick(Qt.Key_Tab);
+        verify(menu.itemAt(1).activeFocus, "Tab from the last item stays on it");
+        compare(greeter.overlay, "options");
+        keyClick(Qt.Key_Backtab);
+        verify(menu.itemAt(0).activeFocus, "Shift+Tab moves to the item before");
+        keyClick(Qt.Key_Backtab);
+        verify(menu.itemAt(0).activeFocus, "Shift+Tab from the first item stays on it");
+        compare(greeter.overlay, "options");
+    }
+
+    function test_password_field_under_an_open_overlay_takes_no_typing_data() {
+        return [
+            {
+                tag: "Choose a user",
+                overlay: "otherUsers"
+            },
+            {
+                tag: "Session Menu",
+                overlay: "options"
+            }
+        ];
+    }
+
+    function test_password_field_under_an_open_overlay_takes_no_typing(data) {
+        const greeter = createGreeter({
+            users: testCase.twoUsers,
+            sessions: testCase.twoSessions
+        });
+        if (data.overlay === "otherUsers")
+            openChooseAUser(greeter);
+        else
+            openSessionMenu(greeter);
+        const field = findChild(greeter, "passwordField");
+        field.forceActiveFocus();
+        keyClick("a");
+        keyClick(Qt.Key_Return);
+        compare(field.text, "");
+        compare(greeter.backend.calls, []);
+    }
 }
