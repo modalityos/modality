@@ -50,6 +50,15 @@ preview:
 install prefix:
     tools/install.sh --prefix {{prefix}}
 
+# Create the test VM "modality-dev" from a pinned Arch cloud image; args pass to tools/vm/create.sh
+[positional-arguments]
+vm-create *args:
+    tools/vm/create.sh "$@"
+
+# Remove the test VM "modality-dev", its disk and its address reservation
+vm-destroy:
+    tools/vm/destroy.sh
+
 # Deploy a development build into the test VM ($MODALITYOS_VM); args pass to tools/deploy-vm.sh
 [positional-arguments]
 deploy *args:
