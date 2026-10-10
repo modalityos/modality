@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 env:
-  PACKAGES: qt6-declarative just python inter-font
+  PACKAGES: qt6-declarative diffutils just python inter-font
 
 jobs:
   test:

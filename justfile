@@ -25,23 +25,13 @@ lint:
         $(git ls-files --cached --others --exclude-standard '*.qml')
     @echo "qmllint OK"
 
-# Format every QML file in place with qmlformat (settings in .qmlformat.ini)
+# Format every QML file in place with CI's qmlformat (in Docker; settings in .qmlformat.ini)
 format:
-    {{qt_bin}}/qmlformat --inplace $(git ls-files --cached --others --exclude-standard '*.qml')
+    tools/qmlformat.sh format
 
-# Fail if any QML file isn't formatted, naming each one; `just format` fixes them
+# Fail if any QML file isn't formatted the way CI's qmlformat does it; `just format` fixes them
 format-check:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    unformatted=0
-    for file in $(git ls-files --cached --others --exclude-standard '*.qml'); do
-        if ! {{qt_bin}}/qmlformat "$file" | cmp --silent - "$file"; then
-            echo "not formatted: $file"
-            unformatted=1
-        fi
-    done
-    ((unformatted)) || echo "qmlformat OK"
-    exit "$unformatted"
+    tools/qmlformat.sh check
 
 # List Greeter and shared-module files that no test loads, failing if any
 coverage:
