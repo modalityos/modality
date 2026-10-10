@@ -89,3 +89,4 @@ just vm-create
 - **SSH asks for a password, or says "Permission denied (publickey)":** the VM trusts only the key it was built with. Check which one that was (`--ssh-key`, or the first in `ssh-add -L`), and that your agent offers it. To change keys, rebuild.
 - **cloud-init failed:** SSH in and run `sudo cloud-init status --long` and `sudo journalctl -u cloud-final`. A failed `pacman -Syu` (a mirror down) is the usual cause; rebuild.
 - **The VM already exists:** `just vm-destroy`, then `just vm-create`.
+- **The VM powers off instead of rebooting:** virt-install runs a VM's first boot as an install, where a reboot means power off. `just vm-create` power-cycles the VM once at the end to leave that mode, and checks it worked. A VM built before that step will power off on its first reboot only: start it again in virt-manager (or `virsh -c qemu:///system start modality-dev`) and it reboots normally from then on.

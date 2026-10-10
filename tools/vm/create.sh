@@ -189,6 +189,24 @@ status=0
 ssh "${ssh_opts[@]}" "$user@$ip" cloud-init status --wait --long || status=$?
 ((status == 0 || status == 2)) || die "cloud-init failed in $domain; see docs/vm.md, Troubleshooting"
 
+# virt-install runs the first boot as an install, where a reboot powers the VM off. One clean
+# power cycle moves it onto its saved config, so later reboots (such as deploy --reboot) restart.
+echo "Power-cycling $domain onto its saved config"
+virsh --connect "$uri" shutdown "$domain" >/dev/null
+for ((i = 0; i < 60; i++)); do
+    [[ $(virsh --connect "$uri" domstate "$domain") == "shut off" ]] && break
+    sleep 2
+done
+[[ $(virsh --connect "$uri" domstate "$domain") == "shut off" ]] || die "$domain did not shut down; see docs/vm.md, Troubleshooting"
+virsh --connect "$uri" start "$domain" >/dev/null
+# Check the outcome rather than trust the quirk: the running VM must restart on reboot.
+virsh --connect "$uri" dumpxml "$domain" | grep -q '<on_reboot>restart</on_reboot>' ||
+    die "$domain would power off on reboot; see docs/vm.md, Troubleshooting"
+for ((i = 0; i < 60; i++)); do
+    ssh "${ssh_opts[@]}" -o BatchMode=yes "$user@$ip" true 2>/dev/null && break
+    sleep 5
+done
+
 echo
 echo "$domain is ready. To deploy into it:"
 echo "  export MODALITYOS_VM=$user@$ip"
