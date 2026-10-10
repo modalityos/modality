@@ -68,21 +68,21 @@ None. This is the first design, so there are no earlier Tokens or Controls to ma
 - Alternative accent colours and a high-contrast theme.
 
 ## Hand back
-- [ ] Grounds, surfaces, fills, separator and border colours, light and dark
-- [ ] Text colours, light and dark, each passing its contrast floor on every ground
-- [ ] Accent set: fill, hover, pressed, subtle background, text on accent, accent as text
-- [ ] Status colours: success, warning, danger, info, each foreground and subtle background
-- [ ] Scrim colour
-- [ ] Wallpaper gradient stops, light and dark
-- [ ] At least three materials, each with tint, blur and solid fallback
+- [x] Grounds, surfaces, fills, separator and border colours, light and dark
+- [x] Text colours, light and dark, each passing its contrast floor on every ground
+- [x] Accent set: fill, hover, pressed, subtle background, text on accent, accent as text
+- [x] Status colours: success, warning, danger, info, each foreground and subtle background
+- [x] Scrim colour
+- [x] Wallpaper gradient stops, light and dark
+- [x] At least three materials, each with tint, blur and solid fallback
 - [ ] Font family Tokens: sans, mono, fallback, alternative pair
-- [ ] Type scale, every role with size, line height, weight and letter spacing
-- [ ] Control and row heights
-- [ ] Spacing scale on the 4 px grid
-- [ ] Radius Tokens: Control, card, panel and window, pill
-- [ ] Shadow levels, light and dark
-- [ ] Focus ring Tokens: colour, width, offset
-- [ ] Motion Tokens: three durations, standard, ease-in and ease-out curves, one spring
-- [ ] Palette in use, light and dark side by side
-- [ ] Settings scene and Login scene, following the Light/Dark switch
+- [x] Type scale, every role with size, line height, weight and letter spacing
+- [x] Control and row heights
+- [x] Spacing scale on the 4 px grid
+- [x] Radius Tokens: Control, card, panel and window, pill
+- [x] Shadow levels, light and dark
+- [x] Focus ring Tokens: colour, width, offset
+- [x] Motion Tokens: three durations, standard, ease-in and ease-out curves, one spring
+- [x] Palette in use, light and dark side by side
+- [x] Settings scene and Login scene, following the Light/Dark switch
 - [ ] Font pairing specimen, and the user's pick recorded in the README

@@ -78,18 +78,18 @@ States, one artboard each, dark first, then the main ones in light:
 - The lock screen and the boot splash.
 
 ## Hand back
-- [ ] Clock, UserPanel, Avatar, PasswordField, Button, IconButton, Menu and Notice, each named
-- [ ] Ready, dark and light
-- [ ] Several users, three and five
-- [ ] Other users open, three and eight
-- [ ] Typing
-- [ ] Caps Lock on
-- [ ] Checking
-- [ ] Wrong password
-- [ ] Session failed
-- [ ] Login unavailable
-- [ ] Options open, dark and light
-- [ ] Starting
-- [ ] Control states sheet
-- [ ] Ready at 1366 × 768
-- [ ] Contrast passing on every state, including text over the wallpaper
+- [x] Clock, UserPanel, Avatar, PasswordField, Button, IconButton, Menu and Notice, each named
+- [x] Ready, dark and light
+- [x] Several users, three and five
+- [x] Other users open, three and eight
+- [x] Typing
+- [x] Caps Lock on
+- [x] Checking
+- [x] Wrong password
+- [x] Session failed
+- [x] Login unavailable
+- [x] Options open, dark and light
+- [x] Starting
+- [x] Control states sheet
+- [x] Ready at 1366 × 768
+- [x] Contrast passing on every state, including text over the wallpaper
