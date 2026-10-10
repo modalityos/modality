@@ -82,7 +82,7 @@ Repo files (code, config, `.gitignore`, the root `README.md`, `LICENSE`) are wri
 
 - Tickets from one spec: each in its own worktree branched from the spec (grill) branch, merged back locally when done; one PR per spec. Merge commits get a Conventional Commits message and `Refs` footers too (`git merge --no-ff -m "chore: merge #<ticket> <title>" -m "Refs #<spec>"`).
 - `/implement-spec`: the integration branch is the branch created before `/grill-with-docs` (it already holds the glossary and ADRs). Implementer worktrees branch from it and merge back one at a time.
-- `/mattpocock-skills:code-review` (not the built-in `/code-review`): default fixed point is `main`.
+- When a mattpocock skill (`/implement`, `/implement-spec`, `/tdd`) says `code-review`, it means `/mattpocock-skills:code-review`, with `main` as its default fixed point. Anywhere else, `/code-review` is the built-in review.
 
 ### Visual work
 
