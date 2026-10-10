@@ -60,9 +60,13 @@ QtObject {
     // greetd ended the login before checking the password: the screen clears the field.
     signal attemptEnded
 
+    // Nothing behind an overlay logs in, even a field that kept its focus. After a failed
+    // Session, greetd drops what is left of it first.
     function submit(password) {
-        if (!acceptsInput || password.length === 0 || !selectedUser)
+        if (!acceptsInput || overlay !== "" || password.length === 0 || !selectedUser)
             return;
+        if (phase === "sessionFailed")
+            backend.cancel();
         pendingPassword = password;
         authError = "";
         phase = "checking";
@@ -120,10 +124,14 @@ QtObject {
 
     // The screen calls this when its fade-out ends. The login is remembered first, since
     // the Greeter quits once the Session launches; only a picked Session is saved, so users
-    // who never pick follow the machine default.
+    // who never pick follow the machine default. With no Session to launch, it failed to start.
     function launch() {
         if (phase !== "starting")
             return;
+        if (!selectedSession) {
+            phase = "sessionFailed";
+            return;
+        }
         backend.remember(selectedUser.name, chosenSession);
         backend.launch(selectedSession);
     }
@@ -146,9 +154,18 @@ QtObject {
     property Connections backendConnections: Connections {
         target: logic.backend
 
+        // The Greeter answers one prompt per login, with the password. A second prompt, such as
+        // a new password after an expired one, ends the attempt and shows what greetd asked.
         function onAuthPrompt(message, secret) {
             if (logic.phase !== "checking")
                 return;
+            if (logic.pendingPassword === "") {
+                logic.backend.cancel();
+                logic.authError = message;
+                logic.phase = "ready";
+                logic.attemptEnded();
+                return;
+            }
             logic.backend.answer(logic.pendingPassword);
             logic.pendingPassword = "";
         }

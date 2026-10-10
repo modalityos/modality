@@ -804,4 +804,63 @@ TestCase {
         verify(findChild(greeter, "wallpaper").visible);
         compare(greeter.backend.lastCall(), ["launch", "org.modalityos.kwin"]);
     }
+
+    function test_password_submitted_behind_the_choose_a_user_panel_starts_no_login() {
+        const greeter = createGreeter({
+            users: someUsers(3),
+            lastUser: "katherine"
+        });
+        openOtherUsers(greeter);
+        findChild(greeter, "passwordField").submitted("secret");
+        compare(greeter.loginState, "ready");
+        compare(greeter.backend.calls.filter(call => call[0] === "startAuthentication"), []);
+    }
+
+    function test_no_session_to_launch_is_a_failed_session() {
+        const greeter = createGreeter({
+            sessions: [],
+            defaultSession: ""
+        });
+        logIn(greeter, "secret");
+        greeter.backend.readyToLaunch();
+        tryCompare(greeter, "loginState", "sessionFailed");
+        compare(greeter.backend.calls.filter(call => call[0] === "launch"), []);
+        const notice = findChild(greeter, "sessionFailedNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "Couldn't start the session.");
+        verify(notice.actionItem.activeFocus);
+        tryCompare(findChild(greeter, "content"), "opacity", 1);
+    }
+
+    function test_second_greetd_prompt_cancels_and_shows_its_message() {
+        const greeter = createGreeter();
+        const backend = greeter.backend;
+        logIn(greeter, "secret");
+        backend.authPrompt("New password:", true);
+        compare(backend.lastCall(), ["cancel"]);
+        compare(backend.calls.filter(call => call[0] === "answer"), [["answer", "secret"]]);
+        const notice = findChild(greeter, "authErrorNotice");
+        tryCompare(notice, "visible", true);
+        compare(notice.text, "New password:");
+        verify(!findChild(greeter, "wrongPasswordNotice").visible);
+        const field = findChild(greeter, "passwordField");
+        compare(field.text, "");
+        verify(field.activeFocus);
+
+        logIn(greeter, "secret");
+        compare(backend.lastCall(), ["answer", "secret"]);
+    }
+
+    function test_logging_in_again_after_a_failed_session_cancels_it_first() {
+        const greeter = createGreeter();
+        const backend = greeter.backend;
+        failSession(greeter);
+        tryCompare(findChild(greeter, "sessionFailedNotice"), "visible", true);
+        const before = backend.calls.length;
+        mouseClick(findChild(greeter, "passwordField"));
+        typeText("secret");
+        keyClick(Qt.Key_Return);
+        compare(backend.calls.slice(before), [["cancel"], ["startAuthentication", "katherine"]]);
+        compare(greeter.loginState, "checking");
+    }
 }
