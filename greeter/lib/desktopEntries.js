@@ -2,8 +2,8 @@
 
 // Sessions from wayland-sessions desktop entries, printed as a record separator (U+001E)
 // and the file's path, then its contents. An id seen twice keeps its first entry, so
-// earlier folders win, as in XDG_DATA_DIRS. Hidden and NoDisplay entries are skipped; a
-// Hidden one counts as deleted, so it also hides the same id in a later folder.
+// earlier folders win, as in XDG_DATA_DIRS. Hidden and NoDisplay entries and entries with
+// no Exec are skipped, but each still claims its id, so it hides the same id in a later folder.
 function parseSessions(text) {
     const sessions = [];
     const seen = new Set();
@@ -16,13 +16,9 @@ function parseSessions(text) {
         const entry = parseEntry(record.slice(newline + 1));
         if (seen.has(id))
             continue;
-        if (entry.Hidden === "true") {
-            seen.add(id);
-            continue;
-        }
-        if (!entry.Exec || entry.NoDisplay === "true")
-            continue;
         seen.add(id);
+        if (entry.Hidden === "true" || !entry.Exec || entry.NoDisplay === "true")
+            continue;
         sessions.push({
             id: id,
             name: entry.Name ?? id,

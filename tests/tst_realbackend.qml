@@ -143,6 +143,18 @@ TestCase {
         compare(Greetd.lastCall(), ["launch", ["/opt/modalityos-dev/bin/modalityos-session-kwin"], ["XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=ModalityOS", "XDG_SESSION_DESKTOP=ModalityOS"], true]);
     }
 
+    function test_launching_without_a_session_is_an_error() {
+        const backend = createBackend();
+        const spy = createTemporaryObject(spyComponent, testCase, {
+            target: backend,
+            signalName: "error"
+        });
+        backend.launch(null);
+        compare(spy.count, 1);
+        verify(spy.signalArguments[0][0].length > 0);
+        compare(Greetd.lastCall(), []);
+    }
+
     function test_greetd_error_is_an_error() {
         const backend = createBackend();
         const spy = createTemporaryObject(spyComponent, testCase, {
@@ -259,6 +271,12 @@ TestCase {
         const backend = createBackend();
         Processes.finish(Processes.find("wayland-sessions"), ["\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/bin/false", "Hidden=true", "\u001e/usr/share/wayland-sessions/org.modalityos.kwin.desktop", "[Desktop Entry]", "Name=ModalityOS (KWin)", "Exec=/usr/bin/modalityos-session-kwin", "Hidden=false", "\u001e/usr/share/wayland-sessions/gnome-debug.desktop", "[Desktop Entry]", "Name=GNOME (debug)", "Exec=/usr/bin/gnome-session --debug", "NoDisplay=true", "\u001e/usr/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/usr/bin/startplasma-wayland", ""].join("\n"));
         compare(backend.sessions.map(session => session.id), ["org.modalityos.kwin"]);
+    }
+
+    function test_session_hidden_by_no_display_or_missing_exec_hides_the_same_id_in_a_later_folder() {
+        const backend = createBackend();
+        Processes.finish(Processes.find("wayland-sessions"), ["\u001e/opt/modalityos-dev/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/bin/false", "NoDisplay=true", "\u001e/opt/modalityos-dev/share/wayland-sessions/noexec.desktop", "[Desktop Entry]", "Name=No Exec", "\u001e/usr/share/wayland-sessions/plasma.desktop", "[Desktop Entry]", "Name=Plasma (Wayland)", "Exec=/usr/bin/startplasma-wayland", "\u001e/usr/share/wayland-sessions/noexec.desktop", "[Desktop Entry]", "Name=No Exec", "Exec=/usr/bin/noexec", "\u001e/usr/share/wayland-sessions/other.desktop", "[Desktop Entry]", "Name=Other", "Exec=/usr/bin/other", ""].join("\n"));
+        compare(backend.sessions.map(session => session.id), ["other"]);
     }
 
     readonly property string statePath: "/var/lib/modalityos/greeter/state.json"

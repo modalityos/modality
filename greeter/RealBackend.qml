@@ -119,6 +119,10 @@ GreeterBackend {
 
     // Quickshell quits once greetd takes the Session; the screen has already faded out.
     function launch(session) {
+        if (!session) {
+            backend.error("No session to start");
+            return;
+        }
         const environment = ["XDG_SESSION_TYPE=wayland"];
         if (session.desktopNames.length > 0) {
             environment.push(`XDG_CURRENT_DESKTOP=${session.desktopNames.join(":")}`);
