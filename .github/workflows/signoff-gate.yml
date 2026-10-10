@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   boxes:
-    name: Every box ticked
+    name: Tickets signed off
     # A draft can't merge, and marking it ready runs the gate.
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
