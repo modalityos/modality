@@ -27,7 +27,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 
 ### Issues and PRs
 
-- Use the `.github/` templates (`ISSUE_TEMPLATE/bug.md`, `ISSUE_TEMPLATE/feature-task.md`, `pull_request_template.md`) and fill in every section; write `None` where one doesn't apply.
+- Use the `.github/` templates (`ISSUE_TEMPLATE/bug.md`, `ISSUE_TEMPLATE/feature-task.md`, `ISSUE_TEMPLATE/idea.md`, `pull_request_template.md`) and fill in every section; write `None` where one doesn't apply.
 - Exception: issues created by skills — `/to-spec` specs, `/to-tickets` tickets, `/triage` briefs, wayfinder maps and tickets — use the skill's own body format, not these templates.
 - This repo is public: no local paths, hostnames or machine details in issue, PR or commit text.
 - In a PR, use `Closes #123` for each issue it completes, so merging closes it; use a plain `#123` for issues it only relates to. This tracker closes work through PRs.
@@ -75,6 +75,7 @@ The **grill record**, `.scratch/grill-<short-description>.md` in the change's wo
 - **`/grill-with-docs`** writes it before its hand-off: the change and its branch; every question settled, one line each, with the answer and any ADR or glossary entry it went to; research facts found, with their sources; questions left open; whether the change has visual work still to design, and the next stage. Done when a fresh session could run the next stage from it alone.
 - **Every later stage up to `/to-spec`** reads it first. `/design-brief` adds each piece's slug. Anything the user decides between stages goes in it at once, not only into the chat.
 - **`/to-spec`** writes the spec from the grill record, `GLOSSARY.md`, the ADRs, and every `design/<slug>/brief.md` and `spec.md` the record names, plus anything said in its own session. Where the skill says "from the conversation", read "from these files". Once the spec issue exists, the grill record is spent.
+- **Features and Ideas** are issues waiting to be picked up: type **Feature** for something to build, type **Idea** for a maybe. A grill needs none. When the user names some (`/grill-with-docs #23 #25`), read them as the starting brief and list them in the grill record; `/to-spec` links each from the spec issue, then closes it with a comment naming the spec. An Idea set aside is closed as not planned, with the reason.
 - **Heavy reads go to subagents.** A stage that must read something large (a design snapshot, an artifact type's instructions, many source files) hands it to a subagent and takes back a short report, so its own context stays small. The design skills say how for their stages.
 - **`/compact` is the fallback,** for a stage that has to run long; before compacting, write anything decided to the grill record or the stage's own files.
 </important>
