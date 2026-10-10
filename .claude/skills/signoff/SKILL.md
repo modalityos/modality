@@ -31,7 +31,7 @@ For each thing the user reports:
 
 When the user confirms a **User check**, tick it in its ticket's issue body and mark it in the record.
 
-**The design is the source of truth.** Before fixing a finding, check it against the spec, its tickets and every design spec they name (`design/<slug>/spec.md`). A fix that makes the build match them belongs here. Anything they don't ask for, or that contradicts them, is new behaviour, even when the user suggests it: it becomes a new **Feature** issue (or an **Idea**, if the user is unsure), linked from the record, and stays out of this PR. Say which line of which spec decided it.
+**The design is the source of truth.** Before fixing a finding, check it against the spec, its tickets and every design spec they name (`design/<slug>/spec.md`). A fix that makes the build match them belongs here. Anything they don't ask for, or that contradicts them, is new behaviour, even when the user suggests it: it becomes a new **Feature** issue (a **Task** for a chore, an **Idea** if the user is unsure), linked from the record, and stays out of this PR. Say which line of which spec decided it.
 
 Update the record after every step: it is what survives a `/clear` or a compaction.
 
