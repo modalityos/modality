@@ -43,7 +43,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<sc
 - **Red must fail for the expected reason** — a compile error or setup crash isn't red. **Never weaken a failing test** to make it pass; report the gap and stop.
 - **Test-after** only for existing untested QML (coverage gaps) or pure visual layout: use `qt-qml-test`.
 - **Rust:** `cargo test`; lint with the clippy command in `CODING_STANDARDS.md`.
-- **QML:** Qt Quick Test, `tst_*.qml` in `tests/`, run with `just test`, or `just test-one <file>` for one file. Run `just check` (tests, lint, coverage) before pushing.
+- **QML:** Qt Quick Test, `tst_*.qml` in `tests/`, run with `just test`, or `just test-one <file>` for one file. Run `just check` (lint, format, tests, coverage) before pushing.
 - **Quickshell** types can't load under `qmltestrunner`: stub the ones you use in `tests/stubs/Quickshell/`, and keep logic in plain QML/JS outside the thin Quickshell layer.
 - **Shared test kit:** reuse and extend `tests/stubs/` and `tests/helpers/` instead of one-off stubs; `.claude/rules/tests.md` says how, and loads by itself under `tests/`.
 
