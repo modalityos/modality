@@ -68,3 +68,25 @@ deploy *args:
 [positional-arguments]
 rollback *args:
     tools/deploy-vm.sh rollback "$@"
+
+# Send only the changed files to the test VM, after one full deploy; args pass to tools/deploy-vm.sh
+[positional-arguments]
+sync *args:
+    tools/deploy-vm.sh sync "$@"
+
+# Sync to the test VM on every save under greeter/, qml/Modality/, data/ and session/
+[positional-arguments]
+deploy-watch *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v watchexec >/dev/null; then
+        echo "deploy-watch: watchexec is missing; install it with: sudo pacman -S watchexec" >&2
+        exit 1
+    fi
+    # Editor temp files are ignored; saves inside the debounce window make one sync.
+    exec watchexec --project-origin . \
+        --watch greeter --watch qml/Modality --watch data --watch session \
+        --ignore '*~' --ignore '*.swp' --ignore '*.swx' --ignore '.#*' --ignore '#*#' \
+        --ignore '*.tmp' --ignore '4913' --ignore '*.kate-swp' \
+        --debounce 500ms --on-busy-update queue \
+        -- tools/deploy-vm.sh sync "$@"
