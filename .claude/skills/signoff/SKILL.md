@@ -31,7 +31,7 @@ For each thing the user reports:
 
 When the user confirms a **User check**, tick it in its ticket's issue body and mark it in the record.
 
-A finding that asks for new behaviour (in neither the spec nor its tickets) becomes a new issue from the `.github/` templates, linked from the record, and stays out of this PR. Say so; the user can overrule.
+A finding that asks for new behaviour (in neither the spec nor its tickets) becomes a new **Feature** issue (or an **Idea**, if the user is unsure), linked from the record, and stays out of this PR. Say so; the user can overrule.
 
 Update the record after every step: it is what survives a `/clear` or a compaction.
 
