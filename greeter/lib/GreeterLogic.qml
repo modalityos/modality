@@ -21,8 +21,7 @@ QtObject {
     // The user picked in the Choose a user panel, else the last user to log in, else the first.
     readonly property var selectedUser: {
         const users = backend?.users ?? [];
-        return users.find(user => user.name === chosenUser)
-            ?? users.find(user => user.name === backend.lastUser) ?? users[0] ?? null;
+        return users.find(user => user.name === chosenUser) ?? users.find(user => user.name === backend.lastUser) ?? users[0] ?? null;
     }
     property string chosenUser: ""
 
@@ -34,9 +33,7 @@ QtObject {
     readonly property var selectedSession: {
         const sessions = backend?.sessions ?? [];
         const remembered = backend?.rememberedSessions[selectedUser?.name ?? ""];
-        return sessions.find(session => session.id === chosenSession)
-            ?? sessions.find(session => session.id === remembered)
-            ?? sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
+        return sessions.find(session => session.id === chosenSession) ?? sessions.find(session => session.id === remembered) ?? sessions.find(session => session.id === backend.defaultSession) ?? sessions[0] ?? null;
     }
     property string chosenSession: ""
 

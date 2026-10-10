@@ -32,7 +32,9 @@ TestCase {
 
     function createGreeter(backendProperties) {
         const backend = createTemporaryObject(backendComponent, testCase, backendProperties ?? {});
-        const greeter = createTemporaryObject(greeterComponent, testCase, { backend: backend });
+        const greeter = createTemporaryObject(greeterComponent, testCase, {
+            backend: backend
+        });
         verify(greeter);
         return greeter;
     }
@@ -49,16 +51,25 @@ TestCase {
 
     function verifyOnScreen(greeter, name) {
         const b = box(greeter, name);
-        verify(b.x >= 0 && b.y >= 0 && b.x + b.width <= greeter.width && b.y + b.height <= greeter.height,
-               `${name} at ${b.x},${b.y} ${b.width}x${b.height} is on screen`);
+        verify(b.x >= 0 && b.y >= 0 && b.x + b.width <= greeter.width && b.y + b.height <= greeter.height, `${name} at ${b.x},${b.y} ${b.width}x${b.height} is on screen`);
     }
 
     function test_ready_at_1366x768_fits_with_nothing_cut_off() {
         // A tall user column: a two-line name, the Wrong password Notice and the Other users pill.
         const greeter = createGreeter({
             users: [
-                { name: "alex", realName: "Alexandria Montgomery-Fitzwilliam", avatar: "", systemAccount: false },
-                { name: "katherine", realName: "Katherine Johnson", avatar: "", systemAccount: false }
+                {
+                    name: "alex",
+                    realName: "Alexandria Montgomery-Fitzwilliam",
+                    avatar: "",
+                    systemAccount: false
+                },
+                {
+                    name: "katherine",
+                    realName: "Katherine Johnson",
+                    avatar: "",
+                    systemAccount: false
+                }
             ],
             lastUser: "alex"
         });
@@ -70,8 +81,7 @@ TestCase {
         tryVerify(() => findChild(greeter, "wrongPasswordNotice").opacity === 1, 2000);
 
         compare(greeter.shortScreen, true);
-        for (const name of ["clock", "userAvatar", "userName", "passwordField", "wrongPasswordNotice",
-                            "otherUsersPill", "powerRow"])
+        for (const name of ["clock", "userAvatar", "userName", "passwordField", "wrongPasswordNotice", "otherUsersPill", "powerRow"])
             verifyOnScreen(greeter, name);
 
         const clock = box(greeter, "clock");
@@ -108,8 +118,18 @@ TestCase {
     function test_options_fits_at_1366x768() {
         const greeter = createGreeter({
             sessions: [
-                { id: "org.modalityos.kwin", name: "ModalityOS (KWin)", command: ["kwin"], desktopNames: ["ModalityOS"] },
-                { id: "org.modalityos.hyprland", name: "ModalityOS (Hyprland)", command: ["hyprland"], desktopNames: ["ModalityOS"] }
+                {
+                    id: "org.modalityos.kwin",
+                    name: "ModalityOS (KWin)",
+                    command: ["kwin"],
+                    desktopNames: ["ModalityOS"]
+                },
+                {
+                    id: "org.modalityos.hyprland",
+                    name: "ModalityOS (Hyprland)",
+                    command: ["hyprland"],
+                    desktopNames: ["ModalityOS"]
+                }
             ]
         });
         verifyOnScreen(greeter, "optionsButton");

@@ -72,14 +72,19 @@ TestCase {
     }
 
     function test_primary_button_disabled_is_fill_with_disabled_text() {
-        const button = createButton({ enabled: false });
+        const button = createButton({
+            enabled: false
+        });
         compare(button.fillColor, Theme.fill);
         compare(button.labelColor, Theme.textDisabled);
         compare(button.shadow, null);
     }
 
     function test_secondary_button_states() {
-        const button = createButton({ variant: Button.Secondary, text: "Cancel" });
+        const button = createButton({
+            variant: Button.Secondary,
+            text: "Cancel"
+        });
         compare(button.fillColor, Theme.fill);
         compare(button.labelColor, Theme.textPrimary);
         compare(button.shadow, null);
@@ -127,7 +132,9 @@ TestCase {
     }
 
     function test_button_states_can_be_set_through_properties() {
-        const button = createButton({ hoverActive: true });
+        const button = createButton({
+            hoverActive: true
+        });
         compare(button.fillColor, Theme.accentHover);
         button.down = true;
         compare(button.fillColor, Theme.accentPressed);

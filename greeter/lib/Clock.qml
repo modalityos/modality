@@ -43,7 +43,9 @@ ColumnLayout {
         font.weight: Theme.display.font.weight
         font.letterSpacing: Theme.display.font.letterSpacing
         // Tabular figures, so the digits don't shift as the minutes change.
-        font.features: { "tnum": 1 }
+        font.features: {
+            "tnum": 1
+        }
         lineHeight: Theme.display.lineHeight
         lineHeightMode: Text.FixedHeight
         color: Theme.textPrimary

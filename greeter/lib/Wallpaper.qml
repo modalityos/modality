@@ -12,9 +12,7 @@ Image {
     readonly property bool sixteenByTen: height > 0 && Math.abs(width / height - 1.6) < 0.01
     readonly property string size: sixteenByTen ? "3840x2400" : "3840x2160"
 
-    source: folder.toString().length > 0
-            ? `${folder}/wallpaper-${name}-${dark ? "dark" : "light"}-${size}.png`
-            : ""
+    source: folder.toString().length > 0 ? `${folder}/wallpaper-${name}-${dark ? "dark" : "light"}-${size}.png` : ""
     sourceSize: Qt.size(width, height)
     fillMode: Image.PreserveAspectCrop
     asynchronous: true

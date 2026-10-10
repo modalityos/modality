@@ -19,9 +19,21 @@ TestCase {
 
     function test_power_operation_runs_systemctl_data() {
         return [
-            { tag: "suspend", operation: "suspend", command: ["systemctl", "suspend"] },
-            { tag: "reboot", operation: "reboot", command: ["systemctl", "reboot"] },
-            { tag: "powerOff", operation: "powerOff", command: ["systemctl", "poweroff"] }
+            {
+                tag: "suspend",
+                operation: "suspend",
+                command: ["systemctl", "suspend"]
+            },
+            {
+                tag: "reboot",
+                operation: "reboot",
+                command: ["systemctl", "reboot"]
+            },
+            {
+                tag: "powerOff",
+                operation: "powerOff",
+                command: ["systemctl", "poweroff"]
+            }
         ];
     }
 
