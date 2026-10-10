@@ -3,6 +3,7 @@ name: Feature or task
 about: New behaviour, an improvement, or a piece of work
 title: ""
 labels: enhancement
+type: Feature
 ---
 
 ## Goal
