@@ -43,7 +43,10 @@ just vm-create                        # trusts the first key in ssh-add -L
 just vm-create --ssh-key ~/.ssh/id_ed25519.pub
 just vm-create --timezone Europe/London   # instead of the host's timezone
 just vm-create --password secret          # instead of the Greeter password "modality"
+just vm-create --resolution 1920x1200     # instead of the 2560x1600 display
 ```
+
+`--resolution WxH` sets the VM's display size in pixels, as width and height joined by `x`; the default is `2560x1600`. Any other shape of value stops the script before it builds anything.
 
 It builds a libvirt domain called `modality-dev` and, when it is ready, writes its SSH target to `.env` in the repo:
 
@@ -56,7 +59,7 @@ MODALITYOS_VM=dev@192.168.122.50
 What it builds:
 
 - **The disk:** Arch Linux's official cloud image (from the arch-boxes project), copied and grown to 40 GB, stored as `modality-dev.qcow2` in libvirt's `default` storage pool (usually `/var/lib/libvirt/images`). The first download is cached in `~/.cache/modalityos/vm/` (or `$XDG_CACHE_HOME/modalityos/vm/`), so later builds skip it.
-- **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU.
+- **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU. The display is 2560 × 1600 (or `--resolution`), which the Greeter shows at 2×, so it draws 1280 × 800 logical pixels at twice the density, like a HiDPI laptop. The size is set as the virtual monitor's EDID (the mode a monitor reports), and Cage picks it; there is no SPICE agent in the VM, so the size never follows the window.
 - **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; the host's timezone, so the Greeter's clock matches yours (from `timedatectl`, else where `/etc/localtime` points, else UTC; `--timezone Area/City` picks another); user `dev` with password `modality` for the Greeter (`--password` picks another; SSH stays key-only), your SSH key and passwordless `sudo`; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
 
 The script refuses to run if `modality-dev` already exists; run `just vm-destroy` first.
@@ -193,4 +196,11 @@ just vm-create
 - **The VM powers off instead of rebooting:** virt-install runs a VM's first boot as an install, where a reboot means power off. `just vm-create` power-cycles the VM once at the end to leave that mode, and checks it worked. A VM built before that step will power off on its first reboot only: start it again in virt-manager (or `virsh -c qemu:///system start modality-dev`) and it reboots normally from then on.
 - **No `initial` snapshot:** the VM was built before `just vm-create` took one. The other snapshot commands work on it as it is; to get `initial`, rebuild with `just vm-destroy && just vm-create`.
 - **`just vm-snapshot` says the VM did not shut down:** something in it is holding up shutdown. Open the console in virt-manager to see what, or shut it down there, then take the snapshot again; it is taken from a shut-off VM without starting it.
+- **An existing VM is blurry (built before the 2560 × 1600 display):** raise its resolution in place, no rebuild needed. `virt-xml` is a Python script like virt-install, so put the system Python first on `PATH`:
+
+  ```sh
+  PATH=/usr/bin:$PATH virt-xml --connect qemu:///system modality-dev --edit --video 'xpath1.set=./model/resolution/@x=2560,xpath2.set=./model/resolution/@y=1600'
+  ```
+
+  Then shut the VM down fully and start it again (`virsh -c qemu:///system shutdown modality-dev`, wait for `domstate` to say `shut off`, then `start`); a reboot is not enough, since libvirt applies the new display only to a VM started from powered off. The Greeter's 2× scale is in the launcher, so `just sync` or `just deploy` brings it in.
 - **The `just vm-view` window opens cut off,** showing only part of the VM's screen: **View > Resize to VM** sizes the window to the guest.
