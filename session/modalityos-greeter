@@ -18,6 +18,8 @@ if command -v systemd-detect-virt >/dev/null && systemd-detect-virt --quiet --vm
     # The test VM is a 2x device (2560x1600) and Cage reports scale 1, so the Greeter would
     # draw at half its intended size. A stop-gap until #33 makes the scale an Admin setting.
     export QT_SCALE_FACTOR=2
+    # Qt sizes the cursor from XCURSOR_SIZE times the output scale, still 1, so double it too.
+    export XCURSOR_SIZE=48
 fi
 
 exec cage -s -m last -- quickshell -p "$prefix/share/modalityos/greeter"
