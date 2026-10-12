@@ -66,6 +66,14 @@ install prefix:
 vm-create *args:
     tools/vm/create.sh "$@"
 
+# virt-manager is GTK 3, which only knows integer scales, so native Wayland at 1.5× resamples it and blurs; under X11 with
+# GDK_SCALE=1 the guest draws 1:1 and GDK_DPI_SCALE sizes only its menus. A mise/pyenv Python breaks it ("No module named gi").
+
+# Open the test VM's console pixel-exact; the scale sizes virt-manager's menus, e.g. just vm-view 2 on a 2× desktop
+vm-view scale="1.5":
+    PATH=/usr/bin:$PATH GDK_BACKEND=x11 GDK_SCALE=1 GDK_DPI_SCALE={{quote(scale)}} \
+        virt-manager --connect qemu:///system --show-domain-console modality-dev
+
 # Add a login user to the test VM (then snapshots it, unless --no-snapshot), e.g. just vm-user-add ada --real-name "Ada Lovelace" --avatar data/avatars/avatar-flower.png
 [positional-arguments]
 vm-user-add name *args:

@@ -7,6 +7,7 @@ Some things only show in a real boot: the Greeter under greetd and Cage, the KWi
 | Command | What it does |
 |---|---|
 | `just vm-create` | Build the VM `modality-dev` at `192.168.122.50`, and write `MODALITYOS_VM` to `.env` |
+| `just vm-view` | Open the VM's screen in virt-manager, one guest pixel per host pixel; `just vm-view 2` on a 2× desktop |
 | `just deploy --reboot` | Install the build, make greetd the display manager, reboot into the Greeter |
 | `just deploy-watch` | Leave running: sends each saved change to the VM |
 | `just sync` | Send changed files once |
@@ -74,11 +75,30 @@ Each new VM has new SSH host keys at the same address, so the scripts drop that 
 
 ## See the screen
 
-Open **virt-manager**, connect to **QEMU/KVM** (the system connection), and double-click `modality-dev`. Before a deploy you see a text login; after one, the Greeter. Or from a terminal:
+```sh
+just vm-view        # menus sized for a 1.5× desktop
+just vm-view 2      # for a 2× desktop; 1 for an unscaled one
+```
+
+This opens the VM's console in **virt-manager** with one guest pixel on one host pixel, so the Greeter looks as sharp as it would on a real screen. Before a deploy you see a text login; after one, the Greeter.
+
+The VM's screen is 2560 × 1600, which it treats as a 2× display. virt-manager is a GTK 3 app, and GTK 3 only knows whole-number scales (1×, 2×), not the 1.5× most high-resolution desktops use. So `just vm-view` runs it as an X11 app under XWayland (the compatibility layer that runs X11 apps on a Wayland desktop) with a GTK scale of 1: the guest is drawn at the screen's physical pixels, untouched. The number you pass is a separate font scale for virt-manager's own menus and text, so they stay readable; the default `1.5` matches a 1.5× desktop. It also puts the system Python first on `PATH`, since a Python from a version manager (mise, pyenv) breaks virt-manager with `No module named 'gi'`.
+
+Three host settings make that work. Set them once:
+
+- **KDE: System Settings > Display & Monitor > Legacy applications (X11): "Apply scaling themselves"** (it writes `Scale=1` under `[Xwayland]` in `~/.config/kwinrc`). By default KDE scales X11 apps up itself, which blurs them. This setting makes XWayland apps draw at the screen's physical pixels, with nothing scaled by the desktop. On another desktop, find its equivalent: whatever makes X11 apps draw at physical pixels, unscaled.
+- **virt-manager: View > Scale Display > Never**, or from a terminal `gsettings set org.virt-manager.virt-manager.console scaling 0`. Otherwise virt-manager stretches the guest to fit the window.
+- **virt-manager: Edit > Preferences > Console > "Resize guest with window" off**, so the guest keeps its 2560 × 1600 screen whatever size the window is.
+
+If the window opens too small for the screen, **View > Resize to VM** fits it.
+
+**The fallback: plain virt-manager.** On a desktop at a whole-number scale (1× or 2×) you can skip XWayland: open virt-manager as usual, connect to **QEMU/KVM** (the system connection), double-click `modality-dev` and set **View > Scale Display > Never**. Or from a terminal:
 
 ```sh
 virt-manager --connect qemu:///system --show-domain-console modality-dev
 ```
+
+That is pixel-exact on a 1× or 2× desktop, but not on a fractional one. On a 1.5× desktop GTK 3 rounds up and draws virt-manager at 2×, and the desktop then shrinks the window by 0.75 to make it the right size, which resamples every guest pixel. The result is sharper than the old 1280 × 800 VM, but not crisp.
 
 ## Deploy and roll back
 
@@ -173,3 +193,4 @@ just vm-create
 - **The VM powers off instead of rebooting:** virt-install runs a VM's first boot as an install, where a reboot means power off. `just vm-create` power-cycles the VM once at the end to leave that mode, and checks it worked. A VM built before that step will power off on its first reboot only: start it again in virt-manager (or `virsh -c qemu:///system start modality-dev`) and it reboots normally from then on.
 - **No `initial` snapshot:** the VM was built before `just vm-create` took one. The other snapshot commands work on it as it is; to get `initial`, rebuild with `just vm-destroy && just vm-create`.
 - **`just vm-snapshot` says the VM did not shut down:** something in it is holding up shutdown. Open the console in virt-manager to see what, or shut it down there, then take the snapshot again; it is taken from a shut-off VM without starting it.
+- **The `just vm-view` window opens cut off,** showing only part of the VM's screen: **View > Resize to VM** sizes the window to the guest.
