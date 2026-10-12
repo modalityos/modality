@@ -179,7 +179,9 @@ EOF
 
 # virt-install 5.1 has no model.resolution option, so the <resolution> element on the video
 # <model> is set through its xpath form. The guest has no spice-vdagent: this is its EDID.
-video="virtio,model.acceleration.accel3d=yes,xpath1.set=./model/resolution/@x=${resolution%x*},xpath2.set=./model/resolution/@y=${resolution#*x}"
+width=${resolution%x*}
+height=${resolution#*x}
+video="virtio,model.acceleration.accel3d=yes,xpath1.set=./model/resolution/@x=$width,xpath2.set=./model/resolution/@y=$height"
 
 # Specs match the project's reference test VM; the firmware is OVMF without Secure Boot,
 # since the cloud image is not signed.
