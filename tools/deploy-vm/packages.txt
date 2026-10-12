@@ -6,6 +6,9 @@ accountsservice
 polkit
 kwin
 konsole
+# The pointer images the `default` cursor theme inherits; without them Qt sets no cursor and
+# Cage's 24 px fallback shows, whatever XCURSOR_SIZE says.
+adwaita-cursors
 # Fonts, from the Foundations spec's Type table.
 inter-font
 ttf-jetbrains-mono

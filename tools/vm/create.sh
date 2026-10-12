@@ -2,11 +2,14 @@
 # Create the test VM, libvirt domain "modality-dev", from Arch's official cloud image.
 #
 #   tools/vm/create.sh [--ssh-key FILE.pub] [--timezone Area/City] [--password PASSWORD]
+#                      [--resolution WxH]
 #
 # The VM gets user "dev" (Greeter password "modality", or the one given) with passwordless sudo, the given SSH public key (default: the
 # first key in ssh-add -L), rsync, the host's timezone (or the one given), and the fixed
-# address 192.168.122.50 on libvirt's "default" network. Once set up it takes the
-# snapshot "initial" (see tools/vm/snapshot.sh); it prints the MODALITYOS_VM line for just deploy.
+# address 192.168.122.50 on libvirt's "default" network. Its display is 2560x1600 (a 2x
+# device: the Greeter shows at 1280x800 logical), or the --resolution given as WIDTHxHEIGHT.
+# Once set up it takes the snapshot "initial" (see tools/vm/snapshot.sh); it prints the
+# MODALITYOS_VM line for just deploy.
 # The image is pinned to one release and checked against its SHA256; packages installed
 # on top are current Arch. Remove the VM with tools/vm/destroy.sh.
 set -euo pipefail
@@ -31,9 +34,11 @@ vcpus=8
 user=dev
 # A throwaway test VM on a private network: a known password, so the Greeter can be tried.
 password=modality
+# 2560x1600 at 2x is 1280x800 logical, which the Greeter design fits (see docs/vm.md).
+resolution=2560x1600
 
 usage() {
-    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
     exit "${1:-0}"
 }
 
@@ -49,6 +54,12 @@ while [[ $# -gt 0 ]]; do
         --ssh-key) [[ $# -ge 2 ]] || usage 2; ssh_key=$2; shift 2 ;;
         --timezone) [[ $# -ge 2 ]] || usage 2; timezone=$2; shift 2 ;;
         --password) [[ $# -ge 2 ]] || usage 2; password=$2; shift 2 ;;
+        --resolution)
+            [[ $# -ge 2 ]] || usage 2
+            resolution=$2
+            [[ $resolution =~ ^[0-9]+x[0-9]+$ ]] || die "not a resolution WIDTHxHEIGHT: $resolution"
+            shift 2
+            ;;
         -h | --help) usage ;;
         *) echo "create.sh: unknown argument: $1" >&2; usage 2 ;;
     esac
@@ -166,6 +177,12 @@ instance-id: $domain
 local-hostname: $domain
 EOF
 
+# virt-install 5.1 has no model.resolution option, so the <resolution> element on the video
+# <model> is set through its xpath form. The guest has no spice-vdagent: this is its EDID.
+width=${resolution%x*}
+height=${resolution#*x}
+video="virtio,model.acceleration.accel3d=yes,xpath1.set=./model/resolution/@x=$width,xpath2.set=./model/resolution/@y=$height"
+
 # Specs match the project's reference test VM; the firmware is OVMF without Secure Boot,
 # since the cloud image is not signed.
 virt_install \
@@ -180,7 +197,7 @@ virt_install \
     --network "network=$network,model=virtio,mac=$mac" \
     --graphics spice,listen=none,gl.enable=no \
     --graphics egl-headless \
-    --video virtio,model.acceleration.accel3d=yes \
+    --video "$video" \
     --channel spicevmc \
     --cloud-init "user-data=$work/user-data,meta-data=$work/meta-data" \
     --noautoconsole

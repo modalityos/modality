@@ -7,6 +7,7 @@ Some things only show in a real boot: the Greeter under greetd and Cage, the KWi
 | Command | What it does |
 |---|---|
 | `just vm-create` | Build the VM `modality-dev` at `192.168.122.50`, and write `MODALITYOS_VM` to `.env` |
+| `just vm-view` | Open the VM's screen in virt-manager, one guest pixel per host pixel; `just vm-view 2` on a 2× desktop |
 | `just deploy --reboot` | Install the build, make greetd the display manager, reboot into the Greeter |
 | `just deploy-watch` | Leave running: sends each saved change to the VM |
 | `just sync` | Send changed files once |
@@ -42,7 +43,10 @@ just vm-create                        # trusts the first key in ssh-add -L
 just vm-create --ssh-key ~/.ssh/id_ed25519.pub
 just vm-create --timezone Europe/London   # instead of the host's timezone
 just vm-create --password secret          # instead of the Greeter password "modality"
+just vm-create --resolution 1920x1200     # instead of the 2560x1600 display
 ```
+
+`--resolution WxH` sets the VM's display size in pixels, as width and height joined by `x`; the default is `2560x1600`. Any other shape of value stops the script before it builds anything. The Greeter draws at 2× in any VM whatever the size, so a smaller display gives it less room, not smaller text.
 
 It builds a libvirt domain called `modality-dev` and, when it is ready, writes its SSH target to `.env` in the repo:
 
@@ -55,7 +59,7 @@ MODALITYOS_VM=dev@192.168.122.50
 What it builds:
 
 - **The disk:** Arch Linux's official cloud image (from the arch-boxes project), copied and grown to 40 GB, stored as `modality-dev.qcow2` in libvirt's `default` storage pool (usually `/var/lib/libvirt/images`). The first download is cached in `~/.cache/modalityos/vm/` (or `$XDG_CACHE_HOME/modalityos/vm/`), so later builds skip it.
-- **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU.
+- **The machine:** 16 GB of memory, 8 vCPUs, UEFI firmware without Secure Boot (the cloud image is not signed), a virtio disk, a virtio network card on libvirt's `default` network, and 3D-accelerated virtio graphics (`virtio-vga-gl`) shown through SPICE with `egl-headless`. The Greeter and KWin need that GPU. The display is 2560 × 1600 (or `--resolution`), which the Greeter shows at 2×, so it draws 1280 × 800 logical pixels at twice the density, like a HiDPI laptop. Only the Greeter: the KWin session after login still runs at 1× on the same screen. The Greeter's 2× is a stop-gap until #33. The size is set as the virtual monitor's EDID (the mode a monitor reports), and Cage picks it; there is no SPICE agent in the VM, so the size never follows the window.
 - **First boot**, set up by cloud-init (the cloud image's first-boot setup tool): hostname `modality-dev`; the host's timezone, so the Greeter's clock matches yours (from `timedatectl`, else where `/etc/localtime` points, else UTC; `--timezone Area/City` picks another); user `dev` with password `modality` for the Greeter (`--password` picks another; SSH stays key-only), your SSH key and passwordless `sudo`; a full system upgrade (`pacman -Syu`); and `rsync`, which `just deploy` needs. The script waits until all of that is done, which takes a few minutes.
 
 The script refuses to run if `modality-dev` already exists; run `just vm-destroy` first.
@@ -74,11 +78,30 @@ Each new VM has new SSH host keys at the same address, so the scripts drop that 
 
 ## See the screen
 
-Open **virt-manager**, connect to **QEMU/KVM** (the system connection), and double-click `modality-dev`. Before a deploy you see a text login; after one, the Greeter. Or from a terminal:
+```sh
+just vm-view        # menus sized for a 1.5× desktop
+just vm-view 2      # for a 2× desktop; 1 for an unscaled one
+```
+
+This opens the VM's console in **virt-manager** with one guest pixel on one host pixel, so the Greeter looks as sharp as it would on a real screen. Before a deploy you see a text login; after one, the Greeter.
+
+The VM's screen is 2560 × 1600, which it treats as a 2× display. virt-manager is a GTK 3 app, and GTK 3 only knows whole-number scales (1×, 2×), not the 1.5× most high-resolution desktops use. So `just vm-view` runs it as an X11 app under XWayland (the compatibility layer that runs X11 apps on a Wayland desktop) with a GTK scale of 1 (GTK's whole-number zoom for the whole app): the guest is drawn at the screen's physical pixels, untouched. The number you pass is a separate font scale for virt-manager's own menus and text, so they stay readable; the default `1.5` matches a 1.5× desktop. It also puts the system Python first on `PATH`, since a Python from a version manager (mise, pyenv) breaks virt-manager with `No module named 'gi'`.
+
+Three host settings make that work. Set them once:
+
+- **KDE: System Settings > Display & Monitor > Legacy applications (X11): "Apply scaling themselves"** (X11 apps are the "legacy" ones; it writes `Scale=1` under `[Xwayland]` in `~/.config/kwinrc`). By default KDE scales X11 apps up itself, which blurs them. This setting makes XWayland apps draw at the screen's physical pixels, with nothing scaled by the desktop. On another desktop, find its equivalent: whatever makes X11 apps draw at physical pixels, unscaled.
+- **virt-manager: View > Scale Display > Never**, or from a terminal `gsettings set org.virt-manager.virt-manager.console scaling 0`. Otherwise virt-manager stretches the guest to fit the window.
+- **virt-manager: Edit > Preferences > Console > "Resize guest with window" off**, so the guest keeps its 2560 × 1600 screen whatever size the window is.
+
+The first window opens at virt-manager's default size, 1280 × 800, so only a corner of the 2× guest shows: **View > Resize to VM** fits it. virt-manager saves the window size when you close the window, so after one resize and a normal close it opens at full size.
+
+**The fallback: plain virt-manager.** On a desktop at a whole-number scale (1× or 2×) you can skip XWayland: open virt-manager as usual, connect to **QEMU/KVM** (the system connection), double-click `modality-dev` and set **View > Scale Display > Never**. Or from a terminal:
 
 ```sh
 virt-manager --connect qemu:///system --show-domain-console modality-dev
 ```
+
+That is pixel-exact on a 1× or 2× desktop, but not on a fractional one. On a 1.5× desktop GTK 3 rounds up and draws virt-manager at 2×. The desktop then shrinks the window by 0.75 to make it the right size, and that resamples every guest pixel (each host pixel is a blend of its neighbours). The result is sharper than the old 1280 × 800 VM, but not crisp.
 
 ## Deploy and roll back
 
@@ -173,3 +196,13 @@ just vm-create
 - **The VM powers off instead of rebooting:** virt-install runs a VM's first boot as an install, where a reboot means power off. `just vm-create` power-cycles the VM once at the end to leave that mode, and checks it worked. A VM built before that step will power off on its first reboot only: start it again in virt-manager (or `virsh -c qemu:///system start modality-dev`) and it reboots normally from then on.
 - **No `initial` snapshot:** the VM was built before `just vm-create` took one. The other snapshot commands work on it as it is; to get `initial`, rebuild with `just vm-destroy && just vm-create`.
 - **`just vm-snapshot` says the VM did not shut down:** something in it is holding up shutdown. Open the console in virt-manager to see what, or shut it down there, then take the snapshot again; it is taken from a shut-off VM without starting it.
+- **An existing VM is blurry (built before the 2560 × 1600 display):** raise its resolution in place, no rebuild needed. `virt-xml` is a Python script like virt-install, so put the system Python first on `PATH`:
+
+  ```sh
+  PATH=/usr/bin:$PATH virt-xml --connect qemu:///system modality-dev --edit --video 'xpath1.set=./model/resolution/@x=2560,xpath2.set=./model/resolution/@y=1600'
+  ```
+
+  Then shut the VM down fully and start it again (`virsh -c qemu:///system shutdown modality-dev`, wait for `domstate` to say `shut off`, then `start`); a reboot is not enough, since libvirt applies the new display only to a VM started from powered off. The Greeter's 2× scale is in the launcher, so `just sync` or `just deploy` brings it in.
+- **The `just vm-view` window opens cut off,** showing only part of the VM's screen: **View > Resize to VM** sizes the window to the guest. Close the window normally afterwards and virt-manager remembers the size.
+- **The `just vm-view` window is blurry or stretched:** one of the three host settings from "See the screen" is off. Check `~/.config/kwinrc` has `Scale=1` under `[Xwayland]` (KDE's "Apply scaling themselves"), `gsettings get org.virt-manager.virt-manager.console scaling` prints `0` (Scale Display: Never), and Edit > Preferences > Console > "Resize guest with window" is off.
+- **`just vm-view` prints its command and returns, and no window appears:** a virt-manager is already running, and it took the request instead (virt-manager runs one instance). Quit that one (`pkill virt-manager`) and run `just vm-view` again.
