@@ -93,7 +93,7 @@ Three host settings make that work. Set them once:
 - **virt-manager: View > Scale Display > Never**, or from a terminal `gsettings set org.virt-manager.virt-manager.console scaling 0`. Otherwise virt-manager stretches the guest to fit the window.
 - **virt-manager: Edit > Preferences > Console > "Resize guest with window" off**, so the guest keeps its 2560 × 1600 screen whatever size the window is.
 
-If the window opens too small for the screen, **View > Resize to VM** fits it.
+The first window opens at virt-manager's default size, 1280 × 800, so only a corner of the 2× guest shows: **View > Resize to VM** fits it. virt-manager saves the window size when you close the window, so after one resize and a normal close it opens at full size.
 
 **The fallback: plain virt-manager.** On a desktop at a whole-number scale (1× or 2×) you can skip XWayland: open virt-manager as usual, connect to **QEMU/KVM** (the system connection), double-click `modality-dev` and set **View > Scale Display > Never**. Or from a terminal:
 
@@ -203,4 +203,5 @@ just vm-create
   ```
 
   Then shut the VM down fully and start it again (`virsh -c qemu:///system shutdown modality-dev`, wait for `domstate` to say `shut off`, then `start`); a reboot is not enough, since libvirt applies the new display only to a VM started from powered off. The Greeter's 2× scale is in the launcher, so `just sync` or `just deploy` brings it in.
-- **The `just vm-view` window opens cut off,** showing only part of the VM's screen: **View > Resize to VM** sizes the window to the guest.
+- **The `just vm-view` window opens cut off,** showing only part of the VM's screen: **View > Resize to VM** sizes the window to the guest. Close the window normally afterwards and virt-manager remembers the size.
+- **`just vm-view` prints its command and returns, and no window appears:** a virt-manager is already running, and it took the request instead (virt-manager runs one instance). Quit that one (`pkill virt-manager`) and run `just vm-view` again.
